@@ -10,6 +10,12 @@
         "content-1 content-2 content-3"
         "content-4 content-5 content-6"
   }
+
+  .content-main {
+    display: flex;
+    width: 70%;
+    height: 100%;
+  }
   
   .logo{
       margin: 25px 25px auto;
@@ -17,6 +23,12 @@
       width: 45%;
       height: 45%;
   }
+
+  .icon{
+    margin: auto;
+    width: 25%;
+    height: 25%;
+}
   
   .content-1 {
     grid-area: content-1;
@@ -72,6 +84,7 @@
     align-items: center;
     height: 250px;
     background-image: linear-gradient(130deg, rgba(0, 128, 240, 0.125) 0%, rgba(52, 228, 234, 0.125) 85% );
+    border: 2px;
   }
   
   .content-1,
@@ -86,3 +99,40 @@
     
   }
   
+  .tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 140px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: 150%;
+    left: 50%;
+    margin-left: -75px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}

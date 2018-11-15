@@ -25,13 +25,14 @@ from flask import Flask, url_for, render_template, jsonify, request, make_respon
 
 from kryptoflask.routes import *
 
-
 path_to_static = os.getcwd() + '/static'
 path_to_templates = os.getcwd() + '/templates'
 
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__, template_folder=path_to_templates, static_folder= path_to_static)
+
+app.config['TESTING'] = True
 
 app.register_blueprint(routes)
 

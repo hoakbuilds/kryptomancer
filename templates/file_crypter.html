@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="item content content-1">
+<title>Upload new File</title>
+    <h1>Upload new File</h1>
+    <form method=post enctype=multipart/form-data>
+      <input type=file name=file>
+      <input type=submit value=Upload>
+    </form>
+</div>
+
+<div class="item content content-2">
+    {{ name }}
+    <a href="{{ url_for('routes.encrypt') }}" class="w3-btn w3-indigo">Encrypt</a>
+</div>
+
+<div class="item content content-3">
+</div>
+<div class="item content content-4">
+    {% for item in listdir  %}
+        <p>{{ item }}<br></p>
+    {% endfor %}
+</div>
+{% endblock %}
