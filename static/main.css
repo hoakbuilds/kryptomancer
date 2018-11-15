@@ -1,0 +1,138 @@
+.container {
+    display: grid;
+    width: 70%;
+    height: 100%;
+    grid-template-columns: auto;
+    grid-template-rows: 95px auto;
+    grid-gap: 1rem;
+    grid-template-areas:
+        "header header header"
+        "content-1 content-2 content-3"
+        "content-4 content-5 content-6"
+  }
+
+  .content-main {
+    display: flex;
+    width: 70%;
+    height: 100%;
+  }
+  
+  .logo{
+      margin: 25px 25px auto;
+      float:left;
+      width: 45%;
+      height: 45%;
+  }
+
+  .icon{
+    margin: auto;
+    width: 25%;
+    height: 25%;
+}
+  
+  .content-1 {
+    grid-area: content-1;
+  }
+  
+  .content-2 {
+    grid-area: content-2;
+  }
+  
+  .content-3 {
+    grid-area: content-3;
+  }
+
+  .content-4 {
+    grid-area: content-4;
+  }
+  
+  .content-5 {
+    grid-area: content-5;
+  }
+  
+  .content-6 {
+    grid-area: content-6;
+  }
+  
+  
+  /* OTHER STYLES */
+  
+  body {
+    background-color: #c8c2ae;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  }
+  
+  .item { 
+    box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+    color: #2b4141;
+    display: flex;
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
+  .header {
+    grid-area: header;
+    background-color: white;
+  }
+
+  .content {
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    height: 250px;
+    background-image: linear-gradient(130deg, rgba(0, 128, 240, 0.125) 0%, rgba(52, 228, 234, 0.125) 85% );
+    border: 2px;
+  }
+  
+  .content-1,
+  .content-2,
+  .content-3,
+  .content-4,
+  .content-5,
+  .content-6,{
+    justify-content: center;
+    align-items: center;
+    height: 250px;
+    
+  }
+  
+  .tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 140px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: 150%;
+    left: 50%;
+    margin-left: -75px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}

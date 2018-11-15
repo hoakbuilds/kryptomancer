@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+ 
+<div class="item content content-1">
+    <a href="{{ url_for('routes.crypter') }} "><img src="../static/document.png" class="icon"> </img>File Crypter</a>
+</div>
+<div class="item content content-2">
+    <a href="{{ url_for('routes.password_generator') }} "><img src="../static/data-protection.png" class="icon"> </img>Password Generator</a>
+    </div>
+<div class="item content content-3">H(ash)MAC Calculator</div>
+<div class="item content content-4">RSA & Signature Fiddlings</div>
+<div class="item content content-5">Digital Certs & Co.</div>
+<div class="item content content-6">KC MANAGER</div>
+
+{% endblock %}
