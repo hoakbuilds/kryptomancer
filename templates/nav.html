@@ -1,4 +1,74 @@
-<div class="item header">
-    <a href="{{ url_for('routes.index') }}"><img src="../static/logo_1.png" class="logo"> </img></a>
+<div class="navbar">
+  <a href="{{ url_for('routes.index') }} " class="logo"><img src="../static/logo_2.png" class="logo"> </img></a>
+  <div class="subnav">
+    <button class="subnavbtn" onmouseover="snackbar()">
+        <img src="../static/data-protection.png" class="icon"> </img> Keygen 
+        <i class="fa fa-caret-down"></i>
+    </button>
+    <div class="subnav-content">
+      <button class="tablink tablink-keygen" type="button" onclick="window.location.href='{{ url_for( 'routes.generate' ) }}'; snackbar()">128</button>
+      <button class="tablink tablink-keygen" type="button" onclick="window.location.href='{{ url_for( 'routes.generate' ) }}'; snackbar()">256</button>
+      <button class="tablink tablink-keygen" type="button" onclick="window.location.href='{{ url_for( 'routes.generate' ) }}'; snackbar()">512</button>
+    </div>
+  </div> 
+  <div class="subnav">
+    <button class="subnavbtn" type="button" onclick="window.location.href='{{ url_for( 'routes.crypter' ) }}'; snackbar()"> <img src="../static/document.png" class="icon"> </img> Encryption <i class="fa fa-caret-down"></i></button>
+    <div class="subnav-content">
+    </div>
+  </div> 
+  <div class="subnav">
+    <button class="subnavbtn"> Digest <i class="fa fa-caret-down"></i></button>
+    <div class="subnav-content">
+    </div>
+  </div>
+  <div class="subnav">
+    <button class="subnavbtn"> HMAC <i class="fa fa-caret-down"></i></button>
+    <div class="subnav-content">
+    </div>
+  </div>
+  <div class="subnav">
+    <button class="subnavbtn"> RSA <i class="fa fa-caret-down"></i></button>
+    <div class="subnav-content">
+    </div>
+  </div>
+  <div class="subnav">
+    <button class="subnavbtn"> Digital Certificates <i class="fa fa-caret-down"></i></button>
+    <div class="subnav-content">
+    </div>
+  </div>
+  <div class="subnav">
+    <button class="subnavbtn"> KC MANAGER <i class="fa fa-caret-down"></i></button>
+    <div class="subnav-content">
+    </div>
+  </div>
 </div>
 
+<script>
+function openPage(pageName,elmnt,color) {
+    var i, tabcontent, tablinks;
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+    tablinks = document.getElementsByClassName("tablink");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].style.backgroundColor = "";
+    }
+    document.getElementById(pageName).style.display = "block";
+    elmnt.style.backgroundColor = color;
+
+}
+// Get the element with id="defaultOpen" and click on it
+document.getElementById("defaultOpen").click();
+
+function snackbar() {
+    // Get the snackbar DIV
+    var x = document.getElementById("snackbar");
+
+    // Add the "show" class to DIV
+    x.className = "show";
+
+    // After 3 seconds, remove the show class from DIV
+    setTimeout(function(){ x.className = x.className.replace("show", ""); }, 10000);
+}
+</script>
