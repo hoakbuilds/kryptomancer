@@ -13,6 +13,8 @@ import asyncio
 import logging
 import subprocess
 import time
+import kryptoflask
+
 
 from time import sleep
 from threading import Thread
@@ -20,7 +22,9 @@ from flask import Flask, redirect, url_for, request, render_template
 from werkzeug import secure_filename
 
 from . import routes
-import kryptoflask
+from kryptoflask.openssl import (
+    generate_key_iv, generate_key, encrypt_file 
+)
 
 UPLOAD_FOLDER = os.getcwd() + '/uploads'
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
@@ -78,54 +82,23 @@ def encrypt():
         
     return render_template('file_crypter.html', data=res)
 
-# openssl enc -aes-256-cbc -e -in $file -out $file.dec -K $key -iv $iv
-
-def file_encryption( input_file, key, iv ):
-    file_path = os.path.join(UPLOAD_FOLDER, input_file)
-    enc_file = os.path.join(UPLOAD_FOLDER,  input_file + ".dec")
-    subprocess.Popen(
-        ['openssl', 'enc', '-aes-256-cbc', '-e', '-in', file_path, '-out', enc_file, '-K', key, '-iv', iv]
-    )
-
 @routes.route('/password_generator/', methods=['GET'])
 def password_generator():
     
     return render_template('password_gen.html', data = None)
 
-@routes.route('/generate', methods=['GET'])
-def generate():
-    key_dir=os.path.join(UPLOAD_FOLDER, "key-file.txt")
-    iv_dir=os.path.join(UPLOAD_FOLDER, "iv-file.txt")
-    print(iv_dir, key_dir)
+@routes.route('/generate', methods=['GET', 'POST'])
+@routes.route('/generate/<int:bits>', methods=['GET'])
+def generate(bits=256):
 
-    key_file = open(key_dir, 'w+')
-    iv_file = open(iv_dir, 'w+')
-    print(iv_file, key_file)
-
-    subprocess.Popen(
-        ['openssl', 'rand', '-hex', '32'],
-        stdout=key_file
-    )
-    subprocess.Popen(
-        ['openssl', 'rand', '-hex', '16'],
-        stdout=iv_file
-    )
+    if request.method == 'POST':
+        data = generate_key( bytes= str(request.form['size']))
+    elif bits == 128 or bits == 256 or bits == 512 :
+        data = generate_key_iv( bytes= str(int(bits/8)) )
+    else:
+        data = generate_key( bytes=str(bits))
     
-    time.sleep(0.1)
-
-    key_file = open(key_dir, 'r')
-    iv_file = open(iv_dir, 'r')
-    print(iv_file, key_file)
-
-    iv = iv_file.read()
-    key = key_file.read()
-    print(iv, key)
-
-    data = {
-        'iv' : iv,
-        'key' : key
-    }
-    print(data)
+    
     return render_template('password_gen.html',  data=data)
 
 def do_stuff():
