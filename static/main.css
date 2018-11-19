@@ -48,10 +48,9 @@ body, html {
 }
 
 .word-wrapper{
-  margin: 0 auto;
   padding-left: 5px;
   padding-right: 5px;
-  max-width: 960px;
+  max-width: 1080px;
   overflow-wrap: break-word;
   word-break: break-all;
 }

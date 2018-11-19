@@ -38,7 +38,7 @@ def index():
 
     return render_template('index.html')
 
-@routes.route('/crypter/', methods=['GET']) 
+@routes.route('/crypter/', methods=['GET', 'POST']) 
 def crypter():
     """
     Esta função serve uma página com um form de upload de ficheiros
@@ -61,7 +61,7 @@ def crypter():
 
     return render_template('file_crypter.html')
 
-@routes.route('/encrypt/', methods=['GET'])
+@routes.route('/encrypt/', methods=['GET', 'POST'])
 def encrypt():
     """
     Esta função é chamada quando o botão "Encrypt" da página "File_Crypter" é pressionado
@@ -82,18 +82,18 @@ def encrypt():
         
     return render_template('file_crypter.html', data=res)
 
-
-
 @routes.route('/password_generator/', methods=['GET'])
 def password_generator():
     
     return render_template('password_gen.html', data = None)
 
-@routes.route('/generate', methods=['GET'])
+@routes.route('/generate', methods=['GET', 'POST'])
 @routes.route('/generate/<int:bits>', methods=['GET'])
 def generate(bits=256):
 
-    if bits == 128 or bits == 256 or bits == 512 :
+    if request.method == 'POST':
+        data = generate_key( bytes= str(request.form['size']))
+    elif bits == 128 or bits == 256 or bits == 512 :
         data = generate_key_iv( bytes= str(int(bits/8)) )
     else:
         data = generate_key( bytes=str(bits))
