@@ -23,7 +23,7 @@ from werkzeug import secure_filename
 
 from . import routes
 from kryptoflask.openssl import (
-    generate_key_iv, encrypt_file 
+    generate_key_iv, generate_key, encrypt_file 
 )
 
 UPLOAD_FOLDER = os.getcwd() + '/uploads'
@@ -38,7 +38,7 @@ def index():
 
     return render_template('index.html')
 
-@routes.route('/crypter/', methods=['GET', 'POST']) 
+@routes.route('/crypter/', methods=['GET']) 
 def crypter():
     """
     Esta função serve uma página com um form de upload de ficheiros
@@ -61,7 +61,7 @@ def crypter():
 
     return render_template('file_crypter.html')
 
-@routes.route('/encrypt/', methods=['GET', 'POST'])
+@routes.route('/encrypt/', methods=['GET'])
 def encrypt():
     """
     Esta função é chamada quando o botão "Encrypt" da página "File_Crypter" é pressionado
@@ -93,7 +93,11 @@ def password_generator():
 @routes.route('/generate/<int:bits>', methods=['GET'])
 def generate(bits=256):
 
-    data = generate_key_iv( bytes= str(int(bits/8)) )
+    if bits == 128 or bits == 256 or bits == 512 :
+        data = generate_key_iv( bytes= str(int(bits/8)) )
+    else:
+        data = generate_key( bytes=str(bits))
+    
     
     return render_template('password_gen.html',  data=data)
 

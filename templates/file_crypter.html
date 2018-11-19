@@ -15,8 +15,8 @@
     </form>
   </div>
   <hr>
-  <div class="w3-panel">
-    <h2 class="w3"> Uploaded files </h2>
+  <div class="w3-container">
+    <h2 class="w3">Uploaded files</h2>
     <ul class="w3-ul w3-border" style="width:50%">
       <select class="w3-select">
         {% for item in listdir  %}
@@ -31,7 +31,7 @@
     <span>By clicking below a random Key and IV will be generated to encrypt the file. <br>
           For advanced options look on the right panel.</span><br>
     <div class="w3-panel">
-    <a href="{{ url_for('routes.encrypt') }}" class="w3-btn w3-teal">Encrypt</a>
+      <a href="{{ url_for('routes.encrypt') }}" class="w3-btn w3-dark-grey">Encrypt</a>
     </div>
   </div>
 </div>
@@ -42,7 +42,7 @@
   </div>
   <hr>
   <div class="w3-container">
-    <input class="w3-check" type="checkbox" checked="checked">
+    <input class="w3-check" type="checkbox">
     <label>Base64 Encoding</label>
     <br>
     <input class="w3-check" type="checkbox">
@@ -50,7 +50,7 @@
     <hr>
   </div>
   <div class="w3-dropdown-hover w3-container">
-    <select class="w3-select w3-teal">
+    <select class="w3-select">
       <div class="w3-dropdown-content w3-bar-block w3-border" style="right:0">
         <option disabled selected value=""  class="w3-bar-item w3-select">Ciphers</option>
         <option  value="" class="w3-bar-item w3-select">AES-128-CBC</option>
