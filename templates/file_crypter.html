@@ -2,25 +2,64 @@
 
 {% block content %}
 
-<div class="item content content-1">
-<title>Upload new File</title>
-    <h1>Upload new File</h1>
+<div class="w3-container w3-left">
+  <div class="w3-container">  
+    <h1 class="w3"> File Encryption </h1>
+  </div>
+  <hr>
+  <div class="w3-container">
+    <h2 class="w3">Upload a file</h2>
     <form method=post enctype=multipart/form-data>
       <input type=file name=file>
       <input type=submit value=Upload>
     </form>
+  </div>
+  <hr>
+  <div class="w3-panel">
+    <h2 class="w3"> Uploaded files </h2>
+    <ul class="w3-ul w3-border" style="width:50%">
+      <select class="w3-select">
+        {% for item in listdir  %}
+          <li class="w3-padding-small w3-hover-blue"><option value="{{item}}">{{ item }}</option></li>
+        {% endfor %}
+        <li class="w3-padding-small w3-hover-red">Eve</li>
+        <li class="w3-padding-small w3-hover-green">Adam</li>
+      </select>
+    </ul>    
+  </div>
+  <div class="w3-container">
+    <span>By clicking below a random Key and IV will be generated to encrypt the file. <br>
+          For advanced options look on the right panel.</span><br>
+    <div class="w3-panel">
+    <a href="{{ url_for('routes.encrypt') }}" class="w3-btn w3-teal">Encrypt</a>
+    </div>
+  </div>
 </div>
 
-<div class="item content content-2">
-    {{ name }}
-    <a href="{{ url_for('routes.encrypt') }}" class="w3-btn w3-indigo">Encrypt</a>
+<div class="w3-container w3-right">
+  <div class="w3-container">  
+    <h1 class="w3">Advanced Options</h1>
+  </div>
+  <hr>
+  <div class="w3-container">
+    <input class="w3-check" type="checkbox" checked="checked">
+    <label>Base64 Encoding</label>
+    <br>
+    <input class="w3-check" type="checkbox">
+    <label>Use PBKDF2</label>
+    <hr>
+  </div>
+  <div class="w3-dropdown-hover w3-container">
+    <select class="w3-select w3-teal">
+      <div class="w3-dropdown-content w3-bar-block w3-border" style="right:0">
+        <option disabled selected value=""  class="w3-bar-item w3-select">Ciphers</option>
+        <option  value="" class="w3-bar-item w3-select">AES-128-CBC</option>
+        <option  value="" class="w3-bar-item w3-select">AES-256-CBC</option>
+        <option  value="" class="w3-bar-item w3-select">AES-512-CBC</option>
+      </div>
+    </select>
+  </div>
 </div>
+    
 
-<div class="item content content-3">
-</div>
-<div class="item content content-4">
-    {% for item in listdir  %}
-        <p>{{ item }}<br></p>
-    {% endfor %}
-</div>
 {% endblock %}

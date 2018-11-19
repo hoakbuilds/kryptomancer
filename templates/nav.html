@@ -1,18 +1,18 @@
 <div class="navbar">
   <a href="{{ url_for('routes.index') }} " class="logo"><img src="../static/logo_2.png" class="logo"> </img></a>
   <div class="subnav">
-    <button class="subnavbtn" onmouseover="snackbar()">
+    <button class="subnavbtn" onmouseover="snackbar(0)">
         <img src="../static/data-protection.png" class="icon"> </img> Keygen 
         <i class="fa fa-caret-down"></i>
     </button>
     <div class="subnav-content">
-      <button class="tablink tablink-keygen" type="button" onclick="window.location.href='{{ url_for( 'routes.generate' ) }}'; snackbar()">128</button>
-      <button class="tablink tablink-keygen" type="button" onclick="window.location.href='{{ url_for( 'routes.generate' ) }}'; snackbar()">256</button>
-      <button class="tablink tablink-keygen" type="button" onclick="window.location.href='{{ url_for( 'routes.generate' ) }}'; snackbar()">512</button>
+      <button class="tablink tablink-keygen" type="button" onclick="window.location.href='{{ url_for( 'routes.generate', bits=128 ) }}';">128</button>
+      <button class="tablink tablink-keygen" type="button" onclick="window.location.href='{{ url_for( 'routes.generate', bits=256 ) }}';">256</button>
+      <button class="tablink tablink-keygen" type="button" onclick="window.location.href='{{ url_for( 'routes.generate', bits=512 ) }}';">512</button>
     </div>
   </div> 
   <div class="subnav">
-    <button class="subnavbtn" type="button" onclick="window.location.href='{{ url_for( 'routes.crypter' ) }}'; snackbar()"> <img src="../static/document.png" class="icon"> </img> Encryption <i class="fa fa-caret-down"></i></button>
+    <button class="subnavbtn" type="button" onclick="window.location.href='{{ url_for( 'routes.crypter' ) }}'" onmouseover="snackbar(1)"> <img src="../static/document.png" class="icon"> </img> Encryption <i class="fa fa-caret-down"></i></button>
     <div class="subnav-content">
     </div>
   </div> 
@@ -61,13 +61,20 @@ function openPage(pageName,elmnt,color) {
 // Get the element with id="defaultOpen" and click on it
 document.getElementById("defaultOpen").click();
 
-function snackbar() {
+function snackbar( nav ) {
     // Get the snackbar DIV
     var x = document.getElementById("snackbar");
 
     // Add the "show" class to DIV
     x.className = "show";
 
+    if( nav == '0'){
+      x.textContent = 'This page generates keys for encryption.';
+    }else if( nav == '1'){
+      x.textContent = 'This page is for file encryption, allows advanced arguments.';
+    }else {
+      x.textContent = 'Under construction.';
+    }
     // After 3 seconds, remove the show class from DIV
     setTimeout(function(){ x.className = x.className.replace("show", ""); }, 10000);
 }
