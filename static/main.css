@@ -9,6 +9,13 @@ body, html {
     background-image: linear-gradient(141deg, #58d2df8c 10%, #27909c7e 90%);
 }
 
+select {
+  padding: 4px;
+}
+option{
+  padding: 4px 10px 4px 10px;
+  border-bottom: 1px #27919c;
+}
 /* Style tab links */
 
 .tablink {
@@ -37,13 +44,13 @@ body, html {
 
 /* Style main container */ 
 .container {
-  padding-right: 5%;
-  padding-left:  5%;
+  padding-right: 2%;
+  padding-left:  2%;
   background-color: rgba(255, 255, 255, 0.8);
   box-shadow: 0 0 2px 2px rgba(20, 18, 131, 0.342);
   width: 80%;
   max-width: 80%;
-  margin: 5% auto;
+  margin: 3% auto;
   overflow-wrap: break-word;
 }
 
