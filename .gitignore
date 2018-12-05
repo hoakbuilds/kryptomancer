@@ -5,12 +5,15 @@ __pycache__/
 
 # C extensions
 *.so
+*.dec
+*.enc
 
 # Distribution / packaging
 .Python
 build/
 develop-eggs/
 dist/
+uploads/
 downloads/
 eggs/
 .eggs/
@@ -84,6 +87,7 @@ celerybeat-schedule
 # Environments
 .env
 .venv
+.vscode/
 env/
 venv/
 ENV/
