@@ -6,7 +6,6 @@ Kryptoflask OpenSSL System Calls
 
 import os
 import sys
-import requests
 import json
 import datetime
 import asyncio
@@ -93,12 +92,32 @@ def generate_key_iv( bytes ):
 
 def encrypt_file( input_file, key, iv ):
     file_path = os.path.join(UPLOAD_FOLDER, input_file)
-    enc_file = os.path.join(UPLOAD_FOLDER,  input_file + ".dec")
+    enc_file = os.path.join(UPLOAD_FOLDER,  input_file + ".enc")
 
     print('Encrypting file: ' + str(file_path) +'\nWith Key:  ' +str(key) + 'And IV:   ' +str(iv), file=sys.stderr)
     try:
         p = subprocess.Popen(
             ['openssl', 'enc', '-aes-256-cbc', '-e', '-in', file_path, '-out', enc_file, '-K', key, '-iv', iv],
+            stdin = subprocess.PIPE,
+            stdout = subprocess.PIPE,
+            stderr = subprocess.PIPE
+        )
+        p.wait()
+        return {'ok':'ok'}
+    except:
+        print('Failed to encrypt: ' + str(file_path), file=sys.stderr)
+        return {'error':'failed'}
+
+# openssl enc -aes-256-cbc -e -in $file -out $file.dec -K $key -iv $iv
+
+def decrypt_file( input_file, key, iv ):
+    file_path = os.path.join(UPLOAD_FOLDER, input_file)
+    enc_file = os.path.join(UPLOAD_FOLDER, file_path.rsplit('.',1)[0] + ".dec")
+
+    print('Decrypting file: ' + str(file_path) +'\nWith Key:  ' +str(key) + 'And IV:   ' +str(iv), file=sys.stderr)
+    try:
+        p = subprocess.Popen(
+            ['openssl', 'enc', '-aes-256-cbc', '-d', '-in', file_path, '-out', enc_file, '-K', key, '-iv', iv],
             stdin = subprocess.PIPE,
             stdout = subprocess.PIPE,
             stderr = subprocess.PIPE

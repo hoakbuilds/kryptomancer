@@ -2,15 +2,16 @@
 
 {% block content %}
 
-<div class="w3-left">  
-  <div class="w3-container w3-left">
+<div class="w3-center">  
+  <div class="w3-container w3-center">
     <div class="w3-container w3-center">
       <h3 class="w3">Upload a file</h3>
-      <form method=post enctype=multipart/form-data>
+      <form method=post action="/crypter/" enctype=multipart/form-data>
         <input class="w3-btn w3-black w3-hover-white" type=file name=file>
         <input class="w3-btn w3-black w3-hover-white" type=submit value=Upload>
       </form>
     </div>
+    <div class="w3-container w3-center">
     <div class="w3-container w3-left">
       <h3 class="w3">Uploaded Files</h3>
       <form id="files" action="/crypter/" method="POST">
@@ -36,10 +37,17 @@
         <input class="w3-btn w3-black w3-hover-white" formaction="/crypter/encrypt_all" type="submit" value="Encrypt All">
         <input class="w3-btn w3-black w3-hover-white" formaction="/crypter/generate_keys_from_selected_files" type="submit" value="Generate Keys">
         <input class="w3-btn w3-black w3-hover-white" formaction="/delete_file/" type="submit" value="Delete Selected"><br>
-        <input class="w3-btn w3-black w3-hover-white" formaction="/crypter/delete_all" type="submit" value="Delete All">  
+        <input class="w3-btn w3-black w3-hover-white" formaction="/crypter/delete_all" type="submit" value="Delete All"> <br>
+        <label>IV</label>
+        <input class="w3-input" type="text">
+
+        <label>Key</label>
+        <input class="w3-input" type="text">
+        <input class="w3-btn w3-black w3-hover-white" formaction="/encrypt_file/" type="submit" value="Encrypt With Key">
+        <input class="w3-btn w3-black w3-hover-white" formaction="/encrypt_file/" type="submit" value="Encrypt Selected With Key">
       </form>
-    </div>
-    <div class="w3-container w3-left">
+      </div>
+      <div class="w3-container w3-right">
       <h3 class="w3">Encrypted Files</h3>
       <form id="files" action="/crypter/" method="POST">
         <select multiple type="file" class="w3-select w3-border" size="10" name="selected_enc_files" enctype="multipart/form-data">
@@ -48,18 +56,19 @@
           {% endfor %}
         </select>
         <br>
-        <input class="w3-btn w3-black w3-hover-white" formaction="/encrypt_file/" type="submit" value="Decrypt Selected">
-        <input class="w3-btn w3-black w3-hover-white" formaction="/crypter/decrypt_all" type="submit" value="Decrypt All">
         <input class="w3-btn w3-black w3-hover-white" formaction="/delete_file/" type="submit" value="Delete Selected">
         <input class="w3-btn w3-black w3-hover-white" formaction="/crypter/delete_all" type="submit" value="Delete All"><br>  
+        <label>IV</label>
+        <input class="w3-input" name="decryption_iv" type="text">
+
+        <label>Key</label>
+        <input class="w3-input" name="decryption_key" type="text">
+        <input class="w3-btn w3-black w3-hover-white" formaction="/decrypt_file/" type="submit" value="Decrypt Selected">
+        <input class="w3-btn w3-black w3-hover-white" formaction="/crypter/decrypt_all" type="submit" value="Decrypt All">
       </form>
       <br>
     </div>
     <div class="w3-container w3-center">
-      <p class="w3">By clicking above a random Key and IV will be generated to encrypt the file(s). <br>
-            For advanced options look on the right panel.</p><br>
-    </div>
-    <div class="w3-container w3-left">
       <div class="w3-responsive">
       <table class="w3-table-all">
       <tr class="w3-black">

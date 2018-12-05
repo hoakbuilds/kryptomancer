@@ -6,7 +6,6 @@ Kryptoflask Application Routes
 
 import os
 import sys
-import requests
 import json
 import datetime
 import asyncio
@@ -23,7 +22,7 @@ from werkzeug import secure_filename
 
 from . import routes
 from kryptoflask.openssl import (
-    generate_key_iv, generate_key, encrypt_file 
+    generate_key_iv, generate_key, encrypt_file, decrypt_file
 )
 
 UPLOAD_FOLDER = os.getcwd() + '/uploads'
@@ -57,9 +56,8 @@ def generate_keys_from_files():
             for file in selected_enc_files:
                 print(file, file=sys.stderr)
         else:
-            return render_template('file_crypter.html', listdir=os.listdir(UPLOAD_FOLDER), enc_files=enc)
-
-    return render_template('file_crypter.html', listdir=os.listdir(UPLOAD_FOLDER), enc_files=enc, enc_info=enc_info['data'])
+            return render_template('file_crypter.html', listdir=files, enc_files=enc)
+    return render_template('file_crypter.html', listdir=files, enc_files=enc, enc_info=enc_info['data'])
 
 @routes.route('/crypter/', methods=['GET', 'POST']) 
 def crypter():
@@ -77,7 +75,7 @@ def crypter():
         file = request.files['file']
         # if user does not select file, browser also
         # submit an empty part without filename
-        if file and allowed_file(file.filename):
+        if file:
             filename = secure_filename(file.filename)
             file.save(os.path.join(UPLOAD_FOLDER, file.filename))
             files, enc = get_uploaded_files()
@@ -90,6 +88,7 @@ def crypter():
 
     return render_template('file_crypter.html', listdir=files, enc_files=enc)
 
+@routes.route('/crypter/encrypt_all', methods=['GET','POST'])
 @routes.route('/encrypt_file/', methods=['GET','POST'])
 def encrypt():
     """
@@ -118,6 +117,39 @@ def encrypt():
         files, enc = get_uploaded_files()
         return render_template('file_crypter.html', listdir=files, enc_files=enc, enc_info=enc_info['data'])
 
+@routes.route('/decrypt_file/', methods=['GET','POST'])
+def decrypt():
+    """
+    Esta função é chamada quando o botão "Encrypt" da página "File_Crypter" é pressionado
+    Retorna o nome dos ficheiros apagados
+    """
+    print('decrypt', file=sys.stderr)
+    if request.method == 'POST':
+        # check if the post request has the file part
+        iv = request.form['decryption_iv']
+        if iv is not None:
+            print('-------------Input IV: ' + str(iv), file=sys.stderr)
+
+        key = request.form['decryption_key']
+        if key is not None:
+            print('-------------Input KEY: ' + str(key), file=sys.stderr)
+            
+        selected_files = request.form.getlist('selected_enc_files')
+        if selected_files is not None:
+            print('-------------Selected Encrypted Files: ', file=sys.stderr)
+            for file in selected_files:
+                print(file, file=sys.stderr)
+            enc_info = decrypt_single_file(file, key, iv)
+            print('------------ Files Encrypted:', file=sys.stderr)
+            for item in enc_info:
+                print(item, file=sys.stderr)
+        else:
+            files, enc = get_uploaded_files()
+            return render_template('file_crypter.html', listdir=files, enc_files=enc)
+        files, enc = get_uploaded_files()
+        return render_template('file_crypter.html', listdir=files, enc_files=enc)
+
+
 @routes.route('/password_generator/', methods=['GET'])
 def password_generator():
     
@@ -143,24 +175,38 @@ def generate(bits=128):
     return render_template('password_gen.html',  data=data)
 
 # Deleting files
+@routes.route('/crypter/delete_all/', methods=['GET', 'POST'])
 @routes.route('/delete_file/', methods=['GET', 'POST'])
 def delete_file():
     print('delete_file', file=sys.stderr)
     if request.method == 'POST':
         # check if the post request has the file part
         selected_files = request.form.getlist('selected_files')
-        if selected_files is not None:
+        if selected_files is not None: # Deletes selected files in select form
             print('------------ Files Selected:', file=sys.stderr)
             for f in selected_files:
                 print(f,  file=sys.stderr)
                 filename = os.path.join(UPLOAD_FOLDER, f)
                 print(filename, file=sys.stderr)
                 os.remove(filename)
-                
+        else:# Deletes all files
+            files, enc = get_uploaded_files()
+            for f in files:
+                print(f,  file=sys.stderr)
+                filename = os.path.join(UPLOAD_FOLDER, f)
+                print(filename, file=sys.stderr)
+                os.remove(filename)
         selected_enc_files = request.form.getlist('selected_enc_files')
-        if selected_enc_files is not None:
+        if selected_enc_files is not None:  # Deletes selected files in select form 
             print('------------ Encrypted Files Selected:', file=sys.stderr)
             for f in selected_enc_files:
+                print(f,  file=sys.stderr)
+                filename = os.path.join(UPLOAD_FOLDER, f)
+                print(filename, file=sys.stderr)
+                os.remove(filename)
+        else: # Deletes all files
+            files, enc = get_uploaded_files()
+            for f in files:
                 print(f,  file=sys.stderr)
                 filename = os.path.join(UPLOAD_FOLDER, f)
                 print(filename, file=sys.stderr)
@@ -204,6 +250,49 @@ def encrypt_list_of_files(files):
         result['data'] = obj_list
         return result
 
+# Decrypts a list of files
+def decrypt_single_file(file, key, iv):
+    print('decrypt_file', file=sys.stderr)
+    if file == None:
+        return []
+    else:
+        result = {}
+        print('DECRYPTING FILE: '+str(file), file=sys.stderr)
+        res = decrypt_file(file, key, iv)
+        if 'ok' in res:
+            print('ok', file=sys.stderr)
+        elif 'error' in res:
+            print('error', file=sys.stderr)
+            pass
+        #print(obj_list, file=sys.stderr)
+        return result
+
+# Decrypts a list of files
+def decrypt_list_of_files(files):
+    print('decrypt_list_of_files', file=sys.stderr)
+    if files == None:
+        return []
+    else:
+        result = {}
+        obj_list = []
+        for f in files:
+            obj = {}
+            obj['filename'] = f
+            data = generate_key_iv(bytes=str(16))
+            obj['iv'] = data['iv']
+            obj['key'] = data['key']
+            print('DECRYPTING FILE: '+str(f), file=sys.stderr)
+            res = encrypt_file(f, obj['key'], obj['iv'])
+            if 'ok' in res:
+                print('ok', file=sys.stderr)
+                obj_list.append(obj)
+            elif 'error' in res:
+                print('error', file=sys.stderr)
+                pass
+            #print(obj_list, file=sys.stderr)
+        result['data'] = obj_list
+        return result
+
 def generate_keys_for_files(files):
     print('generate_keys_for_files', file=sys.stderr)
     if files == None:
@@ -228,7 +317,7 @@ def get_uploaded_files():
     res = []
     enc = []
     for f in listdir:
-        if '.dec' in f:
+        if '.enc' in f:
             enc.append(f)
         else:
             res.append(f)

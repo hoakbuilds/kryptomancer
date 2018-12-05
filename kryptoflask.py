@@ -19,19 +19,7 @@ server_lock = Lock()
 
 if __name__ == '__main__':
 
-    t = Thread(target=run_server)
-    try:
-        t.start()
-        logger.info("Starting server")
-        sleep(1)
-        logger.info("Checking server")
-    except:
-        logger.warning("Failed to start kryptoflask threaded server.")
-    
-    while not url_ok("127.0.0.1", 5000):
-        sleep(0.1)
-
-    logger.info("Server started")
-    webview.create_window("kryptoflask",
+    run_server()
+    """webview.create_window("kryptoflask",
                         "http://127.0.0.1:5000",
-                        min_size=(1280, 720))
+                        min_size=(1280, 720))"""
