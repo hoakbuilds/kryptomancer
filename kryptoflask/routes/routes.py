@@ -98,12 +98,18 @@ def encrypt():
     print('encrypt', file=sys.stderr)
     if request.method == 'POST':
         # check if the post request has the file part
+        selected_cipher = request.form.get('selected_cipher')
+        
         selected_files = request.form.getlist('selected_files')
         if selected_files is not None:
             print('------------ Files Selected:', file=sys.stderr)
-            for file in selected_files:
-                print(file, file=sys.stderr)
-            enc_info = encrypt_list_of_files(selected_files)
+            for f in selected_files:
+                print(f, file=sys.stderr)
+            if selected_cipher is not None:
+                print('------------ Cipher Selected: ' + str(selected_cipher), file=sys.stderr)       
+                enc_info = encrypt_list_of_files(selected_files, selected_cipher)
+            else:
+                enc_info = encrypt_list_of_files(selected_files)
             print('------------ Files Encrypted:', file=sys.stderr)
             for item in enc_info:
                 print(item, file=sys.stderr)
@@ -137,8 +143,8 @@ def decrypt():
         selected_files = request.form.getlist('selected_enc_files')
         if selected_files is not None:
             print('-------------Selected Encrypted Files: ', file=sys.stderr)
-            for file in selected_files:
-                print(file, file=sys.stderr)
+            for f in selected_files:
+                print(f, file=sys.stderr)
             enc_info = decrypt_single_file(file, key, iv)
             print('------------ Files Encrypted:', file=sys.stderr)
             for item in enc_info:
@@ -178,7 +184,7 @@ def generate(bits=128):
 @routes.route('/crypter/delete_all/', methods=['GET', 'POST'])
 @routes.route('/delete_file/', methods=['GET', 'POST'])
 def delete_file():
-    print('delete_file', file=sys.stderr)
+    #print('delete_file', file=sys.stderr)
     if request.method == 'POST':
         # check if the post request has the file part
         selected_files = request.form.getlist('selected_files')
@@ -225,8 +231,8 @@ def encode_file():
     print("soon")
 
 # Encrypts a list of files
-def encrypt_list_of_files(files):
-    print('encrypt_list_of_files', file=sys.stderr)
+def encrypt_list_of_files(files, cipher=None):
+    #print('encrypt_list_of_files', file=sys.stderr)
     if files == None:
         return []
     else:
@@ -239,7 +245,10 @@ def encrypt_list_of_files(files):
             obj['iv'] = data['iv']
             obj['key'] = data['key']
             print('ENCRYPTING FILE: '+str(f), file=sys.stderr)
-            res = encrypt_file(f, obj['key'], obj['iv'])
+            if cipher is not None:
+                res = encrypt_file(f, obj['key'], obj['iv'], cipher)
+            else:
+                res = encrypt_file(f, obj['key'], obj['iv'])
             if 'ok' in res:
                 print('ok', file=sys.stderr)
                 obj_list.append(obj)
@@ -294,7 +303,7 @@ def decrypt_list_of_files(files):
         return result
 
 def generate_keys_for_files(files):
-    print('generate_keys_for_files', file=sys.stderr)
+    #print('generate_keys_for_files', file=sys.stderr)
     if files == None:
         return []
     else:

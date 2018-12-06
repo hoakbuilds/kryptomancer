@@ -75,11 +75,11 @@ def generate_key_iv( bytes ):
 
     key_file = open(key_dir, 'r')
     iv_file = open(iv_dir, 'r')
-    print(iv_file, key_file)
+    #print(iv_file, key_file)
 
     iv = iv_file.read()
     key = key_file.read()
-    print(iv, key)
+    print('IV ' + iv + 'Key ' + key)
 
     data = {
         'iv' : iv,
@@ -90,7 +90,7 @@ def generate_key_iv( bytes ):
 
 # openssl enc -aes-256-cbc -e -in $file -out $file.dec -K $key -iv $iv
 
-def encrypt_file( input_file, key, iv ):
+def encrypt_file( input_file, key, iv, cipher):
     file_path = os.path.join(UPLOAD_FOLDER, input_file)
     enc_file = os.path.join(UPLOAD_FOLDER,  input_file + ".enc")
 
@@ -110,7 +110,7 @@ def encrypt_file( input_file, key, iv ):
 
 # openssl enc -aes-256-cbc -e -in $file -out $file.dec -K $key -iv $iv
 
-def decrypt_file( input_file, key, iv ):
+def decrypt_file( input_file, key, iv, cipher ):
     file_path = os.path.join(UPLOAD_FOLDER, input_file)
     enc_file = os.path.join(UPLOAD_FOLDER, file_path.rsplit('.',1)[0] + ".dec")
 
