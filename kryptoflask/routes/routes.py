@@ -88,6 +88,35 @@ def crypter():
 
     return render_template('file_crypter.html', listdir=files, enc_files=enc)
 
+@routes.route('/digester/', methods=['GET', 'POST']) 
+def digester():
+    """
+    Esta função serve uma página com um form de upload de ficheiros
+    Retorna o nome do ficheiro e o seu conteudo
+    """
+    print('crypter', file=sys.stderr)
+    if request.method == 'POST':
+        # check if the post request has the file part
+        if 'file' not in request.files:
+            files, enc = get_uploaded_files()
+            return render_template('digester.html', listdir=files, enc_files=enc)
+            
+        file = request.files['file']
+        # if user does not select file, browser also
+        # submit an empty part without filename
+        if file:
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(UPLOAD_FOLDER, file.filename))
+            files, enc = get_uploaded_files()
+            return render_template('digester.html', name=filename, listdir=files, enc_files=enc )
+        else:
+            files, enc = get_uploaded_files()
+            return render_template('digester.html', error="File not supported.", listdir=files, enc_files=enc )
+    else:
+        files, enc = get_uploaded_files()
+
+    return render_template('digester.html', listdir=files, enc_files=enc)
+
 @routes.route('/crypter/encrypt_all', methods=['GET','POST'])
 @routes.route('/encrypt_file/', methods=['GET','POST'])
 def encrypt():
