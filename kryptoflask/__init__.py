@@ -38,7 +38,7 @@ app.register_blueprint(routes)
 
 
 def run_server():
-    app.run(host='127.0.0.1', port=5000, threaded=True)
+    app.run(host='127.0.0.1', port=5000, debug=True)
 
 
 def url_ok(url, port):
