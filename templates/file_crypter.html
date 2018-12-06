@@ -19,12 +19,27 @@
         <label>Base64 Encoding</label>
         <input class="w3-check" type="checkbox">
         <label>Use PBKDF2</label>
-        <select class="w3-select" style="max-width:30%;right:0;">
+        <select class="w3-select" name="selected_cipher" style="max-width:30%;right:0;">
           <div class="w3-dropdown-content w3-bar-block w3-border" >
             <option disabled selected value="" class="w3-bar-item w3-select">Ciphers</option>
-            <option  value="" class="w3-bar-item w3-select">AES-128-CBC</option>
-            <option  value="" class="w3-bar-item w3-select">AES-256-CBC</option>
-            <option  value="" class="w3-bar-item w3-select">AES-512-CBC</option>
+            <option  value="aes-128-cbc" class="w3-bar-item w3-select">AES-128-CBC</option>
+            <option  value="aes-192-cbc" class="w3-bar-item w3-select">AES-192-CBC</option>
+            <option  value="aes-256-cbc" class="w3-bar-item w3-select">AES-256-CBC</option>
+            <option  value="aes-128-cbc" class="w3-bar-item w3-select">ARIA-128-CBC</option>
+            <option  value="aes-192-cbc" class="w3-bar-item w3-select">ARIA-192-CBC</option>
+            <option  value="aes-256-cbc" class="w3-bar-item w3-select">ARIA-256-CBC</option>
+            <option  value="aes-128-cbc" class="w3-bar-item w3-select">AES-128-ECB</option>
+            <option  value="aes-192-cbc" class="w3-bar-item w3-select">AES-192-ECB</option>
+            <option  value="aes-256-cbc" class="w3-bar-item w3-select">AES-256-ECB</option>
+            <option  value="aes-128-cbc" class="w3-bar-item w3-select">ARIA-128-ECB</option>
+            <option  value="aes-192-cbc" class="w3-bar-item w3-select">ARIA-192-ECB</option>
+            <option  value="aes-256-cbc" class="w3-bar-item w3-select">ARIA-256-ECB</option>
+            <option  value="aes-128-cbc" class="w3-bar-item w3-select">DES-CBC</option>
+            <option  value="aes-192-cbc" class="w3-bar-item w3-select">DES-EDE-CBC</option>
+            <option  value="aes-256-cbc" class="w3-bar-item w3-select">DES-EDE3-CBC</option>
+            <option  value="aes-128-cbc" class="w3-bar-item w3-select">CAMELLIA-128-CBC</option>
+            <option  value="aes-192-cbc" class="w3-bar-item w3-select">CAMELLIA-192-CBC</option>
+            <option  value="aes-256-cbc" class="w3-bar-item w3-select">CAMELLIA-256-CBC</option>
           </div>
         </select>
         <select multiple type="file" class="w3-select w3-border" size="10" name="selected_files" enctype="multipart/form-data">
@@ -36,13 +51,13 @@
         <input class="w3-btn w3-black w3-hover-white" formaction="/encrypt_file/" type="submit" value="Encrypt Selected">
         <input class="w3-btn w3-black w3-hover-white" formaction="/crypter/encrypt_all" type="submit" value="Encrypt All">
         <input class="w3-btn w3-black w3-hover-white" formaction="/crypter/generate_keys_from_selected_files" type="submit" value="Generate Keys">
-        <input class="w3-btn w3-black w3-hover-white" formaction="/delete_file/" type="submit" value="Delete Selected"><br>
-        <input class="w3-btn w3-black w3-hover-white" formaction="/crypter/delete_all" type="submit" value="Delete All"> <br>
+        <input class="w3-btn w3-black w3-hover-white" formaction="/delete_file/" type="submit" value="Delete Selected">
+        <input class="w3-btn w3-black w3-hover-white" formaction="/crypter/delete_all" type="submit" value="Delete All"><br><br>
         <label>IV</label>
-        <input class="w3-input" type="text">
+        <input class="w3-input" name="encryption_iv" type="text">
 
         <label>Key</label>
-        <input class="w3-input" type="text">
+        <input class="w3-input" name="encryption_key"  type="text"><br>
         <input class="w3-btn w3-black w3-hover-white" formaction="/encrypt_file/" type="submit" value="Encrypt With Key">
         <input class="w3-btn w3-black w3-hover-white" formaction="/encrypt_file/" type="submit" value="Encrypt Selected With Key">
       </form>
@@ -50,6 +65,33 @@
       <div class="w3-container w3-right">
       <h3 class="w3">Encrypted Files</h3>
       <form id="files" action="/crypter/" method="POST">
+        <input class="w3-check" type="checkbox">
+        <label>Base64 Encoding</label>
+        <input class="w3-check" type="checkbox">
+        <label>Use PBKDF2</label>
+        <select class="w3-select" name="selected_cipher" style="max-width:30%;right:0;">
+          <div class="w3-dropdown-content w3-bar-block w3-border" >
+            <option disabled selected value="" class="w3-bar-item w3-select">Ciphers</option>
+            <option  value="aes-128-cbc" class="w3-bar-item w3-select">AES-128-CBC</option>
+            <option  value="aes-192-cbc" class="w3-bar-item w3-select">AES-192-CBC</option>
+            <option  value="aes-256-cbc" class="w3-bar-item w3-select">AES-256-CBC</option>
+            <option  value="aes-128-cbc" class="w3-bar-item w3-select">ARIA-128-CBC</option>
+            <option  value="aes-192-cbc" class="w3-bar-item w3-select">ARIA-192-CBC</option>
+            <option  value="aes-256-cbc" class="w3-bar-item w3-select">ARIA-256-CBC</option>
+            <option  value="aes-128-cbc" class="w3-bar-item w3-select">AES-128-ECB</option>
+            <option  value="aes-192-cbc" class="w3-bar-item w3-select">AES-192-ECB</option>
+            <option  value="aes-256-cbc" class="w3-bar-item w3-select">AES-256-ECB</option>
+            <option  value="aes-128-cbc" class="w3-bar-item w3-select">ARIA-128-ECB</option>
+            <option  value="aes-192-cbc" class="w3-bar-item w3-select">ARIA-192-ECB</option>
+            <option  value="aes-256-cbc" class="w3-bar-item w3-select">ARIA-256-ECB</option>
+            <option  value="aes-128-cbc" class="w3-bar-item w3-select">DES-CBC</option>
+            <option  value="aes-192-cbc" class="w3-bar-item w3-select">DES-EDE-CBC</option>
+            <option  value="aes-256-cbc" class="w3-bar-item w3-select">DES-EDE3-CBC</option>
+            <option  value="aes-128-cbc" class="w3-bar-item w3-select">CAMELLIA-128-CBC</option>
+            <option  value="aes-192-cbc" class="w3-bar-item w3-select">CAMELLIA-192-CBC</option>
+            <option  value="aes-256-cbc" class="w3-bar-item w3-select">CAMELLIA-256-CBC</option>
+          </div>
+        </select>
         <select multiple type="file" class="w3-select w3-border" size="10" name="selected_enc_files" enctype="multipart/form-data">
           {% for item in enc_files  %}
             <option value="{{item}}" name="selected_files">{{ item }}</option>
@@ -57,12 +99,12 @@
         </select>
         <br>
         <input class="w3-btn w3-black w3-hover-white" formaction="/delete_file/" type="submit" value="Delete Selected">
-        <input class="w3-btn w3-black w3-hover-white" formaction="/crypter/delete_all" type="submit" value="Delete All"><br>  
+        <input class="w3-btn w3-black w3-hover-white" formaction="/crypter/delete_all" type="submit" value="Delete All"><br><br>
         <label>IV</label>
         <input class="w3-input" name="decryption_iv" type="text">
 
         <label>Key</label>
-        <input class="w3-input" name="decryption_key" type="text">
+        <input class="w3-input" name="decryption_key" type="text"><br>
         <input class="w3-btn w3-black w3-hover-white" formaction="/decrypt_file/" type="submit" value="Decrypt Selected">
         <input class="w3-btn w3-black w3-hover-white" formaction="/crypter/decrypt_all" type="submit" value="Decrypt All">
       </form>
