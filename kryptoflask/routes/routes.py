@@ -99,13 +99,22 @@ def encrypt():
     if request.method == 'POST':
         # check if the post request has the file part
         selected_cipher = request.form.get('selected_cipher')
-        
+        iv = request.form['encryption_iv']
+        if iv is not None:
+            print('-------------Input IV: ' + str(iv), file=sys.stderr)
+
+        key = request.form['encryption_key']
+        if key is not None:
+            print('-------------Input KEY: ' + str(key), file=sys.stderr)
         selected_files = request.form.getlist('selected_files')
         if selected_files is not None:
             print('------------ Files Selected:', file=sys.stderr)
             for f in selected_files:
                 print(f, file=sys.stderr)
             if selected_cipher is not None:
+                print('------------ Cipher Selected: ' + str(selected_cipher), file=sys.stderr)       
+                enc_info = encrypt_list_of_files(selected_files, selected_cipher)
+            elif iv is not None and key is not None:
                 print('------------ Cipher Selected: ' + str(selected_cipher), file=sys.stderr)       
                 enc_info = encrypt_list_of_files(selected_files, selected_cipher)
             else:
@@ -145,7 +154,7 @@ def decrypt():
             print('-------------Selected Encrypted Files: ', file=sys.stderr)
             for f in selected_files:
                 print(f, file=sys.stderr)
-            enc_info = decrypt_single_file(file, key, iv)
+                enc_info = decrypt_single_file(f, key, iv)
             print('------------ Files Encrypted:', file=sys.stderr)
             for item in enc_info:
                 print(item, file=sys.stderr)
@@ -230,8 +239,8 @@ def delete_file():
 def encode_file(): 
     print("soon")
 
-# Encrypts a list of files
-def encrypt_list_of_files(files, cipher=None):
+# Encrypts a list of files, works with input key & iv as well
+def encrypt_list_of_files(files, cipher=None, key=None, iv=None): #Default values for key and IV are None
     #print('encrypt_list_of_files', file=sys.stderr)
     if files == None:
         return []
@@ -241,14 +250,24 @@ def encrypt_list_of_files(files, cipher=None):
         for f in files:
             obj = {}
             obj['filename'] = f
-            data = generate_key_iv(bytes=str(16))
-            obj['iv'] = data['iv']
-            obj['key'] = data['key']
+            if key is not None and iv is not None:
+                obj['iv'] = iv
+                obj['key'] = key
+            else:
+                data = generate_key_iv(bytes=str(16))
+                obj['iv'] = data['iv']
+                obj['key'] = data['key']
             print('ENCRYPTING FILE: '+str(f), file=sys.stderr)
             if cipher is not None:
-                res = encrypt_file(f, obj['key'], obj['iv'], cipher)
+                if key is not None and iv is not None: # If a key and iv from input exists
+                    res = encrypt_file(f, key, iv, cipher) # encrypt with such key and iv using respective input cipher
+                else:
+                    res = encrypt_file(f, obj['key'], obj['iv'], cipher)
             else:
-                res = encrypt_file(f, obj['key'], obj['iv'])
+                if key is not None and iv is not None: # If a key and iv from input exists
+                    res = encrypt_file(f, key, iv, cipher=None) # encrypt with such key and default cipher (aes-256-cbc)
+                else:
+                    res = encrypt_file(f, obj['key'], obj['iv'], cipher=None)
             if 'ok' in res:
                 print('ok', file=sys.stderr)
                 obj_list.append(obj)
@@ -260,14 +279,14 @@ def encrypt_list_of_files(files, cipher=None):
         return result
 
 # Decrypts a list of files
-def decrypt_single_file(file, key, iv):
+def decrypt_single_file(filename, key, iv):
     print('decrypt_file', file=sys.stderr)
-    if file == None:
+    if filename == None:
         return []
     else:
         result = {}
-        print('DECRYPTING FILE: '+str(file), file=sys.stderr)
-        res = decrypt_file(file, key, iv)
+        print('DECRYPTING FILE: '+str(filename), file=sys.stderr)
+        res = decrypt_file(filename, key, iv)
         if 'ok' in res:
             print('ok', file=sys.stderr)
         elif 'error' in res:

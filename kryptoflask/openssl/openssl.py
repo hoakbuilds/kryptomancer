@@ -110,7 +110,7 @@ def encrypt_file( input_file, key, iv, cipher):
 
 # openssl enc -aes-256-cbc -e -in $file -out $file.dec -K $key -iv $iv
 
-def decrypt_file( input_file, key, iv, cipher ):
+def decrypt_file( input_file, key, iv, cipher = None ):
     file_path = os.path.join(UPLOAD_FOLDER, input_file)
     enc_file = os.path.join(UPLOAD_FOLDER, file_path.rsplit('.',1)[0] + ".dec")
 
