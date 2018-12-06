@@ -141,6 +141,7 @@ def decrypt():
     print('decrypt', file=sys.stderr)
     if request.method == 'POST':
         # check if the post request has the file part
+        selected_cipher = request.form.get('selected_cipher')
         iv = request.form['decryption_iv']
         if iv is not None:
             print('-------------Input IV: ' + str(iv), file=sys.stderr)
@@ -154,7 +155,7 @@ def decrypt():
             print('-------------Selected Encrypted Files: ', file=sys.stderr)
             for f in selected_files:
                 print(f, file=sys.stderr)
-                enc_info = decrypt_single_file(f, key, iv)
+                enc_info = decrypt_single_file(f, key, iv, selected_cipher)
             print('------------ Files Encrypted:', file=sys.stderr)
             for item in enc_info:
                 print(item, file=sys.stderr)
@@ -279,14 +280,17 @@ def encrypt_list_of_files(files, cipher=None, key=None, iv=None): #Default value
         return result
 
 # Decrypts a list of files
-def decrypt_single_file(filename, key, iv):
+def decrypt_single_file(filename, key, iv, cipher=None):
     print('decrypt_file', file=sys.stderr)
     if filename == None:
         return []
     else:
         result = {}
         print('DECRYPTING FILE: '+str(filename), file=sys.stderr)
-        res = decrypt_file(filename, key, iv)
+        if cipher is not None:
+            res = decrypt_file(filename, key, iv, cipher=cipher.lower())
+        else:
+            res = decrypt_file(filename, key, iv)
         if 'ok' in res:
             print('ok', file=sys.stderr)
         elif 'error' in res:
