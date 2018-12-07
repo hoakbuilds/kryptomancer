@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="w3-center">  
+  <div class="w3-container w3-center">
+    <div class="w3-container w3-center">
+      <h3 class="w3">Upload a file</h3>
+      <form method=post action="/digester/" enctype=multipart/form-data>
+        <input class="w3-btn w3-black w3-hover-white" type=file name=file>
+        <input class="w3-btn w3-black w3-hover-white" type=submit value=Upload>
+      </form>
+    </div>
+    <div class="w3-container w3-center">
+        <div class="w3-container w3-left">
+            <h3 class="w3">Uploaded Files</h3>
+            <form id="files" action="/digester/" method="POST">
+                <input class="w3-check" type="checkbox">
+                <label>Base64 Encoding</label>
+                <input class="w3-check" type="checkbox">
+                <label>Use PBKDF2</label>
+                <select class="w3-select" name="selected_cipher" style="max-width:30%;right:0;">
+                <div class="w3-dropdown-content w3-bar-block w3-border" >
+                    <option disabled selected value="" class="w3-bar-item w3-select">Ciphers</option>
+                    <option  value="sha1" class="w3-bar-item w3-select">SHA1</option>
+                    <option  value="sha256" class="w3-bar-item w3-select">SHA256</option>
+                    <option  value="md5" class="w3-bar-item w3-select">MD5</option>
+                </div>
+                </select>
+                <select multiple type="file" class="w3-select w3-border" size="10" name="selected_files" enctype="multipart/form-data">
+                {% for item in listdir  %}
+                    <option class="w3-list" value="{{item}}" name="selected_files">{{ item }} </option> 
+                {% endfor %}
+                </select>
+            </form>
+        </div>
+    </div>
+    <div class="w3-container w3-center">
+      <div class="w3-responsive">
+      <table class="w3-table-all">
+      <tr class="w3-black">
+        <th>Filename</th>
+        <th>IV</th>
+        <th>Key</th> 
+      </tr>
+      {% for item in enc_info  %}
+        <tr>
+          <td> {{ item.filename }}</td>
+          <td> {{ item.iv }}</td>
+          <td> {{ item.key }}</td>
+        </tr>
+      {% endfor %}
+      </table>
+      </div>
+    </div>
+  </div>
+</div>    
+
+{% endblock %}

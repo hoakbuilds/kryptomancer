@@ -18,7 +18,7 @@
     </div>
   </div> 
   <div class="subnav">
-    <button class="subnavbtn"> Digest <i class="fa fa-caret-down"></i></button>
+     <button class="subnavbtn" type="button" onclick="window.location.href='{{ url_for( 'routes.digester' ) }}'" onmouseover="snackbar(2)"> <img src="../static/document.png" class="icon"> </img> Digest <i class="fa fa-caret-down"></i></button>
     <div class="subnav-content">
     </div>
   </div>
