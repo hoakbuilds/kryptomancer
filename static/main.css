@@ -1,13 +1,13 @@
 * {box-sizing: border-box}
 
 /* Set height of body and the document to 100% */
-body, html {
+/* body, html {
     height: 100%;
     width: 100%;
     font-family: Arial;
     background-color: #32568b7a;
     background-image: linear-gradient(141deg, #58d2df8c 10%, #27909c7e 90%);
-}
+} */
 
 select {
   padding: 4px;
@@ -43,7 +43,7 @@ option{
 }
 
 /* Style main container */ 
-.container {
+/* .container {
   padding-right: 2%;
   padding-left:  2%;
   background-color: rgba(255, 255, 255, 0.8);
@@ -51,7 +51,7 @@ option{
   max-width: 90%;
   margin: 3% auto;
   overflow-wrap: break-word;
-}
+} */
 
 .word-wrapper{
   padding-left: 5px;
@@ -68,11 +68,6 @@ option{
 /* Style images */
 
 .icon {
-  height: 25px;
-  width: auto;
-}
-
-.logo {
   height: 25px;
   width: auto;
 }
@@ -186,6 +181,25 @@ option{
    However, delay the fade out process for 2.5 seconds */
    -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
    animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+.w3-bgpict {
+  background-image: url("./papy.png");
+  background-color:white;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: scroll;
+  width: 75%;
+  height: 100%;
+  background-size: cover;
+}
+
+.w3-medieval {
+  font-family: 'MedievalSharp', cursive;
+}
+
+.w3-cinzel {
+  font-family: 'Cinzel', serif;
 }
 
 /* Animations to fade the snackbar in and out */

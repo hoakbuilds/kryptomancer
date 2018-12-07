@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-teal.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Cinzel" rel="stylesheet">  
+    <style>
+    
+    .w3-bar-block .w3-bar-item{padding:16px;font-weight:bold}
+    
+
+    .w3-cinzel {
+                font-family: 'Cinzel', serif;
+    }
+
+    #snackbar {
+    font-family: 'Cinzel', serif;
+    visibility: hidden;
+    min-width: 250px;
+    margin-left: -125px;
+    background-color:rgba(0, 0, 0, 0.2);
+    color:#000;
+    text-align: center;
+    border-radius: 2px;
+    padding: 16px;
+    position: fixed;
+    z-index: 1;
+    left: 50%;
+    bottom: 30px;
+    font-size: 17px;
+}
+
+#snackbar.show {
+    visibility: visible;
+    -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+@-webkit-keyframes fadein {
+    from {bottom: 0; opacity: 0;} 
+    to {bottom: 30px; opacity: 1;}
+}
+
+@keyframes fadein {
+    from {bottom: 0; opacity: 0;}
+    to {bottom: 30px; opacity: 1;}
+}
+
+@-webkit-keyframes fadeout {
+    from {bottom: 30px; opacity: 1;} 
+    to {bottom: 0; opacity: 0;}
+}
+
+@keyframes fadeout {
+    from {bottom: 30px; opacity: 1;}
+    to {bottom: 0; opacity: 0;}
+}
+    </style>
+</head>
+<body>
+
+    <nav class="w3-sidebar w3-bar-block w3-collapse w3-animate-left w3-card" style="z-index:3;width:300px;" id="mySidebar">
+        <a class="w3-bar-item w3-button w3-border-bottom w3-large" href="{{ url_for('routes.index') }}" onclick="w3_close()">
+            <img src="icon/alchemy/png/alchemy.png" style="width: 30%; height: 30%">
+            <span class="w3-cinzel w3-xlarge w3-middle subnav">Krypt0manc&r</h1>
+
+        
+        </a>
+        <a class="w3-bar-item w3-button w3-hide-large w3-large w3-cinzel" href="javascript:void(0)" onclick="w3_close()">Close <i class="fa fa-remove"></i></a>
+        <a class="w3-bar-item w3-button w3-cinzel" href="#" onmouseover="snackbar(0)" ><img src="icon/alchemy/png/key.png" style="width: 20%; height: 20%"> Keygen</img></a>
+        <a class="w3-bar-item w3-button w3-cinzel" href="#" onmouseover="snackbar(1)" ><img src="icon/alchemy/png/skull.png" style="width: 20%; height: 20%"> Encrypt/Decrypt</img></a>
+        <a class="w3-bar-item w3-button w3-cinzel" href="#" onmouseover="snackbar(2)" ><img src="icon/alchemy/png/flask.png" style="width: 20%; height: 20%"> Digest</img></a>
+        <a class="w3-bar-item w3-button w3-cinzel" href="#" onmouseover="snackbar(3)" ><img src="icon/alchemy/png/test-tube.png" style="width: 20%; height: 20%"> HMAC</img></a>
+        <a class="w3-bar-item w3-button w3-cinzel" href="#" onmouseover="snackbar(4)" ><img src="icon/alchemy/png/hands.png" style="width: 20%; height: 20%"> RSA</img></a>
+        <a class="w3-bar-item w3-button w3-cinzel" href="#" onmouseover="snackbar(5)" ><img src="icon/alchemy/png/hand.png" style="width: 20%; height: 20%"> Sign/Verify </img></a>
+    </nav>
+
+    <div class="w3-overlay w3-hide-large w3-animate-opacity" onclick="w3_close()" style="cursor:pointer" id="myOverlay"></div>
+
+    <div class="w3-main" style="margin-left:250px;">
+
+    <div id="myTop" class="w3-container w3-top w3-theme w3-large">
+        <p><i class="fa fa-bars w3-button w3-teal w3-hide-large w3-xlarge" onclick="w3_open()"></i>
+        <span id="myIntro" class="w3-hide">W3.CSS: Introduction</span></p>
+    </div>
+
+    <div id="snackbar"></div>
+
+
+    <script>
+        // Open and close the sidebar on medium and small screens
+        function w3_open() {
+            document.getElementById("mySidebar").style.display = "block";
+            document.getElementById("myOverlay").style.display = "block";
+        }
+        function w3_close() {
+            document.getElementById("mySidebar").style.display = "none";
+            document.getElementById("myOverlay").style.display = "none";
+        }
+        
+        // Change style of top container on scroll
+        window.onscroll = function() {myFunction()};
+        function myFunction() {
+            if (document.body.scrollTop > 80 || document.documentElement.scrollTop > 80) {
+                document.getElementById("myTop").classList.add("w3-card-4", "w3-animate-opacity");
+                document.getElementById("myIntro").classList.add("w3-show-inline-block");
+            } else {
+                document.getElementById("myIntro").classList.remove("w3-show-inline-block");
+                document.getElementById("myTop").classList.remove("w3-card-4", "w3-animate-opacity");
+            }
+        }
+        
+        // Accordions
+        function myAccordion(id) {
+            var x = document.getElementById(id);
+            if (x.className.indexOf("w3-show") == -1) {
+                x.className += " w3-show";
+                x.previousElementSibling.className += " w3-theme";
+            } else { 
+                x.className = x.className.replace("w3-show", "");
+                x.previousElementSibling.className = 
+                x.previousElementSibling.className.replace(" w3-theme", "");
+            }
+        }
+
+
+        function snackbar( nav ) {
+            // Get the snackbar DIV
+            var x = document.getElementById("snackbar");
+
+            // Add the "show" class to DIV
+            x.className = "show ";
+
+            if( nav == '0'){
+            x.textContent = 'This page generates keys for encryption.';
+            }else if( nav == '1'){
+            x.textContent = 'This page is for file encryption, allows advanced arguments.';
+            }else if( nav == '2'){
+            x.textContent = '2';
+            }else if( nav == '3'){
+            x.textContent = '3';
+            }else if( nav == '4'){
+            x.textContent = '4';
+            }else if( nav == '5'){
+            x.textContent = '5';
+            }
+            // After 3 seconds, remove the show class from DIV
+            setTimeout(function(){ x.className = x.className.replace("show", ""); }, 10000);
+        }
+    </script>
+
+</body>
+</html>

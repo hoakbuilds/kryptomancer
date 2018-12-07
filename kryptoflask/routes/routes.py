@@ -6,7 +6,6 @@ Kryptoflask Application Routes
 
 import os
 import sys
-import requests
 import json
 import datetime
 import asyncio

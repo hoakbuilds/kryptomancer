@@ -6,7 +6,6 @@ Kryptoflask OpenSSL System Calls
 
 import os
 import sys
-import requests
 import json
 import datetime
 import asyncio
