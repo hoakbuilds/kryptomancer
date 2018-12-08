@@ -166,7 +166,7 @@ option{
     visibility: hidden; /* Hidden by default. Visible on click */
     min-width: 250px; /* Set a default minimum width */
     margin-left: -125px; /* Divide value of min-width by 2 */
-    background-color:rgba(0, 0, 0, 0.2);
+    background-color: lightgrey;/*:#9e9e9e;*/
     color: #000; /* White text color */
     text-align: center; /* Centered text */
     border-radius: 2px; /* Rounded borders */
@@ -182,8 +182,8 @@ option{
     visibility: visible; /* Show the snackbar */
     /* Add animation: Take 0.5 seconds to fade in and out the snackbar. 
    However, delay the fade out process for 2.5 seconds */
-   -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
-   animation: fadein 0.5s, fadeout 0.5s 2.5s;
+   -webkit-animation: fadein 0.5s;
+   animation: fadein 0.5s;
 }
 
 

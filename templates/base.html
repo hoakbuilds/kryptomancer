@@ -8,17 +8,22 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <link href="https://fonts.googleapis.com/css?family=Cinzel" rel="stylesheet">  
     </head>
-    <body>
+    <body id="body" onresize="body_width()">
+            
         {% include 'nav.html' %}
-    
             {% block content %}
             {% endblock %}
+            <p id="teste">teste</p>
 
     </body>
 
     <script>
     
-
+    
+     function body_width(){
+         var width = document.getElementById("body").offsetWidth;
+         document.getElementById("teste").innerHTML = width;          
+     }
     
     </script>
 </html>
