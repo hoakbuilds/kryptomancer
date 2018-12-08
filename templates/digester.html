@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<div class="w3-center">  
+<div class="w3-container w3-center">  
   <div class="w3-container w3-center">
     <div class="w3-container w3-center">
       <h3 class="w3">Upload a file</h3>
@@ -12,13 +12,9 @@
       </form>
     </div>
     <div class="w3-container w3-center">
-        <div class="w3-container w3-left">
+        <div class="w3-container w3-center">
             <h3 class="w3">Uploaded Files</h3>
             <form id="files" action="/digester/" method="POST">
-                <input class="w3-check" type="checkbox">
-                <label>Base64 Encoding</label>
-                <input class="w3-check" type="checkbox">
-                <label>Use PBKDF2</label>
                 <select class="w3-select" name="selected_cipher" style="max-width:30%;right:0;">
                 <div class="w3-dropdown-content w3-bar-block w3-border" >
                     <option disabled selected value="" class="w3-bar-item w3-select">Ciphers</option>
@@ -32,6 +28,7 @@
                     <option class="w3-list" value="{{item}}" name="selected_files">{{ item }} </option> 
                 {% endfor %}
                 </select>
+                <input class="w3-btn w3-black w3-hover-white" formaction="/digest_file/" type="submit" value="Digest Selected">
             </form>
         </div>
     </div>
@@ -40,14 +37,12 @@
       <table class="w3-table-all">
       <tr class="w3-black">
         <th>Filename</th>
-        <th>IV</th>
-        <th>Key</th> 
+        <th>Digest</th> 
       </tr>
-      {% for item in enc_info  %}
+      {% for item in digest_info  %}
         <tr>
           <td> {{ item.filename }}</td>
-          <td> {{ item.iv }}</td>
-          <td> {{ item.key }}</td>
+          <td> {{ item.hash }}</td>
         </tr>
       {% endfor %}
       </table>
