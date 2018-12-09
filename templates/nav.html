@@ -1,81 +1,69 @@
-<div class="navbar" id="navbar">
-  <a href="{{ url_for('routes.index') }} " class="logo"><img src="../static/logo_2.png" class="logo"> </img></a>
-  <div class="subnav">
-    <button class="subnavbtn" onmouseover="snackbar(0)">
-        <img src="../static/data-protection.png" class="icon"> </img> Keygen 
-        <i class="fa fa-caret-down"></i>
-    </button>
-    <div class="subnav-content">
-      <button class="tablink tablink-keygen" type="button" onclick="window.location.href='{{ url_for( 'routes.generate', bits=128 ) }}';">128 bits</button>
-      <button class="tablink tablink-keygen" type="button" onclick="window.location.href='{{ url_for( 'routes.generate', bits=256 ) }}';">256 bits</button>
-      <button class="tablink tablink-keygen" type="button" onclick="window.location.href='{{ url_for( 'routes.generate', bits=512 ) }}';">512 bits</button>
-    </div>
-  </div> 
-  <div class="subnav">
-    <button class="subnavbtn" type="button" onclick="window.location.href='{{ url_for( 'routes.crypter' ) }}'" onmouseover="snackbar(1)"> <img src="../static/document.png" class="icon"> </img> Encryption <i class="fa fa-caret-down"></i></button>
-    <div class="subnav-content">
-    </div>
-  </div> 
-  <div class="subnav">
-     <button class="subnavbtn" type="button" onclick="window.location.href='{{ url_for( 'routes.digester' ) }}'" onmouseover="snackbar(2)"> <img src="../static/document.png" class="icon"> </img> Digest <i class="fa fa-caret-down"></i></button>
-    <div class="subnav-content">
-    </div>
-  </div>
-  <div class="subnav">
-    <button class="subnavbtn"> HMAC <i class="fa fa-caret-down"></i></button>
-    <div class="subnav-content">
-    </div>
-  </div>
-  <div class="subnav">
-    <button class="subnavbtn"> RSA <i class="fa fa-caret-down"></i></button>
-    <div class="subnav-content">
-    </div>
-  </div>
-  <div class="subnav">
-    <button class="subnavbtn"> Digital Certificates <i class="fa fa-caret-down"></i></button>
-    <div class="subnav-content">
-    </div>
-  </div>
-  <div class="subnav">
-    <button class="subnavbtn"> KC MANAGER <i class="fa fa-caret-down"></i></button>
-    <div class="subnav-content">
-    </div>
-  </div>
-</div>
+<nav class="w3-sidebar w3-bar-block w3-collapse w3-animate-left w3-card" style="z-index:3;width:300px;" id="mySidebar">
+    <a class="w3-bar-item w3-button w3-border-bottom w3-large" href="{{ url_for('routes.index') }}" onclick="w3_close()">
+        <img src="../static/icon/alchemy/png/alchemy.png" style="width: 30%; height: 30%"></img>
+        <span class="w3-cinzel w3-xlarge w3-middle subnav">Krypt0manc&r</h1>
+    </a>
+    <a class="w3-bar-item w3-button w3-hide-large w3-large w3-cinzel" href="javascript:void(0)" onclick="w3_close()">Close <img src="../static/icon/alchemy/png/cancel.png" style="width: 5%; height: 5%"></img></a>
+    <a class="w3-bar-item w3-button w3-cinzel" href="{{ url_for('routes.generate') }}" onmouseover="snackbar(0)" ><img src="../static/icon/alchemy/png/key.png" style="width: 20%; height: 20%"> Keygen</img></a>
+    <a class="w3-bar-item w3-button w3-cinzel" href="{{ url_for( 'routes.crypter' )}}" onmouseover="snackbar(1)" ><img src="../static/icon/alchemy/png/skull.png" style="width: 20%; height: 20%"> Encrypt/Decrypt</img></a>
+    <a class="w3-bar-item w3-button w3-cinzel" href="{{ url_for( 'routes.digester' ) }}" onmouseover="snackbar(2)" ><img src="../static/icon/alchemy/png/flask.png" style="width: 20%; height: 20%"> Digest</img></a>
+    <a class="w3-bar-item w3-button w3-cinzel" href="#" onmouseover="snackbar(3)" ><img src="../static/icon/alchemy/png/test-tube.png" style="width: 20%; height: 20%"> HMAC</img></a>
+    <a class="w3-bar-item w3-button w3-cinzel" href="#" onmouseover="snackbar(4)" ><img src="../static/icon/alchemy/png/hands.png" style="width: 20%; height: 20%"> RSA</img></a>
+    <a class="w3-bar-item w3-button w3-cinzel" href="#" onmouseover="snackbar(5)" ><img src="../static/icon/alchemy/png/hand.png" style="width: 20%; height: 20%"> Sign/Verify </img></a>
+</nav>
+
+<!-- <div class="w3-overlay w3-hide-large w3-animate-opacity" onclick="w3_close()" style="cursor:pointer" id="myOverlay"></div>
+<div class="w3-main" style="margin-left:250px;"></div>
+<div id="myTop" class="w3-container w3-top w3-theme w3-large w3-hide-large w3-white w3-card">
+    <p><i class="fa fa-bars w3-button w3-white w3-hide-large w3-xlarge" onclick="w3_open()"></i>
+    <span id="myIntro" class="w3-cinzel w3-xlarge" >Krypt0manc&r </span></p>
+</div> -->
+
+
+
+<!-- The actual snackbar -->
+<div id="snackbar" onclick="snack_close()"><a id="texto_snack"></a><img src="../static/icon/alchemy/png/cancel_small.png" style="width: 12px; height: 12px;"></img></div>
 
 <script>
-function openPage(pageName,elmnt,color) {
-    var i, tabcontent, tablinks;
-    tabcontent = document.getElementsByClassName("tabcontent");
-    for (i = 0; i < tabcontent.length; i++) {
-        tabcontent[i].style.display = "none";
+  // Open and close the sidebar on medium and small screens
+    function w3_open() {
+            document.getElementById("mySidebar").style.display = "block";
+            document.getElementById("myOverlay").style.display = "block";
     }
-    tablinks = document.getElementsByClassName("tablink");
-    for (i = 0; i < tablinks.length; i++) {
-        tablinks[i].style.backgroundColor = "";
+        
+    function w3_close() {
+        document.getElementById("mySidebar").style.display = "none";
+        document.getElementById("myOverlay").style.display = "none";
     }
-    document.getElementById(pageName).style.display = "block";
-    elmnt.style.backgroundColor = color;
+    
+    function snackbar( nav ) {
+        var width = document.getElementById("body").offsetWidth;
+        // Get the snackbar DIV
+        var x = document.getElementById("snackbar");
+        var y = document.getElementById("texto_snack");
+        // Add the "show" class to DIV            
+        
+        if (width >= 900){
+            x.className = "show";
+            if( nav == '0'){
+                y.textContent = 'Generate Hex Keys ';
+            }else if( nav == '1'){
+                y.textContent = 'Encrypt or Decrypt Your files ';
+            }else if( nav == '2'){
+                y.textContent = 'Calculate Hash Values for Your Files ';
+            }else if( nav == '3'){
+                y.textContent = 'Calculate or Verify Hashed Based Message Authentication Codes ';
+            }else if( nav == '4'){
+                y.textContent = 'Generate RSA Public and Secret Key Pair ';
+            }else if( nav == '5'){
+                y.textContent = 'Sign or Verify RSA Digital Signatures ';
+            }
 
-}
-// Get the element with id="defaultOpen" and click on it
-document.getElementById("defaultOpen").click();
-
-function snackbar( nav ) {
-    // Get the snackbar DIV
-    var x = document.getElementById("snackbar");
-
-    // Add the "show" class to DIV
-    x.className = "show";
-
-    if( nav == '0'){
-      x.textContent = 'This page generates keys for encryption.';
-    }else if( nav == '1'){
-      x.textContent = 'This page is for file encryption, allows advanced arguments.';
-    }else {
-      x.textContent = 'Under construction.';
+        }
     }
-    // After 3 seconds, remove the show class from DIV
-    setTimeout(function(){ x.className = x.className.replace("show", ""); }, 10000);
-}
+
+     function snack_close(){
+         var x = document.getElementById("snackbar");
+         x.className=x.className.replace("show","");
+     }
 </script>

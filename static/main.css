@@ -1,13 +1,13 @@
 * {box-sizing: border-box}
 
 /* Set height of body and the document to 100% */
-body, html {
+/* body, html {
     height: 100%;
     width: 100%;
     font-family: Arial;
     background-color: #32568b7a;
     background-image: linear-gradient(141deg, #58d2df8c 10%, #27909c7e 90%);
-}
+} */
 
 select {
   padding: 4px;
@@ -43,7 +43,7 @@ option{
 }
 
 /* Style main container */ 
-.container {
+/* .container {
   padding-right: 2%;
   padding-left:  2%;
   background-color: rgba(255, 255, 255, 0.8);
@@ -51,11 +51,12 @@ option{
   max-width: 90%;
   margin: 3% auto;
   overflow-wrap: break-word;
-}
+} */
 
 .word-wrapper{
   padding-left: 5px;
   padding-right: 5px;
+  margin: 0 auto;
   max-width: 1080px;
   overflow-wrap: break-word;
   word-break: break-all;
@@ -68,11 +69,6 @@ option{
 /* Style images */
 
 .icon {
-  height: 25px;
-  width: auto;
-}
-
-.logo {
   height: 25px;
   width: auto;
 }
@@ -164,12 +160,15 @@ option{
   padding-top: 60px;
 }
 
+.w3-bar-block .w3-bar-item{padding:16px;font-weight:bold}
+
 #snackbar {
+    font-family: 'Cinzel', serif;
     visibility: hidden; /* Hidden by default. Visible on click */
     min-width: 250px; /* Set a default minimum width */
     margin-left: -125px; /* Divide value of min-width by 2 */
-    background-color: #616161; /* Black background color */
-    color: #fff; /* White text color */
+    background-color: lightgrey;/*:#9e9e9e;*/
+    color: #000; /* White text color */
     text-align: center; /* Centered text */
     border-radius: 2px; /* Rounded borders */
     padding: 16px; /* Padding */
@@ -184,8 +183,13 @@ option{
     visibility: visible; /* Show the snackbar */
     /* Add animation: Take 0.5 seconds to fade in and out the snackbar. 
    However, delay the fade out process for 2.5 seconds */
-   -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
-   animation: fadein 0.5s, fadeout 0.5s 2.5s;
+   -webkit-animation: fadein 0.5s;
+   animation: fadein 0.5s;
+}
+
+
+.w3-cinzel {
+  font-family: 'Cinzel', serif;
 }
 
 /* Animations to fade the snackbar in and out */

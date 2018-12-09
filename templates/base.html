@@ -6,31 +6,33 @@
         <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='main.css') }}">
         <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link href="https://fonts.googleapis.com/css?family=Cinzel" rel="stylesheet">  
     </head>
-    <body>
+    <body id="body" onresize="body_width()">
+            
+            
         {% include 'nav.html' %}
-        <div class="container">        
+            <div class="w3-overlay w3-hide-large w3-animate-opacity" onclick="w3_close()" style="cursor:pointer" id="myOverlay"></div>
+            <div class="w3-main" style="margin-left:300px;">
+            <div id="myTop" class="w3-container w3-top w3-theme w3-large w3-hide-large w3-white w3-card">
+                <p><i class="fa fa-bars w3-button w3-white w3-hide-large w3-xlarge" onclick="w3_open()"></i>
+                <span id="myIntro" class="w3-cinzel w3-xlarge" >Krypt0manc&r </span></p>
+            </div>
             {% block content %}
             {% endblock %}
-        </div>
-
-        <!-- The actual snackbar -->
-        <div id="snackbar"></div>
+            </div>
+            <p id="teste">teste</p>
+            </body>
 
     </body>
 
     <script>
-    window.onscroll = function() {myFunction()};
-
-    var navbar = document.getElementById("navbar");
-    var sticky = navbar.offsetTop;
-
-    function myFunction() {
-        if (window.pageYOffset >= sticky) {
-            navbar.classList.add("sticky")
-        } else {
-            navbar.classList.remove("sticky");
-        }
-    }
+    
+    
+     function body_width(){
+         var width = document.getElementById("body").offsetWidth;
+         document.getElementById("teste").innerHTML = width;          
+     }
+    
     </script>
 </html>
