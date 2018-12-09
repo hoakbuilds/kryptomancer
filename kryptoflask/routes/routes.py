@@ -223,12 +223,6 @@ def decrypt():
         files, enc = get_uploaded_files()
         return render_template('file_crypter.html', listdir=files, enc_files=enc)
 
-
-@routes.route('/password_generator/', methods=['GET'])
-def password_generator():
-    
-    return render_template('password_gen.html', data = None)
-
 @routes.route('/generate', methods=['GET', 'POST'])
 @routes.route('/generate/<int:bits>', methods=['GET'])
 def generate(bits=128):
@@ -315,30 +309,28 @@ def encrypt_list_of_files(files, cipher=None, key=None, iv=None): #Default value
         for f in files:
             obj = {}
             obj['filename'] = f
-            if key is not None and iv is not None:
-                obj['iv'] = iv
-                obj['key'] = key
-            else:
-                data = generate_key_iv(bytes=str(16))
-                obj['iv'] = data['iv']
-                obj['key'] = data['key']
-            print('ENCRYPTING FILE: '+str(f), file=sys.stderr)
             if cipher is not None:
                 if key is not None and iv is not None: # If a key and iv from input exists
-                    res = encrypt_file(f, key, iv, cipher) # encrypt with such key and iv using respective input cipher
+                    obj['iv'] = iv
+                    obj['key'] = key
                 else:
-                    res = encrypt_file(f, obj['key'], obj['iv'], cipher)
-            else:
-                if key is not None and iv is not None: # If a key and iv from input exists
-                    res = encrypt_file(f, key, iv, cipher=None) # encrypt with such key and default cipher (aes-256-cbc)
-                else:
-                    res = encrypt_file(f, obj['key'], obj['iv'], cipher=None)
-            if 'ok' in res:
-                print('ok', file=sys.stderr)
-                obj_list.append(obj)
-            elif 'error' in res:
-                print('error', file=sys.stderr)
-                pass
+                    if 'aes' in cipher:
+                        size = int(cipher.split('-')[1])
+                        data = generate_aes_key_iv(bytes=str(int(size/8)))
+                        obj['iv'] = data['iv']
+                        obj['key'] = data['key']
+                    elif 'des' in cipher:
+                        data = generate_3des_key_iv()
+                        obj['iv'] = data['iv']
+                        obj['key'] = data['key']
+                print('ENCRYPTING FILE: '+str(f), file=sys.stderr)
+                res = encrypt_file(f, obj['key'], obj['iv'], cipher)  
+                if 'ok' in res:
+                    print('ok', file=sys.stderr)
+                    obj_list.append(obj)
+                elif 'error' in res:
+                    print('error', file=sys.stderr)
+                    pass
             #print(obj_list, file=sys.stderr)
         result['data'] = obj_list
         return result
