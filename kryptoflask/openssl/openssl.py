@@ -148,7 +148,6 @@ def digest_file( input_file, hash_algorithm ):
 
     return data
 
-# openssl enc -aes-256-cbc -e -in $file -out $file.dec -K $key -iv $iv
 
 def encrypt_file( input_file, key, iv, cipher = None):
     file_path = os.path.join(UPLOAD_FOLDER, input_file)
@@ -172,109 +171,17 @@ def encrypt_file( input_file, key, iv, cipher = None):
             return {'error':'failed'}
 
 
-# openssl enc -aes-256-cbc -e -in $file -out $file.dec -K $key -iv $iv
 def decrypt_file( input_file, key, iv, cipher = None ):
     file_path = os.path.join(UPLOAD_FOLDER, input_file)
-    enc_file = os.path.join(UPLOAD_FOLDER, file_path.rsplit('.',1)[0] + ".dec")
+    dec_file = os.path.join(UPLOAD_FOLDER, file_path.rsplit('.',1)[0] + ".dec")
 
     if cipher is not None:
         print('Cipher selected: ' + cipher, file=sys.stderr)
-
-        print('Decrypting file: ' + str(file_path) +'\nWith Key:  ' +str(key) + 'And IV:   ' +str(iv), file=sys.stderr)
-        if 'aes' in cipher:
-            if '128' in cipher:
-                if 'cbc' in cipher:
-                    try:
-                        p = subprocess.Popen(
-                            ['openssl', 'enc', '-aes-128-cbc', '-d', '-in', file_path, '-out', enc_file, '-K', key, '-iv', iv],
-                            stdin = subprocess.PIPE,
-                            stdout = subprocess.PIPE,
-                            stderr = subprocess.PIPE
-                        )
-                        p.wait()
-                        return {'ok':'ok'}
-                    except:
-                        print('Failed to decrypt: ' + str(file_path), file=sys.stderr)
-                        return {'error':'failed'}
-                elif 'ecb' in cipher:
-                    try:
-                        p = subprocess.Popen(
-                            ['openssl', 'enc', '-aes-128-ecb', '-d', '-in', file_path, '-out', enc_file, '-K', key],
-                            stdin = subprocess.PIPE,
-                            stdout = subprocess.PIPE,
-                            stderr = subprocess.PIPE
-                        )
-                        p.wait()
-                        return {'ok':'ok'}
-                    except:
-                        print('Failed to decrypt: ' + str(file_path), file=sys.stderr)
-                        return {'error':'failed'}
-
-            elif '192' in cipher:
-                if 'cbc' in cipher:
-                    try:
-                        p = subprocess.Popen(
-                            ['openssl', 'enc', '-aes-192-cbc', '-d', '-in', file_path, '-out', enc_file, '-K', key, '-iv', iv],
-                            stdin = subprocess.PIPE,
-                            stdout = subprocess.PIPE,
-                            stderr = subprocess.PIPE
-                        )
-                        p.wait()
-                        return {'ok':'ok'}
-                    except:
-                        print('Failed to decrypt: ' + str(file_path), file=sys.stderr)
-                        return {'error':'failed'}
-                elif 'ecb' in cipher:
-                    try:
-                        p = subprocess.Popen(
-                            ['openssl', 'enc', '-aes-256-ecb', '-d', '-in', file_path, '-out', enc_file, '-K', key],
-                            stdin = subprocess.PIPE,
-                            stdout = subprocess.PIPE,
-                            stderr = subprocess.PIPE
-                        )
-                        p.wait()
-                        return {'ok':'ok'}
-                    except:
-                        print('Failed to decrypt: ' + str(file_path), file=sys.stderr)
-                        return {'error':'failed'}
-
-            elif '256' in cipher:
-                if 'cbc' in cipher:
-                    try:
-                        p = subprocess.Popen(
-                            ['openssl', 'enc', '-aes-256-cbc', '-d', '-in', file_path, '-out', enc_file, '-K', key, '-iv', iv],
-                            stdin = subprocess.PIPE,
-                            stdout = subprocess.PIPE,
-                            stderr = subprocess.PIPE
-                        )
-                        p.wait()
-                        return {'ok':'ok'}
-                    except:
-                        print('Failed to decrypt: ' + str(file_path), file=sys.stderr)
-                        return {'error':'failed'}
-                elif 'ecb' in cipher:
-                    try:
-                        p = subprocess.Popen(
-                            ['openssl', 'enc', '-aes-256-ecb', '-d', '-in', file_path, '-out', enc_file, '-K', key],
-                            stdin = subprocess.PIPE,
-                            stdout = subprocess.PIPE,
-                            stderr = subprocess.PIPE
-                        )
-                        p.wait()
-                        return {'ok':'ok'}
-                    except:
-                        print('Failed to decrypt: ' + str(file_path), file=sys.stderr)
-                        return {'error':'failed'}
-
-        # elif 'aria' in cipher:
-        # elif 'camellia' in cipher:
-        # elif 'des' in cipher:
-        # elif 'rc' in cipher
-    else:
-        print('Decrypting file: ' + str(file_path) +'\nWith Key:  ' +str(key) + 'And IV:   ' +str(iv), file=sys.stderr)
+        input_cipher = '-' + cipher
+        print('Encrypting file: ' + str(file_path) +'\nWith Key:  ' +str(key) + 'And IV:   ' +str(iv), file=sys.stderr)
         try:
             p = subprocess.Popen(
-                ['openssl', 'enc', '-aes-256-cbc', '-d', '-in', file_path, '-out', enc_file, '-K', key, '-iv', iv],
+                ['openssl', 'enc', input_cipher, '-d', '-in', file_path, '-out', dec_file, '-K', key, '-iv', iv],
                 stdin = subprocess.PIPE,
                 stdout = subprocess.PIPE,
                 stderr = subprocess.PIPE
@@ -282,5 +189,5 @@ def decrypt_file( input_file, key, iv, cipher = None ):
             p.wait()
             return {'ok':'ok'}
         except:
-            print('Failed to decrypt: ' + str(file_path), file=sys.stderr)
+            print('Failed to encrypt: ' + str(file_path), file=sys.stderr)
             return {'error':'failed'}
