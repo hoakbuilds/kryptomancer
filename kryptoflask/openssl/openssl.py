@@ -53,7 +53,7 @@ def generate_key( bytes, base64=None):
 
     return data
 
-def generate_key_iv( bytes ):
+def generate_aes_key_iv( bytes ):
     key_dir=os.path.join(UPLOAD_FOLDER, "key-file.txt")
     iv_dir=os.path.join(UPLOAD_FOLDER, "iv-file.txt")
     #print(iv_dir, key_dir)
@@ -67,7 +67,42 @@ def generate_key_iv( bytes ):
         stdout=key_file
     )
     p2 = subprocess.Popen(
-        ['openssl', 'rand', '-hex', str(int(bytes))],
+        ['openssl', 'rand', '-hex', str(16)],
+        stdout=iv_file
+    )
+    
+    exit_codes = [p.wait() for p in [p1, p2]]
+
+    key_file = open(key_dir, 'r')
+    iv_file = open(iv_dir, 'r')
+    #print(iv_file, key_file)
+
+    iv = iv_file.read()
+    key = key_file.read()
+    print('IV ' + iv + 'Key ' + key)
+
+    data = {
+        'iv' : iv,
+        'key' : key
+    }
+
+    return data
+
+def generate_3des_key_iv():
+    key_dir=os.path.join(UPLOAD_FOLDER, "key-file.txt")
+    iv_dir=os.path.join(UPLOAD_FOLDER, "iv-file.txt")
+    #print(iv_dir, key_dir)
+
+    key_file = open(key_dir, 'w+')
+    iv_file = open(iv_dir, 'w+')
+    #print(iv_file, key_file)
+
+    p1 = subprocess.Popen(
+        ['openssl', 'rand', '-hex', str(21)],
+        stdout=key_file
+    )
+    p2 = subprocess.Popen(
+        ['openssl', 'rand', '-hex', str(8)],
         stdout=iv_file
     )
     

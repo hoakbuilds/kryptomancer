@@ -22,8 +22,8 @@ from werkzeug import secure_filename
 
 from . import routes
 from kryptoflask.openssl import (
-    generate_key_iv, generate_key, encrypt_file, decrypt_file,
-    digest_file
+    generate_aes_key_iv, generate_3des_key_iv, generate_key, encrypt_file,
+    decrypt_file, digest_file
 )
 
 UPLOAD_FOLDER = os.getcwd() + '/uploads'
@@ -232,18 +232,20 @@ def password_generator():
 @routes.route('/generate', methods=['GET', 'POST'])
 @routes.route('/generate/<int:bits>', methods=['GET'])
 def generate(bits=128):
-
+    
     if request.method == 'POST':
         form = request.form.get("base64_encoding")
         if form:
             print(form, file=sys.stderr)
-            data = generate_key( bytes= str(request.form['size']), base64=True)
+            data = generate_key( bytes= str(int(request.form['size'])), base64=True)
         else:
-            data = generate_key( bytes= str(request.form['size']))
-    elif bits == 128 or bits == 256 or bits == 512 :
-        data = generate_key_iv( bytes= str(int(bits/8)) )
+            data = generate_key( bytes= str(int(request.form['size'])))
+    elif bits == 128 or bits == 192 or bits == 256 :
+        data = generate_aes_key_iv( bytes= str(int(bits/8)) )
+    elif bits == 168:
+        data = generate_3des_key_iv()
     else:
-        data = generate_key( bytes=str(bits))
+        data = generate_key( bytes=str(int(bits/8)))
     
     
     return render_template('password_gen.html',  data=data)
