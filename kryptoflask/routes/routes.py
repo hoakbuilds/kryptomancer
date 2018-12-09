@@ -234,12 +234,16 @@ def password_generator():
 def generate(bits=128):
     
     if request.method == 'POST':
-        form = request.form.get("base64_encoding")
-        if form:
-            print(form, file=sys.stderr)
-            data = generate_key( bytes= str(int(request.form['size'])), base64=True)
+        form = request.form.get('base64_encoding')
+        size = request.form.get('size')
+        if size is not '':
+            if form:
+                print(form, file=sys.stderr)
+                data = generate_key( bytes= str(int(size)), base64=True)
+            else:
+                data = generate_key( bytes= str(int(size)))
         else:
-            data = generate_key( bytes= str(int(request.form['size'])))
+            return render_template('password_gen.html', data=[])
     elif bits == 128 or bits == 192 or bits == 256 :
         data = generate_aes_key_iv( bytes= str(int(bits/8)) )
     elif bits == 168:
@@ -395,7 +399,7 @@ def generate_keys_for_files(files):
         for f in files:
             obj = {}
             obj['filename'] = f
-            data = generate_key_iv(bytes=str(16))
+            data = generate_aes_key_iv(bytes=str(16))
             obj['iv'] = data['iv']
             obj['key'] = data['key']
             obj_list.append(obj)

@@ -63,7 +63,7 @@ def generate_aes_key_iv( bytes ):
     #print(iv_file, key_file)
 
     p1 = subprocess.Popen(
-        ['openssl', 'rand', '-hex', str(int(bytes)*2)],
+        ['openssl', 'rand', '-hex', str(int(bytes))],
         stdout=key_file
     )
     p2 = subprocess.Popen(
