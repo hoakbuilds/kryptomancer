@@ -149,7 +149,7 @@ def digest_file( input_file, hash_algorithm ):
     return data
 
 
-def encrypt_file( input_file, key, iv, cipher = None):
+def encrypt_file( input_file, key, iv, cipher = None, base64=None):
     file_path = os.path.join(UPLOAD_FOLDER, input_file)
     enc_file = os.path.join(UPLOAD_FOLDER,  input_file + ".enc")
 
@@ -158,12 +158,20 @@ def encrypt_file( input_file, key, iv, cipher = None):
         input_cipher = '-' + cipher
         print('Encrypting file: ' + str(file_path) +'\nWith Key:  ' +str(key) + 'And IV:   ' +str(iv), file=sys.stderr)
         try:
-            p = subprocess.Popen(
-                ['openssl', 'enc', input_cipher, '-e', '-in', file_path, '-out', enc_file, '-K', key, '-iv', iv],
-                stdin = subprocess.PIPE,
-                stdout = subprocess.PIPE,
-                stderr = subprocess.PIPE
-            )
+            if base64 is not None:
+                p = subprocess.Popen(
+                    ['openssl', 'enc', input_cipher, '-e', '-a', '-in', file_path, '-out', enc_file, '-K', key, '-iv', iv],
+                    stdin = subprocess.PIPE,
+                    stdout = subprocess.PIPE,
+                    stderr = subprocess.PIPE
+                )
+            else:
+                p = subprocess.Popen(
+                    ['openssl', 'enc', input_cipher, '-e', '-in', file_path, '-out', enc_file, '-K', key, '-iv', iv],
+                    stdin = subprocess.PIPE,
+                    stdout = subprocess.PIPE,
+                    stderr = subprocess.PIPE
+                )
             p.wait()
             return {'ok':'ok'}
         except:
@@ -171,21 +179,30 @@ def encrypt_file( input_file, key, iv, cipher = None):
             return {'error':'failed'}
 
 
-def decrypt_file( input_file, key, iv, cipher = None ):
+def decrypt_file( input_file, key, iv, cipher = None, base64=None ):
     file_path = os.path.join(UPLOAD_FOLDER, input_file)
     dec_file = os.path.join(UPLOAD_FOLDER, file_path.rsplit('.',1)[0] + ".dec")
 
     if cipher is not None:
         print('Cipher selected: ' + cipher, file=sys.stderr)
         input_cipher = '-' + cipher
-        print('Encrypting file: ' + str(file_path) +'\nWith Key:  ' +str(key) + 'And IV:   ' +str(iv), file=sys.stderr)
+        print('Decrypting file: ' + str(file_path) +'\nWith Key:  ' +str(key) + 'And IV:   ' +str(iv), file=sys.stderr)
         try:
-            p = subprocess.Popen(
-                ['openssl', 'enc', input_cipher, '-d', '-in', file_path, '-out', dec_file, '-K', key, '-iv', iv],
-                stdin = subprocess.PIPE,
-                stdout = subprocess.PIPE,
-                stderr = subprocess.PIPE
-            )
+            if base64 is not None:
+                p = subprocess.Popen(
+                    ['openssl', 'enc', input_cipher, '-d', '-a', '-in', file_path, '-out', dec_file, '-K', key, '-iv', iv],
+                    stdin = subprocess.PIPE,
+                    stdout = subprocess.PIPE,
+                    stderr = subprocess.PIPE
+                )
+            else:
+                p = subprocess.Popen(
+                    ['openssl', 'enc', input_cipher, '-d', '-in', file_path, '-out', dec_file, '-K', key, '-iv', iv],
+                    stdin = subprocess.PIPE,
+                    stdout = subprocess.PIPE,
+                    stderr = subprocess.PIPE
+                )
+                
             p.wait()
             return {'ok':'ok'}
         except:

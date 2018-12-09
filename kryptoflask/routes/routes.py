@@ -42,6 +42,8 @@ def generate_keys_from_files():
     print('/crypter/generate_keys_from_selected_files', file=sys.stderr)
     files = get_uploaded_files()
     selected_cipher = request.form.get('selected_cipher')
+    if selected_cipher is None:
+        return render_template('file_crypter.html', listdir=files)
     selected_files = request.form.getlist('selected_files')
     if selected_files is not None:
         for file in selected_files:
@@ -119,37 +121,39 @@ def encrypt():
     print('encrypt', file=sys.stderr)
     if request.method == 'POST':
         # check if the post request has the file part
+        files = get_uploaded_files()
         selected_cipher = request.form.get('selected_cipher')
-        iv = request.form['encryption_iv']
-        if iv is not None:
+        if selected_cipher is None:
+            return render_template('file_crypter.html', listdir=files, enc_info=[])
+        base64 = request.form.get('base64_encoding')
+        print(base64, file=sys.stderr)
+        iv = request.form.get('encryption_iv')
+        if iv:
             print('-------------Input IV: ' + str(iv), file=sys.stderr)
 
-        key = request.form['encryption_key']
-        if key is not None:
+        key = request.form.get('encryption_key')
+        if key:
             print('-------------Input KEY: ' + str(key), file=sys.stderr)
         selected_files = request.form.getlist('selected_files')
         if selected_files is not None:
             print('------------ Files Selected:', file=sys.stderr)
             for f in selected_files:
                 print(f, file=sys.stderr)
-            if selected_cipher is not None:
-                print('------------ Cipher Selected: ' + str(selected_cipher), file=sys.stderr)       
-                enc_info = encrypt_list_of_files(selected_files, selected_cipher)
-            elif iv is not None and key is not None:
-                print('------------ Cipher Selected: ' + str(selected_cipher), file=sys.stderr)       
-                enc_info = encrypt_list_of_files(selected_files, selected_cipher)
+            if iv and key:     
+                if base64:
+                    enc_info = encrypt_list_of_files(selected_files, selected_cipher, key=key, iv=iv, base64=True)
+                else:
+                    enc_info = encrypt_list_of_files(selected_files, selected_cipher, key=key, iv=iv)
             else:
-                enc_info = encrypt_list_of_files(selected_files)
+                if base64:
+                    enc_info = encrypt_list_of_files(selected_files, selected_cipher, base64=True)
+                else:
+                    enc_info = encrypt_list_of_files(selected_files, selected_cipher)
             print('------------ Files Encrypted:', file=sys.stderr)
             for item in enc_info:
                 print(item, file=sys.stderr)
         else:
-            """selected_enc_files = request.form.getlist('selected_enc_files')
-            if selected_enc_files is not None:
-                for file in selected_enc_files:
-                    print(file, file=sys.stderr)
-            else:"""
-            return render_template('file_crypter.html', listdir=os.listdir(UPLOAD_FOLDER), enc_info=enc_info['data'])
+            return render_template('file_crypter.html', listdir=files, enc_info=enc_info['data'])
         files = get_uploaded_files()
         return render_template('file_crypter.html', listdir=files,  enc_info=enc_info['data'])
 
@@ -290,7 +294,7 @@ def encode_file():
     print("soon")
 
 # Encrypts a list of files, works with input key & iv as well
-def encrypt_list_of_files(files, cipher=None, key=None, iv=None): #Default values for key and IV are None
+def encrypt_list_of_files(files, cipher=None, key=None, iv=None, base64=None): #Default values for key and IV are None
     #print('encrypt_list_of_files', file=sys.stderr)
     if files == None:
         return []
@@ -315,7 +319,10 @@ def encrypt_list_of_files(files, cipher=None, key=None, iv=None): #Default value
                         obj['iv'] = data['iv']
                         obj['key'] = data['key']
                 print('ENCRYPTING FILE: '+str(f), file=sys.stderr)
-                res = encrypt_file(f, obj['key'], obj['iv'], cipher)  
+                if base64 is not None:
+                    res = encrypt_file(f, obj['key'], obj['iv'], cipher, base64=True)  
+                else: 
+                    res = encrypt_file(f, obj['key'], obj['iv'], cipher)  
                 if 'ok' in res:
                     print('ok', file=sys.stderr)
                     obj_list.append(obj)

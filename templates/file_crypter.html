@@ -15,7 +15,7 @@
     <div class="w3-container w3-left">
       <h3 class="w3">Uploaded Files</h3>
       <form id="files" action="/crypter/" method="POST">
-        <input class="w3-check" type="checkbox">
+        <input class="w3-check" name="base64_encoding" type="checkbox">
         <label>Base64 Encoding</label>
         <select class="w3-select" name="selected_cipher" style="max-width:30%;right:0;">
           <div class="w3-dropdown-content w3-bar-block w3-border" >
@@ -51,8 +51,6 @@
 
         <label>Key</label>
         <input class="w3-input" name="encryption_key"  type="text"><br>
-        <input class="w3-btn w3-black w3-hover-white" formaction="/encrypt_file/" type="submit" value="Encrypt With Key">
-        <input class="w3-btn w3-black w3-hover-white" formaction="/encrypt_file/" type="submit" value="Encrypt Selected With Key">
       </form>
     </div>
     <div class="w3-container w3-center">
