@@ -22,7 +22,8 @@ from werkzeug import secure_filename
 
 from . import routes
 from kryptoflask.openssl import (
-    generate_key_iv, generate_key, encrypt_file, decrypt_file
+    generate_key_iv, generate_key, encrypt_file, decrypt_file,
+    digest_file
 )
 
 UPLOAD_FOLDER = os.getcwd() + '/uploads'
@@ -160,6 +161,34 @@ def encrypt():
             return render_template('file_crypter.html', listdir=os.listdir(UPLOAD_FOLDER), enc_info=enc_info['data'])
         files, enc = get_uploaded_files()
         return render_template('file_crypter.html', listdir=files, enc_files=enc, enc_info=enc_info['data'])
+
+
+@routes.route('/digest_file/', methods=['GET','POST'])
+def digest():
+    """
+    """
+    print('digest', file=sys.stderr)
+    if request.method == 'POST':
+        # check if the post request has the file part
+        selected_hash_algorithm = request.form.get('selected_cipher')
+        if selected_hash_algorithm is not None:
+            print('------------ Hash Algorithm Selected: ' + selected_hash_algorithm, file=sys.stderr)
+
+        selected_files = request.form.getlist('selected_files')
+        if selected_files is not None:
+            print('------------ Files Selected:', file=sys.stderr)
+            digest_list = []
+            for f in selected_files:
+                print(f, file=sys.stderr)
+                digest_info = digest_file(input_file=f, hash_algorithm=selected_hash_algorithm)
+                digest_info['filename'] = f
+                digest_list.append(digest_info)
+
+            print(digest_list)
+
+        files, enc = get_uploaded_files()
+        return render_template('digester.html', listdir=files, digest_info=digest_list)
+
 
 @routes.route('/decrypt_file/', methods=['GET','POST'])
 def decrypt():

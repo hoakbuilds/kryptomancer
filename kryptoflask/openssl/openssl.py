@@ -88,6 +88,31 @@ def generate_key_iv( bytes ):
 
     return data
 
+def digest_file( input_file, hash_algorithm ):
+
+    key_dir=os.path.join(UPLOAD_FOLDER, "key-file.txt")
+    key_file = open(key_dir, 'w+')
+
+    file_path = os.path.join(UPLOAD_FOLDER, input_file)
+    hash = '-' + hash_algorithm
+
+    p1 = subprocess.Popen(
+        ['openssl', 'dgst', hash, file_path,],
+        stdout=key_file
+    )
+    p1.wait()
+    key_file = open(key_dir, 'r')
+
+    key = key_file.read().split('=')[1]
+
+    print('Key ' + key)
+
+    data = {
+        'hash' : key
+    }
+
+    return data
+
 # openssl enc -aes-256-cbc -e -in $file -out $file.dec -K $key -iv $iv
 
 def encrypt_file( input_file, key, iv, cipher = None):
