@@ -1,66 +1,71 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<div class="w3-container w3-content w3-padding-64">
+  <h2 class="w3-cinzel w3-padding-16"> <b>Calculate cryptographic hash functions</b> </h2>
+  <hr>
 
-<div class="w3-container w3-center">  
-  <div class="w3-container w3-center">
-    <div class="w3-container w3-center">
-      <h3 class="w3">Upload a file</h3>
-      <form method=post action="/digester/" enctype=multipart/form-data>
-        <input class="w3-btn w3-black w3-hover-white" type=file name=file>
-        <input class="w3-btn w3-black w3-hover-white" type=submit value=Upload>
-      </form>
-    </div>
-    <div class="w3-container w3-center">
-        <div class="w3-container w3-center">
-            <h3 class="w3">Uploaded Files</h3>
-            <form id="files" action="/digester/" method="POST">
-                <select class="w3-select" name="selected_cipher" style="max-width:30%;right:0;">
-                <div class="w3-dropdown-content w3-bar-block w3-border" >
-                    <option disabled selected value="" class="w3-bar-item w3-select">Ciphers</option>
-                    <option  value="sha1" class="w3-bar-item w3-select">SHA1</option>
-                    <option  value="sha256" class="w3-bar-item w3-select">SHA256</option>
-                    <option  value="sha512" class="w3-bar-item w3-select">SHA512</option>
-                    <option  value="md5" class="w3-bar-item w3-select">MD5</option>
-                    <option  value="sm3" class="w3-bar-item w3-select">SM3</option>
-                    <option  value="blake2s256" class="w3-bar-items w3-select">BLAKE2S256</option>
-                </div>
-                </select>
-                <select multiple type="file" class="w3-select w3-border" size="10" name="selected_files" enctype="multipart/form-data">
-                  <option class="w3-list w3-center" disabled name="selected_files">Untouched Files</option> 
-                  {% for item in listdir.untouched  %}
-                    <option class="w3-list" value="{{item}}" name="selected_files">{{ item }} </option> 
-                  {% endfor %}
-                  <option class="w3-list w3-center" disabled name="selected_files">Encrypted Files</option> 
-                  {% for item in listdir.encrypted  %}
-                    <option class="w3-list" value="{{item}}" name="selected_files">{{ item }} </option> 
-                  {% endfor %}
-                  <option class="w3-list w3-center" disabled name="selected_files">Decrypted Files</option>
-                  {% for item in listdir.decrypted  %}
-                    <option class="w3-list" value="{{item}}" name="selected_files">{{ item }} </option> 
-                  {% endfor %} 
-                </select>
-                <input class="w3-btn w3-black w3-hover-white" formaction="/digest_file/" type="submit" value="Digest Selected">
-            </form>
-        </div>
-    </div>
-    <div class="w3-container w3-center">
-      <div class="w3-responsive">
-      <table class="w3-table-all">
-      <tr class="w3-black">
-        <th>Filename</th>
-        <th>Digest</th> 
-      </tr>
-      {% for item in digest_info  %}
-        <tr>
-          <td> {{ item.filename }}</td>
-          <td> {{ item.hash }}</td>
-        </tr>
+  <div class="w3-left">
+  <span class="w3-cinzel">Upload a file</span>
+  <br>
+  <br>
+
+  
+  <form method=post action="/digester/" enctype=multipart/form-data>
+    <input class="w3-dark-grey w3-round w3-cinzel" type=file name=file>
+    <input class="w3-dark-grey w3-round w3-cinzel" type=submit value=Upload>
+
+    
+    <br>
+      <hr>
+
+    <select multiple type="file" class="w3-select" size="10" name="selected_files" enctype="multipart/form-data">
+      <option class="w3-list w3-center" disabled name="selected_files">Untouched Files</option> 
+      {% for item in listdir.untouched  %}
+        <option class="w3-list" value="{{item}}" name="selected_files">{{ item }} </option> 
       {% endfor %}
-      </table>
-      </div>
-    </div>
-  </div>
-</div>    
+      <option class="w3-list w3-center" disabled name="selected_files">Encrypted Files</option> 
+      {% for item in listdir.encrypted  %}
+        <option class="w3-list" value="{{item}}" name="selected_files">{{ item }} </option> 
+      {% endfor %}
+      <option class="w3-list w3-center" disabled name="selected_files">Decrypted Files</option>
+      {% for item in listdir.decrypted  %}
+        <option class="w3-list" value="{{item}}" name="selected_files">{{ item }} </option> 
+      {% endfor %} 
+    </select>
+
+    <span class="w3-cinzel">Select the desired cryptographic hash function</span>
+    
+    <select class="w3-cinzel" name="selected_cipher">
+        <option disabled >Hash function</option>
+        <option  value="sha1" >SHA1</option>
+        <option  value="sha256" >SHA256</option>
+        <option  value="sha512" >SHA512</option>
+        <option  value="md5" >MD5</option>
+        <option  value="sm3" >SM3</option>
+        <option  value="blake2s256">BLAKE2S256</option>
+    </select>
+
+    
+
+    <input class="w3-dark-grey w3-round w3-cinzel" formaction="/digest_file/" type="submit" value="Digest Selected">   
+  </form>
+
+  <table class="w3-table w3-left w3-bordered">
+  <tr class="w3-round w3-cinzel w3-large">
+    <th>Filename</th>
+    <th>Digest</th> 
+  </tr>
+  {% for item in digest_info  %}
+    <tr>
+      <td> {{ item.filename }}</td>
+      <td> {{ item.hash }}</td>
+    </tr>
+  {% endfor %}
+  </table>
+</div>
+
+</div>
+  
 
 {% endblock %}
