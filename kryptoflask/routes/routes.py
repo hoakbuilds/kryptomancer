@@ -27,6 +27,7 @@ from kryptoflask.openssl import (
 )
 
 UPLOAD_FOLDER = os.getcwd() + '/uploads'
+TEMP_FOLDER = os.getcwd() + '/temp'
 
 @routes.route('/')
 def index():
@@ -243,6 +244,26 @@ def generate(bits=128):
     
     return render_template('password_gen.html',  data=data)
 
+
+@routes.route('/gen_rsa', methods=['GET', 'POST'])
+@routes.route('/gen_rsa/<int:bits>', methods=['GET'])
+def gen_rsa(bits=128):
+    
+    if request.method == 'POST':
+        sk = request.form.get('sk_file')
+        pk = request.form.get('pk_file')
+        if sk is not '' and pk is not '':
+            print(sk, pk)
+            files = get_temporary_files()
+        else:
+            return render_template('rsa_gen.html', data=[], listdir = files)
+    
+    else:
+        files = get_temporary_files()
+    
+    return render_template('rsa_gen.html',  data=[], listdir=files)
+
+
 # Deleting files
 @routes.route('/crypter/delete_all/', methods=['GET', 'POST'])
 @routes.route('/delete_file/', methods=['GET', 'POST'])
@@ -404,7 +425,25 @@ def generate_keys_for_files(files, selected_cipher):
         result['data'] = obj_list
         return result
 
-# Gets uploaded files and encrypted files, returns a tuple of lists (encrypted ones and non-encrypted)
+# Gets temporary app files
+# These may be .pem files
+def get_temporary_files():
+    listdir = os.listdir(TEMP_FOLDER)
+    res = {}
+    sk = []
+    pk = []
+
+    for f in listdir:
+        if '.sk' in f:
+            sk.append(f)
+        elif '.pk' in f:
+            pk.append(f)
+    
+    res['sk'] = sk
+    res['pk'] = pk
+    return res
+
+# Gets uploaded files and encrypted files, returns an object with 3 lists, encrypted files, decrypted and untouched
 def get_uploaded_files():
     listdir = os.listdir(UPLOAD_FOLDER)
     res = {}
