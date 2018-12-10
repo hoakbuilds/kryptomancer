@@ -98,7 +98,7 @@ def generate_3des_key_iv():
     #print(iv_file, key_file)
 
     p1 = subprocess.Popen(
-        ['openssl', 'rand', '-hex', str(21)],
+        ['openssl', 'rand', '-hex', str(24)],
         stdout=key_file
     )
     p2 = subprocess.Popen(
