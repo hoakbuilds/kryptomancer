@@ -23,7 +23,7 @@ from werkzeug import secure_filename
 from . import routes
 from kryptoflask.openssl import (
     generate_aes_key_iv, generate_3des_key_iv, generate_key, encrypt_file,
-    decrypt_file, digest_file
+    decrypt_file, digest_file, generate_rsa, rsa_pubout
 )
 
 UPLOAD_FOLDER = os.getcwd() + '/uploads'
@@ -246,20 +246,28 @@ def generate(bits=128):
 
 
 @routes.route('/gen_rsa', methods=['GET', 'POST'])
-@routes.route('/gen_rsa/<int:bits>', methods=['GET'])
-def gen_rsa(bits=128):
+def gen_rsa():
     
     if request.method == 'POST':
         sk = request.form.get('sk_file')
         pk = request.form.get('pk_file')
-        if sk is not '' and pk is not '':
-            print(sk, pk)
+        selected_files = request.form.get('selected_files')
+        if selected_files is not None:
+            rsa_pubout(selected_files)
             files = get_temporary_files()
+            return render_template('rsa_gen.html', data=[], listdir = files)
+        elif sk is not '' and pk is not '':
+            print(sk, pk) 
+            data = generate_rsa(output_file=sk)
+            if 'ok' in data:
+                files = get_temporary_files()
+                for f in files:
+                    print(f, file=sys.stderr)
         else:
+            files = get_temporary_files()
             return render_template('rsa_gen.html', data=[], listdir = files)
     
-    else:
-        files = get_temporary_files()
+    files = get_temporary_files()
     
     return render_template('rsa_gen.html',  data=[], listdir=files)
 
@@ -434,9 +442,9 @@ def get_temporary_files():
     pk = []
 
     for f in listdir:
-        if '.sk' in f:
+        if '.pem' in f:
             sk.append(f)
-        elif '.pk' in f:
+        elif '.pub' in f:
             pk.append(f)
     
     res['sk'] = sk
