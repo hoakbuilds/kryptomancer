@@ -18,10 +18,10 @@ from time import sleep
 from threading import Thread
 from flask import Flask, redirect, url_for, request, render_template
 from werkzeug import secure_filename
-
 from . import openssl
 
 UPLOAD_FOLDER = os.getcwd() + '/uploads'
+TEMP_FOLDER = os.getcwd() + '/temp'
 
 def generate_key( bytes, base64=None):
     key_dir=os.path.join(UPLOAD_FOLDER, "key-file.txt")
@@ -208,3 +208,48 @@ def decrypt_file( input_file, key, iv, cipher = None, base64=None ):
         except:
             print('Failed to encrypt: ' + str(file_path), file=sys.stderr)
             return {'error':'failed'}
+
+
+#openssl genrsa -out mykey.pem 1024
+#will actually produce a public - private key pair. The pair is stored in the generated mykey.pem file.
+def generate_rsa( output_file ):
+    file_path = os.path.join(TEMP_FOLDER, output_file + '.pem')
+    print(file_path, file=sys.stderr)
+    try:
+            
+        p = subprocess.Popen(
+                ['openssl', 'genrsa', '-out', file_path],
+                stdin = subprocess.PIPE,
+                stdout = subprocess.PIPE,
+                stderr = subprocess.PIPE
+            )
+                
+        p.wait()
+        return {'ok':'ok'}
+    except:
+        print('Failed to encrypt: ' + str(file_path), file=sys.stderr)
+        return {'error':'failed'}
+
+#openssl rsa -in mykey.pem -pubout > mykey.pub
+#will extract the public key and print that out. Here is a link to a page that describes this better.
+def rsa_pubout( input_file ):
+    input_file_path = os.path.join(TEMP_FOLDER, input_file)
+    file_path = os.path.join(TEMP_FOLDER, input_file + '.pub')
+    print(input_file_path, file=sys.stderr)
+    print(file_path, file=sys.stderr)
+    p = subprocess.Popen(['touch', file_path])
+    p.wait()
+    try:
+            
+        p = subprocess.Popen(
+                ['openssl', 'rsa', '-in', input_file_path, '-pubout', '-out', file_path ],
+                stdin = subprocess.PIPE,
+                stdout = subprocess.PIPE,
+                stderr = subprocess.PIPE
+            )
+                
+        p.wait()
+        return {'ok':'ok'}
+    except:
+        print('Failed to encrypt: ' + str(file_path), file=sys.stderr)
+        return {'error':'failed'}

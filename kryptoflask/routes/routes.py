@@ -23,10 +23,11 @@ from werkzeug import secure_filename
 from . import routes
 from kryptoflask.openssl import (
     generate_aes_key_iv, generate_3des_key_iv, generate_key, encrypt_file,
-    decrypt_file, digest_file
+    decrypt_file, digest_file, generate_rsa, rsa_pubout
 )
 
 UPLOAD_FOLDER = os.getcwd() + '/uploads'
+TEMP_FOLDER = os.getcwd() + '/temp'
 
 @routes.route('/')
 def index():
@@ -243,6 +244,34 @@ def generate(bits=128):
     
     return render_template('password_gen.html',  data=data)
 
+
+@routes.route('/gen_rsa', methods=['GET', 'POST'])
+def gen_rsa():
+    
+    if request.method == 'POST':
+        sk = request.form.get('sk_file')
+        pk = request.form.get('pk_file')
+        selected_files = request.form.get('selected_files')
+        if selected_files is not None:
+            rsa_pubout(selected_files)
+            files = get_temporary_files()
+            return render_template('rsa_gen.html', data=[], listdir = files)
+        elif sk is not '' and pk is not '':
+            print(sk, pk) 
+            data = generate_rsa(output_file=sk)
+            if 'ok' in data:
+                files = get_temporary_files()
+                for f in files:
+                    print(f, file=sys.stderr)
+        else:
+            files = get_temporary_files()
+            return render_template('rsa_gen.html', data=[], listdir = files)
+    
+    files = get_temporary_files()
+    
+    return render_template('rsa_gen.html',  data=[], listdir=files)
+
+
 # Deleting files
 @routes.route('/crypter/delete_all/', methods=['GET', 'POST'])
 @routes.route('/delete_file/', methods=['GET', 'POST'])
@@ -404,7 +433,25 @@ def generate_keys_for_files(files, selected_cipher):
         result['data'] = obj_list
         return result
 
-# Gets uploaded files and encrypted files, returns a tuple of lists (encrypted ones and non-encrypted)
+# Gets temporary app files
+# These may be .pem files
+def get_temporary_files():
+    listdir = os.listdir(TEMP_FOLDER)
+    res = {}
+    sk = []
+    pk = []
+
+    for f in listdir:
+        if '.pem' in f:
+            sk.append(f)
+        elif '.pub' in f:
+            pk.append(f)
+    
+    res['sk'] = sk
+    res['pk'] = pk
+    return res
+
+# Gets uploaded files and encrypted files, returns an object with 3 lists, encrypted files, decrypted and untouched
 def get_uploaded_files():
     listdir = os.listdir(UPLOAD_FOLDER)
     res = {}
