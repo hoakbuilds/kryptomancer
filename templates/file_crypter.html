@@ -2,31 +2,61 @@
 
 {% block content %}
 
-<div class="w3-center">  
-  <div class="w3-container w3-center">
-    <div class="w3-container w3-center">
-      <h3 class="w3">Upload a file</h3>
-      <form method=post action="/crypter/" enctype=multipart/form-data>
-        <input class="w3-btn w3-black w3-hover-white" type=file name=file>
-        <input class="w3-btn w3-black w3-hover-white" type=submit value=Upload>
-      </form>
-    </div>
-    <div class="w3-container w3-center">
-    <div class="w3-container w3-left">
-      <h3 class="w3">Uploaded Files</h3>
-      <form id="files" action="/crypter/" method="POST">
-        <input class="w3-check" name="base64_encoding" type="checkbox">
-        <label>Base64 Encoding</label>
-        <select class="w3-select" name="selected_cipher" style="max-width:30%;right:0;">
-          <div class="w3-dropdown-content w3-bar-block w3-border" >
-            <option disabled selected value="" class="w3-bar-item w3-select">Ciphers</option>
-            <option  value="aes-128-cbc" class="w3-bar-item w3-select">AES-128-CBC</option>
-            <option  value="aes-192-cbc" class="w3-bar-item w3-select">AES-192-CBC</option>
-            <option  value="aes-256-cbc" class="w3-bar-item w3-select">AES-256-CBC</option>
-            <option  value="des3" class="w3-bar-item w3-select">DES3</option>
-          </div>
+
+<div class="w3-container w3-content w3-padding-64">
+    <h2 class="w3-cinzel w3-padding-16"> <b>Encrypt and Decrypt Files</b> </h2>
+    <hr>
+
+    
+
+
+
+    <div class="w3-left">
+      <form id="files" action="/crypter/" enctype=multipart/form-data method="POST">
+
+        <span class="w3-cinzel w3-xlarge">Provide an <b>iv</b>, a <b>key</b> and <b>select a cipher</b></span>
+        <br>
+        <br>
+        <span class="w3-cinzel w3-small"><b>Only the cipher is required, KEYS ARE ALWAYS GENERATED</b> in case you do not provide them. 
+        <br>  
+        You can also generate keys by demand clicking on "Generate Keys"</span>
+        <br>
+
+        <br>
+
+        <label class="w3-cinzel">IV</label>
+        <input  name="encryption_iv" type="text">
+        <label class="w3-cinzel">Key</label>
+        <input name="encryption_key"  type="text">
+        
+
+        <select class="w3-cinzel" name="selected_cipher">
+            <option  disabled>Cipher</option>
+            <option  value="aes-128-cbc" >AES-128-CBC</option>
+            <option  value="aes-192-cbc" >AES-192-CBC</option>
+            <option  value="aes-256-cbc" >AES-256-CBC</option>
+            <option  value="des3">DES3</option>
         </select>
-        <select multiple type="file" class="w3-select w3-border" size="10" name="selected_files" enctype="multipart/form-data">
+        <!-- <br>
+        <br> -->
+        
+        <input class="w3-check w3-maring-left" name="base64_encoding" type="checkbox">
+        <label class="w3-cinzel">Base64</label>
+        <br>
+        
+        <hr>
+
+        <span class="w3-cinzel">Upload your files</span>
+        <br>
+        <br>
+        
+
+        <input class="w3-dark-grey w3-round w3-cinzel" type=file name=file>
+        <input class="w3-dark-grey w3-round w3-cinzel" type=submit value=Upload>
+        <br>
+        <hr>
+
+        <select multiple type="file" class="w3-select" size="10" name="selected_files" enctype="multipart/form-data">
           <option class="w3-list w3-center" disabled name="selected_files">Untouched Files</option> 
           {% for item in listdir.untouched  %}
             <option class="w3-list" value="{{item}}" name="selected_files">{{ item }} </option> 
@@ -41,37 +71,35 @@
           {% endfor %} 
         </select>
         <br>
-        <input class="w3-btn w3-black w3-hover-white" formaction="/encrypt_file/" type="submit" value="Encrypt Selected">
-        <input class="w3-btn w3-black w3-hover-white" formaction="/decrypt_file/" type="submit" value="Decrypt Selected">
-        <input class="w3-btn w3-black w3-hover-white" formaction="/crypter/generate_keys_from_selected_files" type="submit" value="Generate Keys">
-        <input class="w3-btn w3-black w3-hover-white" formaction="/delete_file/" type="submit" value="Delete Selected">
-        <br><br>
-        <label>IV</label>
-        <input class="w3-input" name="encryption_iv" type="text">
 
-        <label>Key</label>
-        <input class="w3-input" name="encryption_key"  type="text"><br>
-      </form>
-    </div>
-    <div class="w3-container w3-center">
-      <div class="w3-responsive">
-      <table class="w3-table-all">
-      <tr class="w3-black">
-        <th>Filename</th>
-        <th>IV</th>
-        <th>Key</th> 
-      </tr>
-      {% for item in enc_info  %}
-        <tr>
-          <td> {{ item.filename }}</td>
-          <td> {{ item.iv }}</td>
-          <td> {{ item.key }}</td>
-        </tr>
-      {% endfor %}
-      </table>
-      </div>
-    </div>
-  </div>
-</div>    
+        <input class="w3-dark-grey w3-round w3-cinzel" formaction="/encrypt_file/" type="submit" value="Encrypt Selected">
+        <input class="w3-dark-grey w3-round w3-cinzel" formaction="/decrypt_file/" type="submit" value="Decrypt Selected">
+        <input class="w3-dark-grey w3-round w3-cinzel" formaction="/crypter/generate_keys_from_selected_files" type="submit" value="Generate Keys" onclick="show_table()">
+        <input class="w3-dark-grey w3-round w3-cinzel" formaction="/delete_file/" type="submit" value="Delete Selected">
+        <br>
+        <br>
 
+
+        <table class="w3-table w3-left w3-bordered">
+            <tr class=" w3-round w3-cinzel w3-large">
+              <th><b>Filename</b></th>
+              <th><b>IV</b></th>
+              <th><b>Key</b></th> 
+            </tr>
+            {% for item in enc_info  %}
+              <tr class="w3-round">
+                <td> {{ item.filename }}</td>
+                <td> {{ item.iv }}</td>
+                <td> {{ item.key }}</td>
+              </tr>
+            {% endfor %}
+          </table>
+
+        </form>
+    </div>
+
+  
+</div> 
 {% endblock %}
+
+

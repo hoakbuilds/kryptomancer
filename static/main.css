@@ -9,14 +9,13 @@
     background-image: linear-gradient(141deg, #58d2df8c 10%, #27909c7e 90%);
 } */
 
-select {
-  padding: 4px;
-}
-option{
-  padding: 4px 10px 4px 10px;
-  border-bottom: 1px #27919c;
-}
+
+
 /* Style tab links */
+
+.w3-cinzel {
+  font-family: 'Cinzel', serif;
+}
 
 .tablink {
   background-color: #555;
@@ -42,21 +41,9 @@ option{
     width: 33.3333%;
 }
 
-/* Style main container */ 
-/* .container {
-  padding-right: 2%;
-  padding-left:  2%;
-  background-color: rgba(255, 255, 255, 0.8);
-  width: 90%;
-  max-width: 90%;
-  margin: 3% auto;
-  overflow-wrap: break-word;
-} */
-
 .word-wrapper{
   padding-left: 5px;
   padding-right: 5px;
-  margin: 0 auto;
   max-width: 1080px;
   overflow-wrap: break-word;
   word-break: break-all;
@@ -176,7 +163,9 @@ option{
     z-index: 1; /* Add a z-index if needed */
     left: 50%; /* Center the snackbar */
     bottom: 30px; /* 30px from the bottom */
+
 }
+
 
 /* Show the snackbar when clicking on a button (class added with JavaScript) */
 #snackbar.show {
@@ -188,9 +177,7 @@ option{
 }
 
 
-.w3-cinzel {
-  font-family: 'Cinzel', serif;
-}
+
 
 /* Animations to fade the snackbar in and out */
 @-webkit-keyframes fadein {
