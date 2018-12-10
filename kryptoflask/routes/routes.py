@@ -235,7 +235,7 @@ def generate(bits=128):
             return render_template('password_gen.html', data=[])
     elif bits == 128 or bits == 192 or bits == 256 :
         data = generate_aes_key_iv( bytes= str(int(bits/8)) )
-    elif bits == 168:
+    elif bits == 192:
         data = generate_3des_key_iv()
     else:
         data = generate_key( bytes=str(int(bits/8)))
