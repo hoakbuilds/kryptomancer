@@ -411,6 +411,7 @@ def delete_file():
     #print('delete_file', file=sys.stderr)
     if request.method == 'POST':
         # check if the post request has the file part
+        hidden_redirect = None
         selected_files = request.form.getlist('selected_files')
         if selected_files is not None: # Deletes selected files in select form
             print('------------ Files Selected:', file=sys.stderr)
@@ -418,6 +419,7 @@ def delete_file():
                 print(f,  file=sys.stderr)
                 split = f.split('.')[-1]
                 if split == 'pub' or split == 'pem':
+                    hidden_redirect = True
                     filename = os.path.join(TEMP_FOLDER, f)
                 else:
                     filename = os.path.join(UPLOAD_FOLDER, f)
@@ -433,9 +435,12 @@ def delete_file():
                 filename = os.path.join(UPLOAD_FOLDER, f)
                 print(filename, file=sys.stderr)
                 os.remove(filename)
-
-        files = get_uploaded_files()
-        return render_template('file_crypter.html', listdir=files, enc_info=[])
+        if hidden_redirect is not None:
+            files = get_temporary_files()
+            return render_template('rsa_gen.html', listdir=files, enc_info=[])   
+        else:
+            files = get_uploaded_files()
+            return render_template('file_crypter.html', listdir=files, enc_info=[])
 
     files = get_uploaded_files()
     return render_template('file_crypter.html', listdir=files, enc_info=[])
