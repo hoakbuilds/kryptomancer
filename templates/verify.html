@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="w3-container w3-content w3-padding-64">
+    <h2 class="w3-cinzel w3-padding-16"> <b> Verify Signed Files </b> </h2>
+    <hr>
+
+    <form class="example" action="/verify" name="verify" method=post>
+        <select class="w3-cinzel" name="selected_cipher">
+            <option disabled >Hash function</option>
+            <option  value="sha256" >SHA256</option>
+            <option  value="sha512" >SHA512</option>
+        </select>
+        <select multiple type="file" class="w3-select" size="10" name="uploaded_files" enctype="multipart/form-data">
+          <option class="w3-list w3-center" disabled name="uploaded_files">Untouched Files</option> 
+          {% for item in listdir.untouched  %}
+            <option class="w3-list" value="{{item}}" name="uploaded_files">{{ item }} </option> 
+          {% endfor %}
+          <option class="w3-list w3-center" disabled name="uploaded_files">Encrypted Files</option> 
+          {% for item in listdir.encrypted  %}
+            <option class="w3-list" value="{{item}}" name="uploaded_files">{{ item }} </option> 
+          {% endfor %}
+          <option class="w3-list w3-center" disabled name="uploaded_files">Decrypted Files</option>
+          {% for item in listdir.decrypted  %}
+            <option class="w3-list" value="{{item}}" name="uploaded_files">{{ item }} </option> 
+          {% endfor %}
+          <option class="w3-list w3-center" disabled name="uploaded_files">Signature Files</option> 
+          {% for item in listdir.signed  %}
+            <option class="w3-list" value="{{item}}" name="uploaded_files">{{ item }} </option> 
+          {% endfor %}
+          <option class="w3-list w3-center" disabled name="uploaded_files">Verified Files</option>
+          {% for item in listdir.verified  %}
+            <option class="w3-list" value="{{item}}" name="uploaded_files">{{ item }} </option> 
+          {% endfor %}  
+        </select>
+        <select multiple type="file" class="w3-select w3-border" size="10" name="selected_files" enctype="multipart/form-data">
+            <option class="w3-list w3-center" disabled name="selected_files">Secrets</option> 
+            {% for item in listdir.sk  %}
+            <option class="w3-list" value="{{item}}" name="selected_files">{{ item }} </option> 
+            {% endfor %}
+            <option class="w3-list w3-center" disabled name="selected_files">Public</option> 
+            {% for item in listdir.pk  %}
+            <option class="w3-list" value="{{item}}" name="selected_files">{{ item }} </option> 
+            {% endfor %}
+        </select>
+        <button type="submit" value='Generate Key' class=" w3-dark-grey w3-round w3-cinzel">Sign File</button>
+    </form>
+    {% for item in data  %}
+        {% if item.ok %}
+            <div class="w3-container w3-row-cell w3-margin-top">
+            <h2 class="w3-cinzel w3-cell">Filename: </h2>
+            <p id="" class="w3-cell word-wrapper">{{ item.filename }}</p>
+            <br>
+            <h2 class="w3-cinzel w3-cell">Signature: </h2>
+            <p id="" class="w3-cell word-wrapper">{{ item.ok }}</p>
+            </div>
+        {% endif %}
+        {% if item.error %}
+            <div class="w3-container w3-row-cell w3-margin-top">
+            <h2 class="w3-cinzel w3-cell">Filename: </h2>
+            <p id="" class="w3-cell word-wrapper">{{ item.filename }}</p>
+            <br>
+            <h2 class="w3-cinzel w3-cell">Signature: </h2>
+            <p id="" class="w3-cell word-wrapper">{{ item.error }}</p>
+            </div>
+        {% endif %}
+    {% endfor %}
+</div>
+
+
+<script>
+function clipboard(element_name) {
+    if(element_name == '0'){
+        console.log('iv');
+        var copyText = document.getElementById("span_iv");
+        var textArea = document.createElement("textarea");
+        textArea.value = copyText.textContent;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand("Copy");
+        textArea.remove();
+        var tooltip = document.getElementById("iv_out_tooltip");
+        tooltip.innerHTML = "Copied to clipboard.";
+    }else{
+
+        console.log('key');
+        var copyText = document.getElementById("span_key");
+        var textArea = document.createElement("textarea");
+        textArea.value = copyText.textContent;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand("Copy");
+        textArea.remove();
+        
+        var tooltip = document.getElementById("key_out_tooltip");
+        tooltip.innerHTML = "Copied to clipboard";
+    }
+  
+}
+
+
+function outFunc(element_name) {
+    if(element_name == '0'){
+        var tooltip = document.getElementById("iv_out_tooltip");
+        tooltip.innerHTML = "Copy to clipboard";
+    }else{
+        var tooltip = document.getElementById("key_out_tooltip");
+        tooltip.innerHTML = "Copy to clipboard";
+    }
+}
+
+function myFunction() {
+    // Get the snackbar DIV
+    var x = document.getElementById("snackbar");
+
+    // Add the "show" class to DIV
+    x.className = "show";
+
+    // After 3 seconds, remove the show class from DIV
+    setTimeout(function(){ x.className = x.className.replace("show", ""); }, 10000);
+}
+</script>
+{% endblock %}
