@@ -178,6 +178,7 @@ def digest():
                 print(f, file=sys.stderr)
                 digest_info = digest_file(input_file=f, hash_algorithm=selected_hash_algorithm)
                 digest_info['filename'] = f
+                digest_info['algorithm'] = selected_hash_algorithm
                 digest_list.append(digest_info)
 
             print(digest_list)
@@ -227,6 +228,10 @@ def generate(bits=128):
         form = request.form.get('base64_encoding')
         size = request.form.get('size')
         if size is not '':
+            try:
+                size = int(size)
+            except:
+                return render_template('password_gen.html', data=[])
             if form:
                 print(form, file=sys.stderr)
                 data = generate_key( bytes= str(int(size)), base64=True)
@@ -264,6 +269,7 @@ def hmac_calculator():
                                          hash_algorithm=hash_algorithm,
                                         key=hmac_key)
                     hmac_info['filename']=f
+                    hmac_info['algorithm']=hash_algorithm
                     hmac_list.append(hmac_info)
                 print(hmac_list)
                 return render_template('hmac.html', hmac_info=hmac_list, listdir = files)

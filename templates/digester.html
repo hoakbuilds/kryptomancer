@@ -53,12 +53,16 @@
   <table class="w3-table w3-left w3-bordered">
   <tr class="w3-round w3-cinzel w3-large">
     <th>Filename</th>
-    <th>Digest</th> 
+    <th>Algorithm</th>
+    <th></th>
+    <th>Digest</th>
   </tr>
   {% for item in digest_info  %}
     <tr>
       <td> {{ item.filename }}</td>
-      <td> {{ item.hash }}</td>
+      <td> {{ item.algorithm }}</td>
+      <td> <button id="copy_{{item.filename}}" onclick="digest_clip({{item|safe}})" onmouseout="outFunc({{item|safe}})" class="w3-dark-grey w3-round w3-cinzel">Copy.</button> </td>
+      <td id="{{item.filename}}">  {{ item.hash }}</td> 
     </tr>
   {% endfor %}
   </table>
@@ -66,5 +70,21 @@
 
 </div>
   
-
+<script>
+  function digest_clip(element) {
+    var copyText = document.getElementById(element.filename);
+    var textArea = document.createElement("textarea");
+    textArea.value = copyText.textContent;
+    document.body.appendChild(textArea);
+    textArea.select();
+    document.execCommand("Copy");
+    textArea.remove();
+    var tooltip = document.getElementById("copy_"+element.filename);
+    tooltip.innerHTML = "Copied to clipboard.";
+  }
+  function outFunc(element) {
+    var tooltip = document.getElementById("copy_"+element.filename);
+    tooltip.innerHTML = "Copy.";
+  }
+</script>
 {% endblock %}

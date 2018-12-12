@@ -177,7 +177,7 @@ def hmac_file( input_file, hash_algorithm, key ):
 
 def encrypt_file( input_file, key, iv, cipher = None, base64=None):
     file_path = os.path.join(UPLOADS_FOLDER, input_file)
-    enc_file = os.path.join(OPENSSL_OUTPUT_FOLDER,  input_file + ".enc")
+    enc_file = os.path.join(UPLOADS_FOLDER,  input_file + ".enc")
 
     if cipher is not None:
         print('Cipher selected: ' + cipher, file=sys.stderr)
@@ -207,7 +207,7 @@ def encrypt_file( input_file, key, iv, cipher = None, base64=None):
 
 def decrypt_file( input_file, key, iv, cipher = None, base64=None ):
     file_path = os.path.join(UPLOADS_FOLDER, input_file)
-    dec_file = os.path.join(OPENSSL_OUTPUT_FOLDER, file_path.rsplit('.',1)[0] + ".dec")
+    dec_file = os.path.join(UPLOADS_FOLDER, file_path.rsplit('.',1)[0] + ".dec")
 
     if cipher is not None:
         print('Cipher selected: ' + cipher, file=sys.stderr)
