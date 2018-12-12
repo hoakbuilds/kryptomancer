@@ -24,7 +24,7 @@ from . import routes
 from kryptoflask.openssl import (
     generate_aes_key_iv, generate_3des_key_iv, generate_key, encrypt_file,
     decrypt_file, digest_file, generate_rsa, rsa_pubout, hmac_file,
-    view_key_from_pem
+    view_key_from_pem, sign_file_with_private_key, verify_file_with_public_key
 )
 
 UPLOAD_FOLDER = os.getcwd() + '/uploads'
@@ -287,27 +287,49 @@ def hmac_calculator():
 def signify():
     print('signify', file=sys.stderr)
     if request.method == 'POST':
-        sk = request.form.get('sk_file')
-        pk = request.form.get('pk_file')
-        selected_files = request.form.get('selected_files')
-        if selected_files is not None:
-            rsa_pubout(selected_files)
-            files = get_temporary_files()
-            return render_template('signify.html', data=[], listdir = files)
-        elif sk is not '' and pk is not '':
-            print(sk, pk) 
-            data = generate_rsa(output_file=sk)
-            if 'ok' in data:
-                files = get_temporary_files()
-                for f in files:
-                    print(f, file=sys.stderr)
-        else:
-            files = get_temporary_files()
-            return render_template('signify.html', data=[], listdir = files)
+        files = {**get_temporary_files(), **get_uploaded_files()} #joins two dicts :)
+        private_key_file = request.form.get('selected_files')
+        if private_key_file is None:
+            return render_template('sign.html',  data=[], listdir=files)
+        file_to_sign = request.form.getlist('uploaded_files')
+        if file_to_sign is None:
+            return render_template('sign.html',  data=[], listdir=files)
+        hash = request.form.get('selected_cipher')
+        data_list = []
+        for f in file_to_sign:
+            data = sign_file_with_private_key(f,private_key_file, hash)
+            data['filename'] = f
+            data_list.append(data)
+        return render_template('sign.html',  data=data_list, listdir=files)
     
-    files = get_temporary_files()
+    files = {**get_temporary_files(), **get_uploaded_files()} #joins two dicts :)
     
-    return render_template('signify.html',  data=[], listdir=files)
+    return render_template('sign.html',  data=[], listdir=files)
+
+@routes.route('/verify', methods=['GET', 'POST'])
+def verify():
+    print('verify', file=sys.stderr)
+    if request.method == 'POST':
+        files = {**get_temporary_files(), **get_uploaded_files()} #joins two dicts :)
+        private_key_file = request.form.get('selected_files')
+        if private_key_file is None:
+            return render_template('verify.html',  data=[], listdir=files)
+        file_to_sign = request.form.getlist('uploaded_files')
+        if file_to_sign is None:
+            return render_template('verify.html',  data=[], listdir=files)
+        hash = request.form.get('selected_cipher')
+        data_list = []
+
+        for f in file_to_sign:
+            data = verify_file_with_public_key(f,private_key_file, hash)
+            data['filename'] = f
+            data_list.append(data)
+
+        return render_template('verify.html',  data=data_list, listdir=files)
+    
+    files = {**get_temporary_files(), **get_uploaded_files()} #joins two dicts :)
+    
+    return render_template('verify.html',  data=[], listdir=files)
 
 
 
@@ -517,9 +539,9 @@ def get_temporary_files():
 
     for f in listdir:
         if f.split('.')[-1] == 'pem':
-            pk.append(f)
-        else:
             sk.append(f)
+        else:
+            pk.append(f)
     
     res['sk'] = sk
     res['pk'] = pk
