@@ -7,9 +7,9 @@
     <a class="w3-bar-item w3-button w3-cinzel" href="{{ url_for('routes.generate') }}" onmouseover="snackbar(0)" ><img src="../static/icon/alchemy/png/key.png" style="width: 20%; height: 20%"> Keygen</img></a>
     <a class="w3-bar-item w3-button w3-cinzel" href="{{ url_for( 'routes.crypter' )}}" onmouseover="snackbar(1)" ><img src="../static/icon/alchemy/png/skull.png" style="width: 20%; height: 20%"> Encrypt/Decrypt</img></a>
     <a class="w3-bar-item w3-button w3-cinzel" href="{{ url_for( 'routes.digester' ) }}" onmouseover="snackbar(2)" ><img src="../static/icon/alchemy/png/flask.png" style="width: 20%; height: 20%"> Digest</img></a>
-    <a class="w3-bar-item w3-button w3-cinzel" href="" onmouseover="snackbar(3)" ><img src="../static/icon/alchemy/png/test-tube.png" style="width: 20%; height: 20%"> HMAC</img></a>
+    <a class="w3-bar-item w3-button w3-cinzel" href="{{ url_for( 'routes.hmac_calculator' )}}" onmouseover="snackbar(3)" ><img src="../static/icon/alchemy/png/test-tube.png" style="width: 20%; height: 20%"> HMAC</img></a>
     <a class="w3-bar-item w3-button w3-cinzel" href="{{ url_for( 'routes.gen_rsa' )}}" onmouseover="snackbar(4)" ><img src="../static/icon/alchemy/png/hands.png" style="width: 20%; height: 20%"> RSA</img></a>
-    <a class="w3-bar-item w3-button w3-cinzel" href="#" onmouseover="snackbar(5)" ><img src="../static/icon/alchemy/png/hand.png" style="width: 20%; height: 20%"> Sign/Verify </img></a>
+    <a class="w3-bar-item w3-button w3-cinzel" href="{{ url_for( 'routes.signify' )}}" onmouseover="snackbar(5)" ><img src="../static/icon/alchemy/png/hand.png" style="width: 20%; height: 20%"> Sign/Verify </img></a>
 </nav>
 
 <!-- <div class="w3-overlay w3-hide-large w3-animate-opacity" onclick="w3_close()" style="cursor:pointer" id="myOverlay"></div>

@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="w3-container w3-content">
+    <h2 class="w3-cinzel"> Sign and Verifiy. </h2>
+    <h3 class="w3-cinzel"> Do not trust. </h3>
+    <hr>
+
+    <form class="example" action="/gen_rsa" name="generate" method=post>
+        <label class="w3-cinzel">SK File</label>
+        <input  name="sk_file" type="text">
+        <label class="w3-cinzel">PK File</label>
+        <input name="pk_file"  type="text">
+        <br>
+        <select multiple type="file" class="w3-select w3-border" size="10" name="selected_files" enctype="multipart/form-data">
+            <option class="w3-list w3-center" disabled name="selected_files">Secrets</option> 
+            {% for item in listdir.sk  %}
+            <option class="w3-list" value="{{item}}" name="selected_files">{{ item }} </option> 
+            {% endfor %}
+            <option class="w3-list w3-center" disabled name="selected_files">Public</option> 
+            {% for item in listdir.pk  %}
+            <option class="w3-list" value="{{item}}" name="selected_files">{{ item }} </option> 
+            {% endfor %}
+        </select>
+        <button type="submit" value='Generate Key' class=" w3-dark-grey w3-round w3-cinzel">Generate RSA</button>
+        <button type="submit" value='Extract PK' class=" w3-dark-grey w3-round w3-cinzel">Extract Public Key</button>
+    </form>
+
+    <div class="w3-container w3-row-cell w3-margin-top">
+    <h2 class="w3-cinzel w3-cell">SK: </h2>
+    <p id="span_key" class="w3-cell word-wrapper">{{ data.key }}</p>
+    </div>
+    <button id="key_out_tooltip"onclick="clipboard(1)" onmouseout="outFunc(1)" class="w3-dark-grey w3-round w3-cinzel">Copy to clipboard</button>
+
+        {% if data.iv %}
+        <div class="w3-container w3-row-cell">
+        <h2 class="w3-cinzel w3-cell">PK: </h2>           
+        <p id="span_iv" class="word-wrapper w3-cell">{{ data.iv }}</p>
+        </div>
+        <button id="iv_out_tooltip" onclick="clipboard(0)" onmouseout="outFunc(0)" class="w3-dark-grey w3-round w3-cinzel">Copy to clipboard</button>
+        <br>             
+        {% endif %}  
+
+</div>
+
+
+<script>
+function clipboard(element_name) {
+    if(element_name == '0'){
+        console.log('iv');
+        var copyText = document.getElementById("span_iv");
+        var textArea = document.createElement("textarea");
+        textArea.value = copyText.textContent;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand("Copy");
+        textArea.remove();
+        var tooltip = document.getElementById("iv_out_tooltip");
+        tooltip.innerHTML = "Copied to clipboard.";
+    }else{
+
+        console.log('key');
+        var copyText = document.getElementById("span_key");
+        var textArea = document.createElement("textarea");
+        textArea.value = copyText.textContent;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand("Copy");
+        textArea.remove();
+        
+        var tooltip = document.getElementById("key_out_tooltip");
+        tooltip.innerHTML = "Copied to clipboard";
+    }
+  
+}
+
+
+function outFunc(element_name) {
+    if(element_name == '0'){
+        var tooltip = document.getElementById("iv_out_tooltip");
+        tooltip.innerHTML = "Copy to clipboard";
+    }else{
+        var tooltip = document.getElementById("key_out_tooltip");
+        tooltip.innerHTML = "Copy to clipboard";
+    }
+}
+
+function myFunction() {
+    // Get the snackbar DIV
+    var x = document.getElementById("snackbar");
+
+    // Add the "show" class to DIV
+    x.className = "show";
+
+    // After 3 seconds, remove the show class from DIV
+    setTimeout(function(){ x.className = x.className.replace("show", ""); }, 10000);
+}
+</script>
+{% endblock %}

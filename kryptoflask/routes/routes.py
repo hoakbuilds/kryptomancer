@@ -244,6 +244,59 @@ def generate(bits=128):
     
     return render_template('password_gen.html',  data=data)
 
+@routes.route('/hmac', methods=['GET', 'POST'])
+def hmac_calculator():
+    
+    if request.method == 'POST':
+        sk = request.form.get('sk_file')
+        pk = request.form.get('pk_file')
+        selected_files = request.form.get('selected_files')
+        if selected_files is not None:
+            rsa_pubout(selected_files)
+            files = get_temporary_files()
+            return render_template('hmac.html', data=[], listdir = files)
+        elif sk is not '' and pk is not '':
+            print(sk, pk) 
+            data = generate_rsa(output_file=sk)
+            if 'ok' in data:
+                files = get_temporary_files()
+                for f in files:
+                    print(f, file=sys.stderr)
+        else:
+            files = get_temporary_files()
+            return render_template('hmac.html', data=[], listdir = files)
+    
+    files = get_temporary_files()
+    
+    return render_template('hmac.html',  data=[], listdir=files)
+
+@routes.route('/signify', methods=['GET', 'POST'])
+def signify():
+    
+    if request.method == 'POST':
+        sk = request.form.get('sk_file')
+        pk = request.form.get('pk_file')
+        selected_files = request.form.get('selected_files')
+        if selected_files is not None:
+            rsa_pubout(selected_files)
+            files = get_temporary_files()
+            return render_template('signify.html', data=[], listdir = files)
+        elif sk is not '' and pk is not '':
+            print(sk, pk) 
+            data = generate_rsa(output_file=sk)
+            if 'ok' in data:
+                files = get_temporary_files()
+                for f in files:
+                    print(f, file=sys.stderr)
+        else:
+            files = get_temporary_files()
+            return render_template('signify.html', data=[], listdir = files)
+    
+    files = get_temporary_files()
+    
+    return render_template('signify.html',  data=[], listdir=files)
+
+
 
 @routes.route('/gen_rsa', methods=['GET', 'POST'])
 def gen_rsa():
