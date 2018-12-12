@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="w3-container w3-content w3-padding-64">
+    <h2 class="w3-cinzel w3-padding-16"> <b> HMAC Calculator </b> </h2>
+    <hr>
+
+
+    <span class="w3-cinzel w3-xlarge">Provide a <b>key</b> to be used to calculate the HMAC.</span>
+    <br>
+    <br> 
+    
+
+    <form class="example" action="/hmac_calculator" name="generate" method=post>
+        <label class="w3-cinzel">HMAC Key</label>
+        <input  name="hmac_key" type="text">
+        <br>
+        <hr> 
+        <span class="w3-cinzel">Upload your files</span>
+        <br>
+        <br>
+        
+
+        <input class="w3-dark-grey w3-round w3-cinzel" type=file name=file>
+        <input class="w3-dark-grey w3-round w3-cinzel" type=submit value=Upload>
+        <br>
+        <hr>
+        <select multiple type="file" class="w3-select" size="10" name="selected_files" enctype="multipart/form-data">
+          <option class="w3-list w3-center" disabled name="selected_files">Untouched Files</option> 
+          {% for item in listdir.untouched  %}
+            <option class="w3-list" value="{{item}}" name="selected_files">{{ item }} </option> 
+          {% endfor %}
+          <option class="w3-list w3-center" disabled name="selected_files">Encrypted Files</option> 
+          {% for item in listdir.encrypted  %}
+            <option class="w3-list" value="{{item}}" name="selected_files">{{ item }} </option> 
+          {% endfor %}
+          <option class="w3-list w3-center" disabled name="selected_files">Decrypted Files</option>
+          {% for item in listdir.decrypted  %}
+            <option class="w3-list" value="{{item}}" name="selected_files">{{ item }} </option> 
+          {% endfor %} 
+        </select>
+
+        <span class="w3-cinzel">Select the desired cryptographic hash function</span>
+    
+        <select class="w3-cinzel" name="hash_algorithm">
+            <option disabled >Hash function</option>
+            <option  value="sha1" >SHA1</option>
+            <option  value="sha256" >SHA256</option>
+            <option  value="sha512" >SHA512</option>
+            <option  value="md5" >MD5</option>
+            <option  value="sm3" >SM3</option>
+            <option  value="blake2s256">BLAKE2S256</option>
+        </select>
+
+        <input class="w3-dark-grey w3-round w3-cinzel" formaction="/hmac" type="submit" value="Generate HMAC">
+        <input class="w3-dark-grey w3-round w3-cinzel" formaction="/delete_temp/" type="submit" value="Delete Selected">
+        <br>
+        <br>
+    </form>
+
+    <table class="w3-table w3-left w3-bordered">
+    <tr class="w3-round w3-cinzel w3-large">
+        <th>Filename</th>
+        <th>Algorithm</th>
+        <th></th>
+        <th>HMAC</th> 
+    </tr>
+    {% for item in hmac_info  %}
+        <tr>
+        <td> {{ item.filename }}</td>
+        <td> {{ item.algorithm }}</td>
+        <td> <button id="copy_{{item.filename}}" onclick="digest_clip({{item|safe}})" onmouseout="outFunc({{item|safe}})" class="w3-dark-grey w3-round w3-cinzel">Copy.</button> </td>
+        <td id="{{item.filename}}"> {{ item.hmac }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+</div>
+
+
+<script>
+  function digest_clip(element) {
+    var copyText = document.getElementById(element.filename);
+    var textArea = document.createElement("textarea");
+    textArea.value = copyText.textContent;
+    document.body.appendChild(textArea);
+    textArea.select();
+    document.execCommand("Copy");
+    textArea.remove();
+    var tooltip = document.getElementById("copy_"+element.filename);
+    tooltip.innerHTML = "Copied to clipboard.";
+  }
+  function outFunc(element) {
+    var tooltip = document.getElementById("copy_"+element.filename);
+    tooltip.innerHTML = "Copy.";
+  }
+</script>
+
+
+{% endblock %}
