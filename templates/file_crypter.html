@@ -79,27 +79,114 @@
         <br>
         <br>
 
+        </form>
 
-        <table class="w3-table w3-left w3-bordered">
+
+        {% if gen_info %}
+          <table class="w3-table w3-left w3-bordered">
             <tr class=" w3-round w3-cinzel w3-large">
               <th><b>Filename</b></th>
+              <th></th>
               <th><b>IV</b></th>
+              <th></th>
+              <th><b>Key</b></th> 
+            </tr>
+            {% for item in gen_info  %}
+              <tr class="w3-round">
+                <td> {{ item.filename }}</td>
+                <td> <button id="copy_{{item.filename}}_iv" onclick="crypter_iv_clip({{item|safe}})" onmouseout="outFunc({{item|safe}}, '_iv')" class="w3-dark-grey w3-round w3-cinzel">Copy.</button> </td>
+                <td id="{{item.filename}}_iv">{{ item.iv }}</td>
+                <td> <button id="copy_{{item.filename}}_key" onclick="crypter_key_clip({{item|safe}})" onmouseout="outFunc({{item|safe}}, '_key')" class="w3-dark-grey w3-round w3-cinzel">Copy.</button> </td>
+                <td id="{{item.filename}}_key">{{ item.key }}</td>
+              </tr>
+            {% endfor %}
+          </table>
+        {% endif %}
+
+        {% if enc_info %}
+          <table class="w3-table w3-left w3-bordered">
+            <tr class=" w3-round w3-cinzel w3-large">
+              <th><b>Filename</b></th>
+              <th><b>Algorithm</b></th>
+              <th><b>Encryption</b></th>
+              <th></th>
+              <th><b>IV</b></th>
+              <th></th>
               <th><b>Key</b></th> 
             </tr>
             {% for item in enc_info  %}
               <tr class="w3-round">
                 <td> {{ item.filename }}</td>
-                <td> {{ item.iv }}</td>
-                <td> {{ item.key }}</td>
+                <td> {{ item.algorithm }}</td>
+                <td> {{ item.status }}</td>
+                <td> <button id="copy_{{item.filename}}_iv" onclick="crypter_iv_clip({{item|safe}})" onmouseout="outFunc({{item|safe}}, '_iv')" class="w3-dark-grey w3-round w3-cinzel">Copy.</button> </td>
+                <td id="{{item.filename}}_iv">{{ item.iv }}</td>
+                <td> <button id="copy_{{item.filename}}_key" onclick="crypter_key_clip({{item|safe}})" onmouseout="outFunc({{item|safe}}, '_key')" class="w3-dark-grey w3-round w3-cinzel">Copy.</button> </td>
+                <td id="{{item.filename}}_key">{{ item.key }}</td>
               </tr>
             {% endfor %}
           </table>
+        {% endif %}
+        
+        {% if dec_info %}
+        <table class="w3-table w3-left w3-bordered">
+            <tr class=" w3-round w3-cinzel w3-large">
+              <th><b>Filename</b></th>
+              <th><b>Algorithm</b></th>
+              <th><b>Decryption</b></th>
+              <th></th>
+              <th><b>IV</b></th>
+              <th></th>
+              <th><b>Key</b></th> 
+            </tr>
+            {% for item in dec_info  %}
+              <tr class="w3-round">
+                <td> {{ item.filename }}</td>
+                <td> {{ item.algorithm }}</td>
+                <td> {{ item.status }}</td>
+                <td> <button id="copy_{{item.filename}}_iv" onclick="crypter_iv_clip({{item|safe}})" onmouseout="outFunc({{item|safe}}, '_iv')" class="w3-dark-grey w3-round w3-cinzel">Copy.</button> </td>
+                <td id="{{item.filename}}_iv">{{ item.iv }}</td>
+                <td> <button id="copy_{{item.filename}}_key" onclick="crypter_key_clip({{item|safe}})" onmouseout="outFunc({{item|safe}}, '_key')" class="w3-dark-grey w3-round w3-cinzel">Copy.</button> </td>
+                <td id="{{item.filename}}_key">{{ item.key }}</td>
+              </tr>
+            {% endfor %}
+          </table>
+        {% endif %}
+        
 
-        </form>
     </div>
 
   
 </div> 
+
+<script>
+  function crypter_iv_clip(element) {
+    var copyText = document.getElementById(element.filename+"_iv");
+    var textArea = document.createElement("textarea");
+    textArea.value = copyText.textContent;
+    document.body.appendChild(textArea);
+    textArea.select();
+    document.execCommand("Copy");
+    textArea.remove();
+    var tooltip = document.getElementById("copy_"+element.filename+"_iv");
+    tooltip.innerHTML = "Copied to clipboard.";
+  }
+    function crypter_key_clip(element) {
+    var copyText = document.getElementById(element.filename+"_key");
+    var textArea = document.createElement("textarea");
+    textArea.value = copyText.textContent;
+    document.body.appendChild(textArea);
+    textArea.select();
+    document.execCommand("Copy");
+    textArea.remove();
+    var tooltip = document.getElementById("copy_"+element.filename+"_key");
+    tooltip.innerHTML = "Copied to clipboard.";
+  }
+  function outFunc(element, flag) {
+    var tooltip = document.getElementById("copy_"+element.filename+flag);
+    tooltip.innerHTML = "Copy.";
+  }
+</script>
 {% endblock %}
 
 

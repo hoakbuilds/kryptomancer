@@ -178,6 +178,8 @@ def hmac_file( input_file, hash_algorithm, key ):
 def encrypt_file( input_file, key, iv, cipher = None, base64=None):
     file_path = os.path.join(UPLOADS_FOLDER, input_file)
     enc_file = os.path.join(UPLOADS_FOLDER,  input_file + ".enc")
+    p = subprocess.Popen(['touch', enc_file]) # creating the output file before using it to prevent throwing errors
+    p.wait()
 
     if cipher is not None:
         print('Cipher selected: ' + cipher, file=sys.stderr)
@@ -207,7 +209,9 @@ def encrypt_file( input_file, key, iv, cipher = None, base64=None):
 
 def decrypt_file( input_file, key, iv, cipher = None, base64=None ):
     file_path = os.path.join(UPLOADS_FOLDER, input_file)
-    dec_file = os.path.join(UPLOADS_FOLDER, file_path.rsplit('.',1)[0] + ".dec")
+    dec_file = os.path.join(UPLOADS_FOLDER, input_file.rsplit('.', 1)[0] + ".dec")
+    p = subprocess.Popen(['touch', dec_file]) # creating the output file before using it to prevent throwing errors
+    p.wait()
 
     if cipher is not None:
         print('Cipher selected: ' + cipher, file=sys.stderr)
@@ -260,7 +264,7 @@ def generate_rsa( output_file ):
 #will extract the public key and print that out. Here is a link to a page that describes this better.
 def rsa_pubout( input_file ):
     input_file_path = os.path.join(TEMP_FOLDER, input_file)
-    file_path = os.path.join(TEMP_FOLDER, input_file + '.pub')
+    file_path = os.path.join(TEMP_FOLDER, input_file.split('.')[0] + '.pub')
     print(input_file_path, file=sys.stderr)
     print(file_path, file=sys.stderr)
     p = subprocess.Popen(['touch', file_path]) # creating the output file before using it to prevent throwing errors

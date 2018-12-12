@@ -53,7 +53,7 @@ def generate_keys_from_files():
         enc_info = generate_keys_for_files(selected_files, selected_cipher)
     else:
         return render_template('file_crypter.html', listdir=files)
-    return render_template('file_crypter.html', listdir=files , enc_info=enc_info['data'])
+    return render_template('file_crypter.html', listdir=files , gen_info=enc_info['data'])
 
 @routes.route('/crypter/', methods=['GET', 'POST']) 
 def crypter():
@@ -128,14 +128,14 @@ def encrypt():
         if selected_cipher is None:
             return render_template('file_crypter.html', listdir=files, enc_info=[])
         base64 = request.form.get('base64_encoding')
-        print(base64, file=sys.stderr)
+        print("Base64: " + str(base64), file=sys.stderr)
         iv = request.form.get('encryption_iv')
         if iv:
-            print('-------------Input IV: ' + str(iv), file=sys.stderr)
+            print('-------------Input IV:\n' + str(iv), file=sys.stderr)
 
         key = request.form.get('encryption_key')
         if key:
-            print('-------------Input KEY: ' + str(key), file=sys.stderr)
+            print('-------------Input KEY:\n' + str(key), file=sys.stderr)
         selected_files = request.form.getlist('selected_files')
         if selected_files is not None:
             print('------------ Files Selected:', file=sys.stderr)
@@ -209,12 +209,24 @@ def decrypt():
         selected_files = request.form.getlist('selected_files')
         if selected_files is not None:
             print('-------------Selected Encrypted Files: ', file=sys.stderr)
+            dec_list = []
             for f in selected_files:
                 print(f, file=sys.stderr)
-                enc_info = decrypt_single_file(f, key, iv, selected_cipher)
+                dec_info = decrypt_single_file(f, key, iv, selected_cipher)
+                dec_info['filename'] = f
+                dec_info['algorithm'] = selected_cipher
+                if 'ok' in dec_info:
+                    dec_info['status'] = dec_info['ok']
+                elif 'error' in dec_info:
+                    dec_info['status'] = dec_info['error']
+                dec_list.append(dec_info)
             print('------------ Files Decrypted:', file=sys.stderr)
-            for item in enc_info:
+            print(dec_list, file=sys.stderr)
+            for item in dec_list:
                 print(item, file=sys.stderr)
+
+            files = get_uploaded_files()
+            return render_template('file_crypter.html', listdir=files, dec_info=dec_list)
         else:
             files = get_uploaded_files()
             return render_template('file_crypter.html', listdir=files)
@@ -404,7 +416,11 @@ def delete_file():
             print('------------ Files Selected:', file=sys.stderr)
             for f in selected_files:
                 print(f,  file=sys.stderr)
-                filename = os.path.join(UPLOAD_FOLDER, f)
+                split = f.split('.')[-1]
+                if split == 'pub' or split == 'pem':
+                    filename = os.path.join(TEMP_FOLDER, f)
+                else:
+                    filename = os.path.join(UPLOAD_FOLDER, f)
                 print(filename, file=sys.stderr)
                 try:
                     os.remove(filename)
@@ -461,9 +477,13 @@ def encrypt_list_of_files(files, cipher=None, key=None, iv=None, base64=None): #
                 else: 
                     res = encrypt_file(f, obj['key'], obj['iv'], cipher)  
                 if 'ok' in res:
+                    obj['algorithm'] = cipher
+                    obj['status'] = 'ok'
                     print('ok', file=sys.stderr)
                     obj_list.append(obj)
                 elif 'error' in res:
+                    obj['algorithm'] = cipher
+                    obj['status'] = 'error'
                     print('error', file=sys.stderr)
                     pass
             #print(obj_list, file=sys.stderr)
@@ -483,37 +503,16 @@ def decrypt_single_file(filename, key, iv, cipher=None):
         else:
             res = decrypt_file(filename, key, iv)
         if 'ok' in res:
+            result['ok'] = 'ok'
             print('ok', file=sys.stderr)
         elif 'error' in res:
+            result['error'] = 'error'
             print('error', file=sys.stderr)
             pass
+        
+        result['iv'] = iv
+        result['key'] = key
         #print(obj_list, file=sys.stderr)
-        return result
-
-# Decrypts a list of files
-def decrypt_list_of_files(files):
-    print('decrypt_list_of_files', file=sys.stderr)
-    if files == None:
-        return []
-    else:
-        result = {}
-        obj_list = []
-        for f in files:
-            obj = {}
-            obj['filename'] = f
-            data = generate_key_iv(bytes=str(16))
-            obj['iv'] = data['iv']
-            obj['key'] = data['key']
-            print('DECRYPTING FILE: '+str(f), file=sys.stderr)
-            res = encrypt_file(f, obj['key'], obj['iv'])
-            if 'ok' in res:
-                print('ok', file=sys.stderr)
-                obj_list.append(obj)
-            elif 'error' in res:
-                print('error', file=sys.stderr)
-                pass
-            #print(obj_list, file=sys.stderr)
-        result['data'] = obj_list
         return result
 
 def generate_keys_for_files(files, selected_cipher):
@@ -548,15 +547,24 @@ def get_temporary_files():
     res = {}
     sk = []
     pk = []
+    signed = []
+    verified = []
 
     for f in listdir:
-        if f.split('.')[-1] == 'pem':
+        split = f.split('.')[-1]
+        if split == 'pem':
             sk.append(f)
-        else:
+        elif split == 'pub':
             pk.append(f)
+        elif split == 'sig':
+            signed.append(f)
+        elif split == 'ver':
+            verified.append(f)
     
     res['sk'] = sk
     res['pk'] = pk
+    res['signed'] = signed
+    res['verified'] = verified
     return res
 
 # Gets uploaded files and encrypted files, returns an object with 3 lists, encrypted files, decrypted and untouched
