@@ -20,11 +20,12 @@ from flask import Flask, redirect, url_for, request, render_template
 from werkzeug import secure_filename
 from . import openssl
 
-UPLOAD_FOLDER = os.getcwd() + '/uploads'
+UPLOADS_FOLDER = os.getcwd() + '/uploads'
+OPENSSL_OUTPUT_FOLDER = os.getcwd() + '/openssl_out'
 TEMP_FOLDER = os.getcwd() + '/temp'
 
 def generate_key( bytes, base64=None):
-    key_dir=os.path.join(UPLOAD_FOLDER, "key-file.txt")
+    key_dir=os.path.join(OPENSSL_OUTPUT_FOLDER, "key-file.txt")
     
     key_file = open(key_dir, 'w+')
     if base64 is None:
@@ -54,8 +55,8 @@ def generate_key( bytes, base64=None):
     return data
 
 def generate_aes_key_iv( bytes ):
-    key_dir=os.path.join(UPLOAD_FOLDER, "key-file.txt")
-    iv_dir=os.path.join(UPLOAD_FOLDER, "iv-file.txt")
+    key_dir=os.path.join(OPENSSL_OUTPUT_FOLDER, "key-file.txt")
+    iv_dir=os.path.join(OPENSSL_OUTPUT_FOLDER, "iv-file.txt")
     #print(iv_dir, key_dir)
 
     key_file = open(key_dir, 'w+')
@@ -89,8 +90,8 @@ def generate_aes_key_iv( bytes ):
     return data
 
 def generate_3des_key_iv():
-    key_dir=os.path.join(UPLOAD_FOLDER, "key-file.txt")
-    iv_dir=os.path.join(UPLOAD_FOLDER, "iv-file.txt")
+    key_dir=os.path.join(OPENSSL_OUTPUT_FOLDER, "key-file.txt")
+    iv_dir=os.path.join(OPENSSL_OUTPUT_FOLDER, "iv-file.txt")
     #print(iv_dir, key_dir)
 
     key_file = open(key_dir, 'w+')
@@ -125,10 +126,10 @@ def generate_3des_key_iv():
 
 def digest_file( input_file, hash_algorithm ):
 
-    key_dir=os.path.join(UPLOAD_FOLDER, "key-file.txt")
+    key_dir=os.path.join(OPENSSL_OUTPUT_FOLDER, input_file+'.'+str(hash_algorithm))
     key_file = open(key_dir, 'w+')
 
-    file_path = os.path.join(UPLOAD_FOLDER, input_file)
+    file_path = os.path.join(UPLOADS_FOLDER, input_file)
     hash = '-' + hash_algorithm
 
     p1 = subprocess.Popen(
@@ -138,20 +139,45 @@ def digest_file( input_file, hash_algorithm ):
     p1.wait()
     key_file = open(key_dir, 'r')
 
-    key = key_file.read().split('=')[1]
+    digest = key_file.read().split('=')[1]
 
-    print('Key ' + key)
+    print('Digest'+hash_algorithm+ ' ' + digest)
 
     data = {
-        'hash' : key
+        'hash' : digest
+    }
+
+    return data
+
+def hmac_file( input_file, hash_algorithm, key ):
+
+    key_dir=os.path.join(OPENSSL_OUTPUT_FOLDER, "key-file.txt")
+    key_file = open(key_dir, 'w+')
+
+    file_path = os.path.join(UPLOADS_FOLDER, input_file)
+    hash = '-' + hash_algorithm
+
+    p1 = subprocess.Popen(
+        ['openssl', 'dgst', hash, '-hmac', key, file_path,],
+        stdout=key_file
+    )
+    p1.wait()
+    key_file = open(key_dir, 'r')
+
+    hmac = key_file.read().split('=')[1]
+
+    print('HMAC'+hash_algorithm+ ' ' + hmac)
+
+    data = {
+        'hmac' : hmac
     }
 
     return data
 
 
 def encrypt_file( input_file, key, iv, cipher = None, base64=None):
-    file_path = os.path.join(UPLOAD_FOLDER, input_file)
-    enc_file = os.path.join(UPLOAD_FOLDER,  input_file + ".enc")
+    file_path = os.path.join(UPLOADS_FOLDER, input_file)
+    enc_file = os.path.join(OPENSSL_OUTPUT_FOLDER,  input_file + ".enc")
 
     if cipher is not None:
         print('Cipher selected: ' + cipher, file=sys.stderr)
@@ -180,8 +206,8 @@ def encrypt_file( input_file, key, iv, cipher = None, base64=None):
 
 
 def decrypt_file( input_file, key, iv, cipher = None, base64=None ):
-    file_path = os.path.join(UPLOAD_FOLDER, input_file)
-    dec_file = os.path.join(UPLOAD_FOLDER, file_path.rsplit('.',1)[0] + ".dec")
+    file_path = os.path.join(UPLOADS_FOLDER, input_file)
+    dec_file = os.path.join(OPENSSL_OUTPUT_FOLDER, file_path.rsplit('.',1)[0] + ".dec")
 
     if cipher is not None:
         print('Cipher selected: ' + cipher, file=sys.stderr)
@@ -253,3 +279,5 @@ def rsa_pubout( input_file ):
     except:
         print('Failed to encrypt: ' + str(file_path), file=sys.stderr)
         return {'error':'failed'}
+
+

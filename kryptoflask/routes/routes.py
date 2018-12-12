@@ -23,7 +23,7 @@ from werkzeug import secure_filename
 from . import routes
 from kryptoflask.openssl import (
     generate_aes_key_iv, generate_3des_key_iv, generate_key, encrypt_file,
-    decrypt_file, digest_file, generate_rsa, rsa_pubout
+    decrypt_file, digest_file, generate_rsa, rsa_pubout, hmac_file
 )
 
 UPLOAD_FOLDER = os.getcwd() + '/uploads'
@@ -246,33 +246,39 @@ def generate(bits=128):
 
 @routes.route('/hmac', methods=['GET', 'POST'])
 def hmac_calculator():
-    
+    print('hmac', file=sys.stderr)
     if request.method == 'POST':
-        sk = request.form.get('sk_file')
-        pk = request.form.get('pk_file')
-        selected_files = request.form.get('selected_files')
+        files = get_uploaded_files()
+        selected_files = request.form.getlist('selected_files')
         if selected_files is not None:
-            rsa_pubout(selected_files)
-            files = get_temporary_files()
-            return render_template('hmac.html', data=[], listdir = files)
-        elif sk is not '' and pk is not '':
-            print(sk, pk) 
-            data = generate_rsa(output_file=sk)
-            if 'ok' in data:
-                files = get_temporary_files()
-                for f in files:
-                    print(f, file=sys.stderr)
+            print('------------ Files Selected:', file=sys.stderr)
+            hmac_key = request.form.get('hmac_key')
+            hash_algorithm = request.form.get('hash_algorithm')
+
+            print(hmac_key, hash_algorithm,  file=sys.stderr)
+            if hmac_key is not None and hash_algorithm is not None:
+                hmac_list = []
+                for f in selected_files:
+                    print(f,  file=sys.stderr)
+                    hmac_info = hmac_file(input_file=f,
+                                         hash_algorithm=hash_algorithm,
+                                        key=hmac_key)
+                    hmac_info['filename']=f
+                    hmac_list.append(hmac_info)
+                print(hmac_list)
+                return render_template('hmac.html', hmac_info=hmac_list, listdir = files)
+            else:
+                return render_template('hmac.html', data=[], listdir = files)
         else:
-            files = get_temporary_files()
             return render_template('hmac.html', data=[], listdir = files)
     
-    files = get_temporary_files()
+    files = get_uploaded_files()
     
     return render_template('hmac.html',  data=[], listdir=files)
 
 @routes.route('/signify', methods=['GET', 'POST'])
 def signify():
-    
+    print('signify', file=sys.stderr)
     if request.method == 'POST':
         sk = request.form.get('sk_file')
         pk = request.form.get('pk_file')
@@ -300,17 +306,17 @@ def signify():
 
 @routes.route('/gen_rsa', methods=['GET', 'POST'])
 def gen_rsa():
-    
+    print('gen_rsa', file=sys.stderr)
     if request.method == 'POST':
         sk = request.form.get('sk_file')
         pk = request.form.get('pk_file')
         selected_files = request.form.get('selected_files')
         if selected_files is not None:
-            rsa_pubout(selected_files)
+            rsa_pubout(selected_files, file=sys.stderr)
             files = get_temporary_files()
             return render_template('rsa_gen.html', data=[], listdir = files)
         elif sk is not '' and pk is not '':
-            print(sk, pk) 
+            print(sk, pk, file=sys.stderr)
             data = generate_rsa(output_file=sk)
             if 'ok' in data:
                 files = get_temporary_files()
@@ -326,7 +332,6 @@ def gen_rsa():
 
 
 # Deleting files
-@routes.route('/crypter/delete_all/', methods=['GET', 'POST'])
 @routes.route('/delete_file/', methods=['GET', 'POST'])
 def delete_file():
     #print('delete_file', file=sys.stderr)
@@ -339,23 +344,11 @@ def delete_file():
                 print(f,  file=sys.stderr)
                 filename = os.path.join(UPLOAD_FOLDER, f)
                 print(filename, file=sys.stderr)
-                os.remove(filename)
+                try:
+                    os.remove(filename)
+                except:
+                    pass
         else:# Deletes all files
-            files = get_uploaded_files()
-            for f in files:
-                print(f,  file=sys.stderr)
-                filename = os.path.join(UPLOAD_FOLDER, f)
-                print(filename, file=sys.stderr)
-                os.remove(filename)
-        selected_enc_files = request.form.getlist('selected_enc_files')
-        if selected_enc_files is not None:  # Deletes selected files in select form 
-            print('------------ Encrypted Files Selected:', file=sys.stderr)
-            for f in selected_enc_files:
-                print(f,  file=sys.stderr)
-                filename = os.path.join(UPLOAD_FOLDER, f)
-                print(filename, file=sys.stderr)
-                os.remove(filename)
-        else: # Deletes all files
             files = get_uploaded_files()
             for f in files:
                 print(f,  file=sys.stderr)
