@@ -236,7 +236,7 @@ def decrypt_file( input_file, key, iv, cipher = None, base64=None ):
             return {'error':'failed'}
 
 
-#openssl genrsa -out mykey.pem 1024
+#openssl genrsa -out mykey.pem
 #will actually produce a public - private key pair. The pair is stored in the generated mykey.pem file.
 def generate_rsa( output_file ):
     file_path = os.path.join(TEMP_FOLDER, output_file + '.pem')
@@ -256,14 +256,14 @@ def generate_rsa( output_file ):
         print('Failed to encrypt: ' + str(file_path), file=sys.stderr)
         return {'error':'failed'}
 
-#openssl rsa -in mykey.pem -pubout > mykey.pub
+#openssl rsa -in mykey.pem -pubout -out mykey.pub
 #will extract the public key and print that out. Here is a link to a page that describes this better.
 def rsa_pubout( input_file ):
     input_file_path = os.path.join(TEMP_FOLDER, input_file)
     file_path = os.path.join(TEMP_FOLDER, input_file + '.pub')
     print(input_file_path, file=sys.stderr)
     print(file_path, file=sys.stderr)
-    p = subprocess.Popen(['touch', file_path])
+    p = subprocess.Popen(['touch', file_path]) # creating the output file before using it to prevent throwing errors
     p.wait()
     try:
             
@@ -280,4 +280,50 @@ def rsa_pubout( input_file ):
         print('Failed to encrypt: ' + str(file_path), file=sys.stderr)
         return {'error':'failed'}
 
+# openssl rsa -in teste1.pem.pub -pubin (to view PK)
+# or
+# openssl rsa -in teste1.pem (to view SK)
+#this function will receive a .pem file and extract the PK/SK to show the user in the app
+def view_key_from_pem( input_file ):
+    input_file_path = os.path.join(TEMP_FOLDER, input_file) #concat input file name and temp folder path
+    split = input_file.split('.')[-1] #check file extension
+    key_dir=os.path.join(OPENSSL_OUTPUT_FOLDER, "key."+split) #concat output file name and openssl's output folder path
 
+    key_file = open(key_dir, 'w+')
+    print(input_file_path, file=sys.stderr)
+    
+    if split == 'pem':
+        try:            
+            p = subprocess.Popen(
+                    ['openssl', 'rsa', '-in', input_file_path],
+                    stdout=key_file
+                )
+                    
+            p.wait()
+        except:
+            print('Failed to extract SK from: ' + str(input_file_path), file=sys.stderr)
+            return {'error':'failed'}
+    elif split == 'pub':
+        try:            
+            p = subprocess.Popen(
+                    ['openssl', 'rsa', '-in', input_file_path, '-pubin', ],
+                    stdout=key_file
+                )
+                    
+            p.wait()
+        except:
+            print('Failed to extract PK from: ' + str(input_file_path), file=sys.stderr)
+            return {'error':'failed'}
+
+    key_file = open(key_dir, 'r')
+
+    key = key_file.read()
+    if 'pem' in split:
+        data = {
+            'sk' : key
+        }
+    elif 'pub' in split:
+        data = {
+            'pk' : key
+        }
+    return data

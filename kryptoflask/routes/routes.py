@@ -23,7 +23,8 @@ from werkzeug import secure_filename
 from . import routes
 from kryptoflask.openssl import (
     generate_aes_key_iv, generate_3des_key_iv, generate_key, encrypt_file,
-    decrypt_file, digest_file, generate_rsa, rsa_pubout, hmac_file
+    decrypt_file, digest_file, generate_rsa, rsa_pubout, hmac_file,
+    view_key_from_pem
 )
 
 UPLOAD_FOLDER = os.getcwd() + '/uploads'
@@ -315,14 +316,13 @@ def gen_rsa():
     print('gen_rsa', file=sys.stderr)
     if request.method == 'POST':
         sk = request.form.get('sk_file')
-        pk = request.form.get('pk_file')
         selected_files = request.form.get('selected_files')
         if selected_files is not None:
-            rsa_pubout(selected_files, file=sys.stderr)
+            rsa_pubout(selected_files)
             files = get_temporary_files()
             return render_template('rsa_gen.html', data=[], listdir = files)
-        elif sk is not '' and pk is not '':
-            print(sk, pk, file=sys.stderr)
+        elif sk is not '':
+            print(sk, file=sys.stderr)
             data = generate_rsa(output_file=sk)
             if 'ok' in data:
                 files = get_temporary_files()
@@ -335,6 +335,28 @@ def gen_rsa():
     files = get_temporary_files()
     
     return render_template('rsa_gen.html',  data=[], listdir=files)
+
+@routes.route('/view_key', methods=['POST'])
+def view_key():
+    print('view_key', file=sys.stderr)
+    if request.method == 'POST':
+        selected_files = request.form.getlist('selected_files')
+        if selected_files is not None:
+            key_list = []
+            for f in selected_files:
+                print(f)
+                data = view_key_from_pem(f)
+                data['filename'] = f
+                key_list.append(data)
+            print(key_list, file=sys.stderr)
+            files = get_temporary_files()
+            return render_template('rsa_gen.html',  rsa_data=key_list, listdir=files)
+        files = get_temporary_files()
+        return render_template('rsa_gen.html',  data=[], listdir=files)
+    files = get_temporary_files()
+    return render_template('rsa_gen.html',  data=[], listdir=files)
+
+
 
 
 # Deleting files
@@ -494,10 +516,10 @@ def get_temporary_files():
     pk = []
 
     for f in listdir:
-        if '.pem' in f:
-            sk.append(f)
-        elif '.pub' in f:
+        if f.split('.')[-1] == 'pem':
             pk.append(f)
+        else:
+            sk.append(f)
     
     res['sk'] = sk
     res['pk'] = pk
@@ -512,9 +534,10 @@ def get_uploaded_files():
     untouched = []
 
     for f in listdir:
-        if '.enc' in f:
+        split = f.split('.')[-1]
+        if split == 'enc':
             enc.append(f)
-        elif '.dec' in f:
+        elif split == 'dec':
             dec.append(f)
         else:
             untouched.append(f)
