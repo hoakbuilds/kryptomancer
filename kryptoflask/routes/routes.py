@@ -297,7 +297,9 @@ def signify():
         hash = request.form.get('selected_cipher')
         data_list = []
         for f in file_to_sign:
-            data = sign_file_with_private_key(f,private_key_file, hash)
+            data = sign_file_with_private_key(file_to_verify=f,
+                                            private_key_file=private_key_file,
+                                            hash_algorithm=hash)
             data['filename'] = f
             data_list.append(data)
         return render_template('sign.html',  data=data_list, listdir=files)
@@ -311,19 +313,29 @@ def verify():
     print('verify', file=sys.stderr)
     if request.method == 'POST':
         files = {**get_temporary_files(), **get_uploaded_files()} #joins two dicts :)
-        private_key_file = request.form.get('selected_files')
-        if private_key_file is None:
+        public_key_file = request.form.get('selected_files')
+        if public_key_file is None:
             return render_template('verify.html',  data=[], listdir=files)
         file_to_sign = request.form.getlist('uploaded_files')
         if file_to_sign is None:
             return render_template('verify.html',  data=[], listdir=files)
+        if len(file_to_sign) != 2:
+            return render_template('verify.html',  data=[], listdir=files)
         hash = request.form.get('selected_cipher')
-        data_list = []
 
         for f in file_to_sign:
-            data = verify_file_with_public_key(f,private_key_file, hash)
-            data['filename'] = f
-            data_list.append(data)
+            if f.split('.')[-1] == 'sig':
+                file_signature = f
+            else:
+                file_to_verify = f
+
+        data_list = []
+        data = verify_file_with_public_key(file_to_verify=file_to_verify,
+                                        public_key_file=public_key_file,
+                                        signed_file=file_signature,
+                                        hash_algorithm=hash)
+        data['filename'] = f
+        data_list.append(data)
 
         return render_template('verify.html',  data=data_list, listdir=files)
     
@@ -553,6 +565,8 @@ def get_uploaded_files():
     res = {}
     dec = []
     enc = []
+    signed = []
+    verified = []
     untouched = []
 
     for f in listdir:
@@ -561,10 +575,16 @@ def get_uploaded_files():
             enc.append(f)
         elif split == 'dec':
             dec.append(f)
+        elif split == 'sig':
+            signed.append(f)
+        elif split == 'ver':
+            verified.append(f)
         else:
             untouched.append(f)
     
     res['decrypted'] = dec
     res['encrypted'] = enc
     res['untouched'] = untouched
+    res['signed'] = signed
+    res['verified'] = verified
     return res

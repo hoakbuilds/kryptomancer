@@ -327,3 +327,81 @@ def view_key_from_pem( input_file ):
             'pk' : key
         }
     return data
+
+# openssl dgst -HASH -sign PRIVATE_KEY FILE_TO_SIGN > FILE.SIG
+# openssl dgst -sha256 -sign /private-key-file.pem file-to-sign > file.sig
+def sign_file_with_private_key( file_to_verify, private_key_file , hash_algorithm):
+    input_file_path = os.path.join(UPLOADS_FOLDER, file_to_verify) #concat input file name and uploads folder path
+    private_key_file_path = os.path.join(TEMP_FOLDER, private_key_file) #concat private key file name and temp folder path
+    output_file_path = os.path.join(UPLOADS_FOLDER, file_to_verify+".sig")#concat output file name and uploads folder path
+    p = subprocess.Popen(['touch', output_file_path]) # creating the output file before using it to prevent throwing errors
+    p.wait()
+    split = private_key_file.split('.')[-1] #get PK file extension used for assertion in signing procedure
+    key_dir=os.path.join(OPENSSL_OUTPUT_FOLDER, "key."+split) #concat output file name and openssl's output folder path
+
+
+    key_file = open(key_dir, 'w+')
+    print(input_file_path, file=sys.stderr)
+
+    hash = '-' + hash_algorithm
+    print("openssl dgst " + hash + " -sign " + private_key_file_path +" -out " +output_file_path + " "+input_file_path )
+    
+    if split == 'pem':
+        try:
+            p1 = subprocess.Popen(
+                ['openssl', 'dgst', hash, '-sign', private_key_file_path, '-out', output_file_path, input_file_path],
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE
+            )
+            p1.wait()
+
+            return {'ok':'ok'}
+
+        except:
+            return {'error':'failed_to_sign'}
+
+    else:
+        return {'error':'invalid_pk_file'}
+
+
+
+# openssl dgst -HASH -verify PUBLIC_KEY_TO_VERIFY -signature SIGNED_FILE_TO_VERIFY FILE_TO_VERIFY > VERIFICATION_RESULT
+# openssl dgst -sha256 -verify /private-key-file.pem.pub -signature /file.sig file-to-sign > verif_result.txt
+
+def verify_file_with_public_key( file_to_verify, public_key_file, signed_file, hash_algorithm ):
+    signed_file_path = os.path.join(UPLOADS_FOLDER, signed_file) #concat signed file name and uploads folder path
+    input_file_path = os.path.join(UPLOADS_FOLDER, file_to_verify) #concat input file name and uploads folder path
+    public_key_file_path = os.path.join(TEMP_FOLDER, public_key_file) #concat public key file name and temp folder path
+    output_file_path = os.path.join(UPLOADS_FOLDER, file_to_verify+".ver")#concat output file name and uploads folder path
+    p = subprocess.Popen(['touch', output_file_path]) # creating the output file before using it to prevent throwing errors
+    p.wait()
+    split = public_key_file.split('.')[-1] #get PK file extension used for assertion in signing procedure
+    key_dir=os.path.join(OPENSSL_OUTPUT_FOLDER, "key."+split) #concat output file name and openssl's output folder path
+
+    key_file = open(key_dir, 'w+')
+    print(input_file_path, file=sys.stderr)
+
+    hash = '-' + hash_algorithm
+    print("openssl dgst " + hash + " -sign " + public_key_file_path +" -signature " + signed_file_path + " -out " +output_file_path + " "+input_file_path )
+    
+
+    if split == 'pub':
+        try:
+            p1 = subprocess.Popen(
+                ['openssl', 'dgst', hash, '-verify', public_key_file_path, '-signature', signed_file_path, '-out', output_file_path, input_file_path ],
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE
+            )
+            p1.wait()
+
+            return {'ok':'ok'}
+
+        except:
+            return {'error':'failed_to_verify'}
+
+    else:
+        return {'error':'invalid_pk_file'}
+
+
