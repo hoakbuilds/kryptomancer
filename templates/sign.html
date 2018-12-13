@@ -3,11 +3,24 @@
 {% block content %}
 
 <div class="w3-container w3-content w3-padding-64">
-    <h2 class="w3-cinzel w3-padding-16"> <b> Sign Files </b> </h2>
-    <button class="collapsible">Click me to have a tip!</button>
-    <div class="content">
-        <p>Click me to have a tip!</p>
-    </div>
+    <h2 class="w3-cinzel w3-padding-16"> <b> Sign Files Using RSA Secret Key</b></h2>
+
+            <button class="collapsible">Click me to have a tip!</button>
+            <div class="content">
+                    <span>This area is reserved to the digital signing of documents, using a secret key. To sign a Document, just:
+                            <br>
+                        <ul class="w3-middle">
+                                <li><b>Select your the resume algorith of your signature;</b></li>
+                                <li><b>Select youe file to sign;</b></li>
+                                <li><b>Select your secret key;</b></li>
+                                <li><b>Select the file to sign;</b></li>
+                                <li><b>CLick on sign file;</b></li>
+                            </ul>
+                            Digital signatures are the best way to deploy a unique signature to your files, directly linking them only to the properties of your secret key.
+                            That means that only the ones who have your public key can check if you signed the document.
+                            A slightly change on the original document or signature, will produce a total different output.
+                    </span>
+            </div>
     <hr>
 
     <form class="example" action="/signify" name="signify" method=post>
@@ -38,7 +51,7 @@
             <option class="w3-list" value="{{item}}" name="uploaded_files">{{ item }} </option> 
           {% endfor %}   
         </select>
-        <select multiple type="file" class="w3-select w3-border" size="10" name="selected_files" enctype="multipart/form-data">
+        <select multiple type="file" class="w3-select" size="10" name="selected_files" enctype="multipart/form-data">
             <option class="w3-list w3-center" disabled name="selected_files">Secrets</option> 
             {% for item in listdir.sk  %}
             <option class="w3-list" value="{{item}}" name="selected_files">{{ item }} </option> 

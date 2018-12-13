@@ -3,10 +3,29 @@
 {% block content %}
 
 <div class="w3-container w3-content w3-padding-64">
-    <h2 class="w3-cinzel w3-padding-16"> <b> RSA SK/PK Generator </b></h2>
+    <h2 class="w3-cinzel w3-padding-16-per"> <b> RSA SK/PK Generator </b></h2>
     <button class="collapsible">Click me to have a tip!</button>
     <div class="content">
-        <p>Click me to have a tip!</p>
+            <span>This area is reserved to the generation of RSA public and secret key pairs. To generate a pair of RSA keys just:
+                <br> 
+                <ul class="w3-middle">
+                    <li><b>Provide a name for your keys;</b></li>
+                    <li><b>Click on generate rsa;</b></li>
+                    <li><b>Select the key providedname.pem;</b></li>
+                    <li><b>Click on extract public key;</b></li>
+                </ul>
+                You can also:
+                <ul class="w3-middle">
+                        <li><b>View your selected keys;</b></li>
+                        <li><b>Copy to your clipboard and store your keys;</b></li>
+                        <li><b>Delete keys from the filesystem</b></li>
+                    </ul>
+                RSA Secret and public keys are widely used on modern cryptography.
+                The pair of keys are mathematically bounded in a way that if you encrypt something with the public key, only the owner of the respective private key can decrypt.
+                This connection is used to encrypt connections over the web, and create digital signatures.
+                Remember to ALWAYS keep your secret key in true secret. Is The only way to not compromise de system.
+                The public key, instead, you can give it to everyone you want. The ones who have it will be able to encrypt files only for you and verify your digital signatures.
+            </span>
     </div>
     <hr>
 
@@ -18,7 +37,7 @@
         <input  name="sk_file" type="text">
         <br>
         <br>
-        <select multiple type="file" class="w3-select w3-border" size="10" name="selected_files" enctype="multipart/form-data">
+        <select multiple type="file" class="w3-select " size="10" name="selected_files" enctype="multipart/form-data">
             <option class="w3-list w3-center" disabled name="selected_files">Secrets</option> 
             {% for item in listdir.sk  %}
             <option class="w3-list" value="{{item}}" name="selected_files">{{ item }} </option> 

@@ -3,12 +3,30 @@
 {% block content %}
 
 <div class="w3-container w3-content w3-padding-64">
-    <h2 class="w3-cinzel w3-padding-16"> <b> HMAC Calculator </b> </h2>
+    <h2 class="w3-cinzel w3-padding-16-per"> <b> HMAC Calculator </b> </h2>
     <button class="collapsible">Click me to have a tip!</button>
     <div class="content">
-        <p>Click me to have a tip!</p>
+        <span>This area is reserved to the calculation of hash based message authentication codes from your files. To calculate an HMAC:
+            <br>
+            
+            <ul class=" w3-middle">
+                <li><b>Upload your desiered files;</b></li>
+                <li><b>Provide the a ???bit sized secret key:</b></li>
+                <li><b>Select the desired hash function;</b></li>
+                <li><b>Click on the generate hmac button;</b></li>
+                <li><b>Copy to your clipboard the output values and store them.</b></li>
+            </ul>
+            
+            The hmac code, like hash resumes, is used to verify the integrity of a file while providing an extra layer of security.
+            The extra key needed to extract the correct value, formalizes the source of the file. 
+            <br>When you trade files with a friend, ask him to send you the respective hmac value, hash function and previously exchanged secret key.
+            Later, when you have the files, just re-calculate the hmac with the same function and key, and check if the two are are the same.
+            If that is the case, it means that your file was not changed during the transmission and realy is the file of your friend.
+  
+        </span>
     </div>
     <hr>
+    
 
 
     <span class="w3-cinzel w3-xlarge">Provide a <b>key</b> to be used to calculate the HMAC.</span>
@@ -20,7 +38,7 @@
         <label class="w3-cinzel">HMAC Key</label>
         <input  name="hmac_key" type="text">
         <br>
-        <hr> 
+        <hr>
         <span class="w3-cinzel">Upload your files</span>
         <br>
         <br>
@@ -53,8 +71,6 @@
             <option  value="sha256" >SHA256</option>
             <option  value="sha512" >SHA512</option>
             <option  value="md5" >MD5</option>
-            <option  value="sm3" >SM3</option>
-            <option  value="blake2s256">BLAKE2S256</option>
         </select>
 
         <input class="w3-dark-grey w3-round w3-cinzel" formaction="/hmac" type="submit" value="Generate HMAC">
