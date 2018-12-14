@@ -149,7 +149,9 @@ def digest_file( input_file, hash_algorithm ):
     data = {
         'hash' : digest
     }
-    os.remove(key_file)
+    
+    key_file.close()
+    os.remove(key_dir)
 
     return data
 
@@ -176,7 +178,8 @@ def hmac_file( input_file, hash_algorithm, key ):
         'hmac' : hmac
     }
 
-    os.remove(key_file)
+    key_file.close()
+    os.remove(key_dir)
 
     return data
 
@@ -406,6 +409,7 @@ def verify_file_with_public_key( file_to_verify, public_key_file, signed_file, h
 
             output_file = open(output_file_path, 'r')
             status = output_file.read()
+            output_file.close()
             os.remove(output_file_path)
             if 'OK' in status:
                 return {'ok': status}
