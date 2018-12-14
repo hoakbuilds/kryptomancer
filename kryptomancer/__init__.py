@@ -23,6 +23,7 @@ from threading import Thread
 from flask import Flask, url_for, render_template, jsonify, request, make_response, redirect
 
 from kryptomancer.routes import *
+from kryptomancer.openssl import OPENSSL_OUTPUT_FOLDER, UPLOADS_FOLDER, TEMP_FOLDER
 
 path_to_static = os.getcwd() + '/static'
 path_to_templates = os.getcwd() + '/templates'
@@ -58,3 +59,12 @@ def url_ok(url, port):
         return r.status == 200
     except:
         logger.exception("Server error")
+
+def check_folders(): #function to check if the app folders exist, if they don't creates them
+    if not os.path.isdir(OPENSSL_OUTPUT_FOLDER):
+        os.makedirs(OPENSSL_OUTPUT_FOLDER)
+    if not os.path.isdir(UPLOADS_FOLDER):
+        os.makedirs(UPLOADS_FOLDER)
+    if not os.path.isdir(TEMP_FOLDER):
+        os.makedirs(TEMP_FOLDER)
+    
