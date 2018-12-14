@@ -18,17 +18,21 @@
                     Digital signatures are the best way to deploy a unique signature to your files, directly linking them only to the properties of your secret keys.
                     That means that only the ones who have your public key can check if you signed the document.
                     A slightly change on the original document or signature, will produce a total different output.
-                    If the ouput of your file is
             </span>
     </div>
     <hr>
 
     <form class="example" action="/verify" name="verify" method=post>
+        <span class="w3-cinzel w3-xlarge">Select the <b>hash function</b> for the signature</span>
+        <br>
+        <br>
         <select class="w3-cinzel" name="selected_cipher">
             <option disabled >Hash function</option>
             <option  value="sha256" >SHA256</option>
             <option  value="sha512" >SHA512</option>
         </select>
+        <br>
+        <hr>
         <select multiple type="file" class="w3-select" size="10" name="uploaded_files" enctype="multipart/form-data">
           <option class="w3-list w3-center" disabled name="uploaded_files">Untouched Files</option> 
           {% for item in listdir.untouched  %}

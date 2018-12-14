@@ -11,7 +11,7 @@
                             <br>
                         <ul class="w3-middle">
                                 <li><b>Select your the resume algorith of your signature;</b></li>
-                                <li><b>Select youe file to sign;</b></li>
+                                <li><b>Select your file to sign;</b></li>
                                 <li><b>Select your secret key;</b></li>
                                 <li><b>Select the file to sign;</b></li>
                                 <li><b>CLick on sign file;</b></li>
@@ -24,11 +24,16 @@
     <hr>
 
     <form class="example" action="/signify" name="signify" method=post>
+        <span class="w3-cinzel w3-xlarge">Select the <b>hash function</b> for the signature</span>
+        <br>
+        <br>
         <select class="w3-cinzel" name="selected_cipher">
             <option disabled >Hash function</option>
             <option  value="sha256" >SHA256</option>
             <option  value="sha512" >SHA512</option>
         </select>
+        <br>
+        <hr>
         <select multiple type="file" class="w3-select" size="10" name="uploaded_files" enctype="multipart/form-data">
           <option class="w3-list w3-center" disabled name="uploaded_files">Untouched Files</option> 
           {% for item in listdir.untouched  %}
