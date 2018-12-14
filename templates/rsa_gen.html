@@ -3,18 +3,35 @@
 {% block content %}
 
 <div class="w3-container w3-content w3-padding-64">
-    <h2 class="w3-cinzel w3-padding-16"> <b> RSA SK/PK Generator </b></h2>
+    <h2 class="w3-cinzel w3-padding-16-per"> <b> RSA SK/PK Generator </b></h2>
+    <button class="collapsible">Click me to have a tip!</button>
+    <div class="content">
+            <span>This area is reserved to the generation of RSA public and secret key pairs. <b>To generate a pair of RSA keys</b> just:
+                <br> 
+                <ul class="w3-middle">
+                    <li><b>Provide a name for your keys;</b></li>
+                    <li><b>Click on generate rsa;</b></li>
+                </ul>
+                RSA secret and public keys are widely used on modern cryptography.
+                A pair of keys are mathematically bounded in a way that if you encrypt something with the public key, only the owner of the respective private key can decrypt.
+                RSA keyes are used to encrypt connections over the web, and create digital signatures.
+                Remember to ALWAYS keep your secret key in true secret. Is The only way to not compromise de system.
+                The public key, instead, you can give it to everyone you want. The ones who have it, will be able to encrypt files only for you and verify your digital signatures.
+            </span>
+    </div>
     <hr>
 
-    <span class="w3-cinzel w3-xlarge">Provide a <b>name</b> to be used as the name for the Secret Key file.<br> The Public Key file will always be associated with the Secret Key file.</span>
+    <span class="w3-cinzel w3-xlarge">Provide a <b>name</b> to identify your key pair</span>
     <br>
+    <br>
+
 
     <form class="example" action="/gen_rsa" name="generate" method=post>
         <label class="w3-cinzel">SK File</label>
         <input  name="sk_file" type="text">
         <br>
-        <br>
-        <select multiple type="file" class="w3-select w3-border" size="10" name="selected_files" enctype="multipart/form-data">
+        <hr>
+        <select multiple type="file" class="w3-select " size="10" name="selected_files" enctype="multipart/form-data">
             <option class="w3-list w3-center" disabled name="selected_files">Secrets</option> 
             {% for item in listdir.sk  %}
             <option class="w3-list" value="{{item}}" name="selected_files">{{ item }} </option> 
@@ -25,11 +42,11 @@
             {% endfor %}
         </select>
         <button type="submit" value='Generate Key' class=" w3-dark-grey w3-round w3-cinzel">Generate RSA</button>
-        <button type="submit" value='Extract PK' class=" w3-dark-grey w3-round w3-cinzel">Extract Public Key</button>
         <input class="w3-dark-grey w3-round w3-cinzel" formaction="/view_key" type="submit" value="View Selected Key">
+        <input class="w3-dark-grey w3-round w3-cinzel" formaction="/delete_file/" type="submit" value="Delete Selected">
     </form>
     <br>
-    <hr>
+    
     <br>
     {% for item in rsa_data  %}
         {% if item.sk %}
