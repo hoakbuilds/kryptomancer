@@ -188,7 +188,7 @@ CIFRAR O FICHEIRO SECRET.KEY PARA SECRET.RSA UTILIZANDO A CHAVE PUBLICA DE ALGUÃ
 	-> openssl rsautl -encrypt -in secret.key -out secret.rsa -inkey alguem-pk.pem -pubin
 """
 
-def rsa_encrypt( input_file, key_file):
+def rsa_encrypt(input_file, key_file):
     file_path = os.path.join(UPLOADS_FOLDER, input_file)
     key_file = os.path.join(RSA_FOLDER, key_file)
     enc_file = os.path.join(UPLOADS_FOLDER,  input_file + ".rsa")
@@ -213,45 +213,33 @@ DECIFRAR O FICHEIRO SECRET.RSA PARA SECRET-2.KEY UTILIZANDO A MINHA CHAVE PRIVAD
 	-> openssl rsautl -decrypt -in secret.rsa -out secret-2.key -inkey pk-and-sk.pem
 """
 
-def rsa_decrypt( input_file, key_file):
+def rsa_decrypt(input_file, key_file):
     file_path = os.path.join(UPLOADS_FOLDER, input_file)
     key_file = os.path.join(RSA_FOLDER, key_file)
-    enc_file = os.path.join(UPLOADS_FOLDER,  input_file + ".rsadec")
-    p = subprocess.Popen(['touch', enc_file]) # creating the output file before using it to prevent throwing errors
+    dec_file = os.path.join(UPLOADS_FOLDER,  input_file + ".rsadec")
+    p = subprocess.Popen(['touch', dec_file]) # creating the output file before using it to prevent throwing errors
     p.wait()
 
     try:
         p = subprocess.Popen(
-                    ['openssl', 'rsautl', '-encrypt', '-in', file_path, '-out', enc_file, '-inkey', key_file, '-pubin'],
+                    ['openssl', 'rsautl', '-decrypt', '-in', file_path, '-out', dec_file, '-inkey', key_file],
                     stdin = subprocess.PIPE,
                     stdout = subprocess.PIPE,
                     stderr = subprocess.PIPE
                 )
         p.wait()
-        return {'ok':'ok'}
+        
+        original_file = os.path.join(UPLOADS_FOLDER, input_file.rsplit('.', 1)[0])
+        stat_original = os.stat(original_file)
+        stat_dec = os.stat(dec_file)
+        if stat_original.st_size == stat_dec.st_size:
+            return {'ok':'Decrypt OK'}
+        else:
+            return {'error': 'Decrypt Failed'}
     except:
-        print('Failed to encrypt: ' + str(file_path), file=sys.stderr)
+        print('Failed to decrypt: ' + str(file_path), file=sys.stderr)
         return {'error':'failed'}
 
-def rsa_encrypt( input_file, key_file):
-    file_path = os.path.join(UPLOADS_FOLDER, input_file)
-    key_file = os.path.join(RSA_FOLDER, key_file)
-    enc_file = os.path.join(UPLOADS_FOLDER,  input_file + ".rsa")
-    p = subprocess.Popen(['touch', enc_file]) # creating the output file before using it to prevent throwing errors
-    p.wait()
-
-    try:
-        p = subprocess.Popen(
-                    ['openssl', 'rsautl', '-encrypt', '-in', file_path, '-out', enc_file, '-inkey', key_file, '-pubin'],
-                    stdin = subprocess.PIPE,
-                    stdout = subprocess.PIPE,
-                    stderr = subprocess.PIPE
-                )
-        p.wait()
-        return {'ok':'ok'}
-    except:
-        print('Failed to encrypt: ' + str(file_path), file=sys.stderr)
-        return {'error':'failed'}
 
 
 def encrypt_file( input_file, key, iv, cipher = None, base64=None):

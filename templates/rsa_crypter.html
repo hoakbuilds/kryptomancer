@@ -24,15 +24,13 @@
     <hr>
 
     <form class="example" action="/rsa_crypter" name="rsa_crypter" method=post>
-        <span class="w3-cinzel w3-xlarge">Select the <b>hash function</b> for the signature</span>
+        <span class="w3-cinzel w3-xlarge "><b>Upload</b> your files</span>
         <br>
         <br>
-        <select class="w3-cinzel" name="selected_cipher">
-            <option disabled >Hash function</option>
-            <option  value="sha256" >SHA256</option>
-            <option  value="sha512" >SHA512</option>
-        </select>
-        <br>
+        
+
+        <input class="w3-dark-grey w3-round w3-cinzel" type=file name=file>
+        <input class="w3-dark-grey w3-round w3-cinzel" type=submit value=Upload>
         <hr>
         <select multiple type="file" class="w3-select" size="10" name="uploaded_files" enctype="multipart/form-data">
           <option class="w3-list w3-center" disabled name="uploaded_files">Untouched Files</option> 
@@ -62,8 +60,8 @@
             <option class="w3-list" value="{{item}}" name="selected_files">{{ item }} </option> 
             {% endfor %}
         </select>
-        <button type="submit" value='Generate Key' class=" w3-dark-grey w3-round w3-cinzel">Sign File</button>
-        <input class="w3-dark-grey w3-round w3-cinzel" formaction="/delete_file/" type="submit" value="Delete Selected">  
+        <input class="w3-dark-grey w3-round w3-cinzel" formaction="/rsa_encrypt/" type="submit" value="Encrypt File">
+        <input class="w3-dark-grey w3-round w3-cinzel" formaction="/rsa_decrypt/" type="submit" value="Decrypt File">  
     </form>
     {% for item in data  %}
         {% if item.ok %}

@@ -24,7 +24,8 @@ from . import routes
 from kryptomancer.openssl import (
     generate_aes_key_iv, generate_3des_key_iv, generate_key, encrypt_file,
     decrypt_file, digest_file, generate_rsa, hmac_file,
-    view_key_from_pem, sign_file_with_private_key, verify_file_with_public_key
+    view_key_from_pem, sign_file_with_private_key, verify_file_with_public_key,
+    rsa_encrypt, rsa_decrypt
 )
 
 UPLOAD_FOLDER = os.getcwd() + '/uploads'
@@ -103,16 +104,47 @@ def rsa_crypter():
             if file:
                 filename = secure_filename(file.filename)
                 file.save(os.path.join(UPLOAD_FOLDER, file.filename))
-                files = get_uploaded_files()
+                files = {**get_temporary_files(), **get_uploaded_files()} #joins two dicts :)
                 return render_template('rsa_crypter.html', name=filename, listdir=files)
         
-        
-            files = get_uploaded_files()
+            files = {**get_temporary_files(), **get_uploaded_files()} #joins two dicts :)
             return render_template('rsa_crypter.html', error="File not supported.", listdir=files)
     else:
-        files = get_uploaded_files()
+        files = {**get_temporary_files(), **get_uploaded_files()} #joins two dicts :)
 
     return render_template('rsa_crypter.html', listdir=files)
+
+@routes.route('/rsa_encrypt/', methods=['POST'])
+def rsa_encrypt():
+    print('rsa_encrypt',file=sys.stderr)
+    if request.method == 'POST':
+        files = {**get_temporary_files(), **get_uploaded_files()} #joins two dicts :)
+        public_key_file = request.form.get('selected_files')
+        if public_key_file is None:
+            return render_template('rsa_crypter.html',  data=[], listdir=files)
+        file_to_encrypt = request.form.getlist('uploaded_files')
+        if file_to_encrypt is None:
+            return render_template('rsa_crypter.html',  data=[], listdir=files)
+        
+        data_list = []
+        for f in file_to_encrypt:
+            print(public_key_file, f, file=sys.stderr)
+            data = rsa_encrypt(f, public_key_file)
+            data['filename'] = f
+            data['encryption_file'] = public_key_file
+            if 'ok' in data:
+                data['status'] = data['ok']
+            else:
+                data['status'] = data['error']
+            data_list.append(data)
+
+        return render_template('rsa_crypter.html',  data=data, listdir=files)
+
+    else:
+        files = {**get_temporary_files(), **get_uploaded_files()} #joins two dicts :)
+
+    return render_template('rsa_crypter.html', listdir=files)
+
 
 @routes.route('/digester/', methods=['GET', 'POST']) 
 def digester():
