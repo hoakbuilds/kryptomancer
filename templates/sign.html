@@ -10,11 +10,11 @@
                     <span>This area is reserved to the digital signing of documents, using a secret key. To sign a Document, just:
                             <br>
                         <ul class="w3-middle">
-                                <li><b>Select your the resume algorith of your signature;</b></li>
+                                <li><b>Select the resume algorithm for your signature;</b></li>
                                 <li><b>Select your file to sign;</b></li>
                                 <li><b>Select your secret key;</b></li>
                                 <li><b>Select the file to sign;</b></li>
-                                <li><b>CLick on sign file;</b></li>
+                                <li><b>Click on sign file;</b></li>
                             </ul>
                             Digital signatures are the best way to deploy a unique signature to your files, directly linking them only to the properties of your secret key.
                             That means that only the ones who have your public key can check if you signed the document.
@@ -23,7 +23,7 @@
             </div>
     <hr>
 
-    <form class="example" action="/signify" name="signify" method=post>
+    <form class="example" action="/signify" name="signify"  enctype=multipart/form-data method=post>
         <span class="w3-cinzel w3-xlarge">Select the <b>hash function</b> for the signature</span>
         <br>
         <br>
@@ -33,6 +33,15 @@
             <option  value="sha512" >SHA512</option>
         </select>
         <br>
+        <hr>
+
+        <span class="w3-cinzel w3-xlarge "><b>Upload</b> your files</span>
+        <br>
+        <br>
+        
+
+        <input class="w3-dark-grey w3-round w3-cinzel" type=file name=file>
+        <input class="w3-dark-grey w3-round w3-cinzel" type=submit value=Upload>
         <hr>
         <select multiple type="file" class="w3-select" size="10" name="uploaded_files" enctype="multipart/form-data">
           <option class="w3-list w3-center" disabled name="uploaded_files">Untouched Files</option> 

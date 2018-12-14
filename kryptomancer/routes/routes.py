@@ -85,6 +85,35 @@ def crypter():
 
     return render_template('file_crypter.html', listdir=files)
 
+@routes.route('/rsa_crypter/', methods=['GET', 'POST']) 
+def rsa_crypter():
+    """
+    Esta função serve uma página com um form de upload de ficheiros
+    Retorna o nome do ficheiro e o seu conteudo
+    """
+    print('rsa_crypter', file=sys.stderr)
+    if request.method == 'POST':
+        # check if the post request has the file part
+        if 'file' not in request.files:
+            files = get_uploaded_files()
+            return render_template('file_crypter.html', listdir=files)
+            
+        file = request.files['file']
+        # if user does not select file, browser also
+        # submit an empty part without filename
+        if file:
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(UPLOAD_FOLDER, file.filename))
+            files = get_uploaded_files()
+            return render_template('rsa_crypter.html', name=filename, listdir=files)
+        else:
+            files = get_uploaded_files()
+            return render_template('rsa_crypter.html', error="File not supported.", listdir=files)
+    else:
+        files = get_uploaded_files()
+
+    return render_template('rsa_crypter.html', listdir=files)
+
 @routes.route('/digester/', methods=['GET', 'POST']) 
 def digester():
     """
@@ -304,6 +333,22 @@ def hmac_calculator():
 def signify():
     print('signify', file=sys.stderr)
     if request.method == 'POST':
+        print('post', file=sys.stderr)
+        print(request.__dict__, file=sys.stderr)
+        if 'file' not in request.files:
+            files = {**get_temporary_files(), **get_uploaded_files()} #joins two dicts :)
+            return render_template('sign.html', listdir=files)
+            
+        file = request.files['file']
+        # if user does not select file, browser also
+        # submit an empty part without filename
+        if file:
+            filename = secure_filename(file.filename)
+            print(filename, file=sys.stderr)
+            file.save(os.path.join(UPLOAD_FOLDER, file.filename))
+            files = {**get_temporary_files(), **get_uploaded_files()} #joins two dicts :)
+            return render_template('sign.html', name=filename, listdir=files)
+
         files = {**get_temporary_files(), **get_uploaded_files()} #joins two dicts :)
         private_key_file = request.form.get('selected_files')
         if private_key_file is None:
@@ -321,6 +366,7 @@ def signify():
             data_list.append(data)
         return render_template('sign.html',  data=data_list, listdir=files)
     
+    print('get', file=sys.stderr)
     files = {**get_temporary_files(), **get_uploaded_files()} #joins two dicts :)
     
     return render_template('sign.html',  data=[], listdir=files)
