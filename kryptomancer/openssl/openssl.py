@@ -1,5 +1,5 @@
 """
-Kryptoflask OpenSSL System Calls
+kryptomancer OpenSSL System Calls
 
 
 """
@@ -12,7 +12,7 @@ import asyncio
 import logging
 import subprocess
 import time
-import kryptoflask
+import kryptomancer
 
 from time import sleep
 from threading import Thread

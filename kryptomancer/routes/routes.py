@@ -1,5 +1,5 @@
 """
-Kryptoflask Application Routes
+kryptomancer Application Routes
 
 
 """
@@ -12,7 +12,7 @@ import asyncio
 import logging
 import subprocess
 import time
-import kryptoflask
+import kryptomancer
 
 
 from time import sleep
@@ -21,7 +21,7 @@ from flask import Flask, redirect, url_for, request, render_template
 from werkzeug import secure_filename
 
 from . import routes
-from kryptoflask.openssl import (
+from kryptomancer.openssl import (
     generate_aes_key_iv, generate_3des_key_iv, generate_key, encrypt_file,
     decrypt_file, digest_file, generate_rsa, rsa_pubout, hmac_file,
     view_key_from_pem, sign_file_with_private_key, verify_file_with_public_key

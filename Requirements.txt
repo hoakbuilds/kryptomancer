@@ -5,4 +5,3 @@ Jinja2==2.10
 itsdangerous==0.24
 MarkupSafe==1.0
 pywebview==2.2.1
-pyqt5==5.11.3
