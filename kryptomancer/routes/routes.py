@@ -23,12 +23,13 @@ from werkzeug import secure_filename
 from . import routes
 from kryptomancer.openssl import (
     generate_aes_key_iv, generate_3des_key_iv, generate_key, encrypt_file,
-    decrypt_file, digest_file, generate_rsa, rsa_pubout, hmac_file,
+    decrypt_file, digest_file, generate_rsa, hmac_file,
     view_key_from_pem, sign_file_with_private_key, verify_file_with_public_key
 )
 
 UPLOAD_FOLDER = os.getcwd() + '/uploads'
 TEMP_FOLDER = os.getcwd() + '/temp'
+OPENSSL_OUTPUT_FOLDER = os.getcwd() + '/openssl_out'
 
 @routes.route('/')
 def index():
@@ -219,6 +220,10 @@ def decrypt():
                     dec_info['status'] = dec_info['ok']
                 elif 'error' in dec_info:
                     dec_info['status'] = dec_info['error']
+                
+
+                print(dec_info, file=sys.stderr)
+                print('------------ ', file=sys.stderr)
                 dec_list.append(dec_info)
             print('------------ Files Decrypted:', file=sys.stderr)
             print(dec_list, file=sys.stderr)
@@ -274,7 +279,7 @@ def hmac_calculator():
             hash_algorithm = request.form.get('hash_algorithm')
 
             print(hmac_key, hash_algorithm,  file=sys.stderr)
-            if hmac_key is not None and hash_algorithm is not None:
+            if hmac_key is not '':
                 hmac_list = []
                 for f in selected_files:
                     print(f,  file=sys.stderr)
@@ -362,14 +367,9 @@ def gen_rsa():
     print('gen_rsa', file=sys.stderr)
     if request.method == 'POST':
         sk = request.form.get('sk_file')
-        selected_files = request.form.get('selected_files')
-        if selected_files is not None:
-            rsa_pubout(selected_files)
-            files = get_temporary_files()
-            return render_template('rsa_gen.html', data=[], listdir = files)
-        elif sk is not '':
+        if sk is not '':
             print(sk, file=sys.stderr)
-            data = generate_rsa(output_file=sk)
+            data = generate_rsa(sk_file=sk)
             if 'ok' in data:
                 files = get_temporary_files()
                 for f in files:
@@ -411,7 +411,8 @@ def delete_file():
     #print('delete_file', file=sys.stderr)
     if request.method == 'POST':
         # check if the post request has the file part
-        hidden_redirect = None
+        redirect_rsa = None
+        redirect_sign = None
         selected_files = request.form.getlist('selected_files')
         if selected_files is not None: # Deletes selected files in select form
             print('------------ Files Selected:', file=sys.stderr)
@@ -419,7 +420,7 @@ def delete_file():
                 print(f,  file=sys.stderr)
                 split = f.split('.')[-1]
                 if split == 'pub' or split == 'pem':
-                    hidden_redirect = True
+                    redirect_rsa = True
                     filename = os.path.join(TEMP_FOLDER, f)
                 else:
                     filename = os.path.join(UPLOAD_FOLDER, f)
@@ -428,16 +429,29 @@ def delete_file():
                     os.remove(filename)
                 except:
                     pass
-        else:# Deletes all files
-            files = get_uploaded_files()
-            for f in files:
+
+        uploaded_files = request.form.getlist('uploaded_files')
+
+        if uploaded_files is not None: # Deletes selected files in select form
+            print('------------ Files Selected From Uploaded Files:', file=sys.stderr)
+            for f in uploaded_files:
                 print(f,  file=sys.stderr)
-                filename = os.path.join(UPLOAD_FOLDER, f)
+                split = f.split('.')[-1]
+                if split == 'sig':
+                    redirect_sign = True
+                    filename = os.path.join(UPLOAD_FOLDER, f)
                 print(filename, file=sys.stderr)
-                os.remove(filename)
-        if hidden_redirect is not None:
+                try:
+                    os.remove(filename)
+                except:
+                    pass
+                    
+        if redirect_rsa is not None:
             files = get_temporary_files()
             return render_template('rsa_gen.html', listdir=files, enc_info=[])   
+        if redirect_sign is not None:
+            files = {**get_temporary_files(), **get_uploaded_files()} #joins two dicts :)
+            return render_template('sign.html', listdir=files, enc_info=[])   
         else:
             files = get_uploaded_files()
             return render_template('file_crypter.html', listdir=files, enc_info=[])
@@ -497,7 +511,6 @@ def encrypt_list_of_files(files, cipher=None, key=None, iv=None, base64=None): #
 
 # Decrypts a list of files
 def decrypt_single_file(filename, key, iv, cipher=None):
-    print('decrypt_file', file=sys.stderr)
     if filename == None:
         return []
     else:
@@ -507,18 +520,11 @@ def decrypt_single_file(filename, key, iv, cipher=None):
             res = decrypt_file(filename, key, iv, cipher=cipher.lower())
         else:
             res = decrypt_file(filename, key, iv)
-        if 'ok' in res:
-            result['ok'] = 'ok'
-            print('ok', file=sys.stderr)
-        elif 'error' in res:
-            result['error'] = 'error'
-            print('error', file=sys.stderr)
-            pass
-        
-        result['iv'] = iv
-        result['key'] = key
-        #print(obj_list, file=sys.stderr)
-        return result
+        res['iv'] = iv
+        res['key'] = key
+        print('decrypt_single_file', file=sys.stderr)
+        print(res, file=sys.stderr)
+        return res
 
 def generate_keys_for_files(files, selected_cipher):
     print('generate_keys_for_files', file=sys.stderr)
@@ -553,7 +559,6 @@ def get_temporary_files():
     sk = []
     pk = []
     signed = []
-    verified = []
 
     for f in listdir:
         split = f.split('.')[-1]
@@ -563,13 +568,11 @@ def get_temporary_files():
             pk.append(f)
         elif split == 'sig':
             signed.append(f)
-        elif split == 'ver':
-            verified.append(f)
+
     
     res['sk'] = sk
     res['pk'] = pk
     res['signed'] = signed
-    res['verified'] = verified
     return res
 
 # Gets uploaded files and encrypted files, returns an object with 3 lists, encrypted files, decrypted and untouched

@@ -46,10 +46,6 @@
           {% for item in listdir.signed  %}
             <option class="w3-list" value="{{item}}" name="uploaded_files">{{ item }} </option> 
           {% endfor %}
-          <option class="w3-list w3-center" disabled name="uploaded_files">Verified Files</option>
-          {% for item in listdir.verified  %}
-            <option class="w3-list" value="{{item}}" name="uploaded_files">{{ item }} </option> 
-          {% endfor %}   
         </select>
         <select multiple type="file" class="w3-select" size="10" name="selected_files" enctype="multipart/form-data">
             <option class="w3-list w3-center" disabled name="selected_files">Secrets</option> 
@@ -62,6 +58,7 @@
             {% endfor %}
         </select>
         <button type="submit" value='Generate Key' class=" w3-dark-grey w3-round w3-cinzel">Sign File</button>
+        <input class="w3-dark-grey w3-round w3-cinzel" formaction="/delete_file/" type="submit" value="Delete Selected">  
     </form>
     {% for item in data  %}
         {% if item.ok %}

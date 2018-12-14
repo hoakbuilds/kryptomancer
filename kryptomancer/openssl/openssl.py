@@ -234,45 +234,42 @@ def decrypt_file( input_file, key, iv, cipher = None, base64=None ):
                 )
                 
             p.wait()
-            return {'ok':'ok'}
+
+            original_file = os.path.join(UPLOADS_FOLDER, input_file.rsplit('.', 1)[0])
+            stat_original = os.stat(original_file)
+            stat_dec = os.stat(dec_file)
+            if stat_original.st_size == stat_dec.st_size:
+                return {'ok':'Decrypt OK'}
+            else:
+                return {'error': 'Decrypt Failed'}
         except:
-            print('Failed to encrypt: ' + str(file_path), file=sys.stderr)
+            print('Failed to decrypt: ' + str(file_path), file=sys.stderr)
             return {'error':'failed'}
 
 
 #openssl genrsa -out mykey.pem
 #will actually produce a public - private key pair. The pair is stored in the generated mykey.pem file.
-def generate_rsa( output_file ):
-    file_path = os.path.join(TEMP_FOLDER, output_file + '.pem')
-    print(file_path, file=sys.stderr)
-    try:
-            
-        p = subprocess.Popen(
-                ['openssl', 'genrsa', '-out', file_path],
-                stdin = subprocess.PIPE,
-                stdout = subprocess.PIPE,
-                stderr = subprocess.PIPE
-            )
-                
-        p.wait()
-        return {'ok':'ok'}
-    except:
-        print('Failed to encrypt: ' + str(file_path), file=sys.stderr)
-        return {'error':'failed'}
-
-#openssl rsa -in mykey.pem -pubout -out mykey.pub
-#will extract the public key and print that out. Here is a link to a page that describes this better.
-def rsa_pubout( input_file ):
-    input_file_path = os.path.join(TEMP_FOLDER, input_file)
-    file_path = os.path.join(TEMP_FOLDER, input_file.split('.')[0] + '.pub')
-    print(input_file_path, file=sys.stderr)
-    print(file_path, file=sys.stderr)
-    p = subprocess.Popen(['touch', file_path]) # creating the output file before using it to prevent throwing errors
+def generate_rsa( sk_file  ):
+    sk_path = os.path.join(TEMP_FOLDER, sk_file + '.pem')
+    pk_path = os.path.join(TEMP_FOLDER, sk_path.split('.')[0] + '.pub')
+    p = subprocess.Popen(['touch', pk_path, sk_path]) # creating the output file before using it to prevent throwing errors
     p.wait()
     try:
             
         p = subprocess.Popen(
-                ['openssl', 'rsa', '-in', input_file_path, '-pubout', '-out', file_path ],
+                ['openssl', 'genrsa', '-out', sk_path],
+                stdin = subprocess.PIPE,
+                stdout = subprocess.PIPE,
+                stderr = subprocess.PIPE
+            )
+                
+        p.wait()
+
+        #openssl rsa -in mykey.pem -pubout -out mykey.pub
+        #will extract the public key and print that out. Here is a link to a page that describes this better.
+
+        p = subprocess.Popen(
+                ['openssl', 'rsa', '-in', sk_path, '-pubout', '-out', pk_path ],
                 stdin = subprocess.PIPE,
                 stdout = subprocess.PIPE,
                 stderr = subprocess.PIPE
@@ -281,8 +278,9 @@ def rsa_pubout( input_file ):
         p.wait()
         return {'ok':'ok'}
     except:
-        print('Failed to encrypt: ' + str(file_path), file=sys.stderr)
+        print('Failed to encrypt: ' + str(sk_path), file=sys.stderr)
         return {'error':'failed'}
+
 
 # openssl rsa -in teste1.pem.pub -pubin (to view PK)
 # or
@@ -400,7 +398,13 @@ def verify_file_with_public_key( file_to_verify, public_key_file, signed_file, h
             )
             p1.wait()
 
-            return {'ok':'ok'}
+            output_file = open(output_file_path, 'r')
+            status = output_file.read()
+
+            if 'OK' in status:
+                return {'ok': status}
+            else:
+                return {'error': status}
 
         except:
             return {'error':'failed_to_verify'}
