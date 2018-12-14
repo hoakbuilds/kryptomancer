@@ -75,7 +75,8 @@ Final note: for the app to be able to run properly, in the root dir of the repos
 
 * **Hugo Carvalho** - *Initial work* - [murlokito](https://github.com/murlokito)
 * **António Matos** - *Initial work* - [ajsmatos](https://github.com/ajsmatos)
-* 
+* **João Silva** - *Initial work* - [JoaoSilva](https://github.com/JoaoSilva)
+* **Guilherme Poeta** - *Initial work* - [P0ETA](https://github.com/P0ETA)
 See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
 
 ## License
