@@ -51,6 +51,7 @@ def generate_key( bytes, base64=None):
     data = {
         'key' : key
     }
+    os.remove(key_dir)
 
     return data
 
@@ -86,7 +87,8 @@ def generate_aes_key_iv( bytes ):
         'iv' : iv,
         'key' : key
     }
-
+    os.remove(key_dir)
+    os.remove(iv_dir)
     return data
 
 def generate_3des_key_iv():
@@ -121,7 +123,8 @@ def generate_3des_key_iv():
         'iv' : iv,
         'key' : key
     }
-
+    os.remove(key_dir)
+    os.remove(iv_dir)
     return data
 
 def digest_file( input_file, hash_algorithm ):
@@ -146,6 +149,7 @@ def digest_file( input_file, hash_algorithm ):
     data = {
         'hash' : digest
     }
+    os.remove(file_path)
 
     return data
 
@@ -171,6 +175,8 @@ def hmac_file( input_file, hash_algorithm, key ):
     data = {
         'hmac' : hmac
     }
+
+    os.remove(file_path)
 
     return data
 
@@ -400,7 +406,7 @@ def verify_file_with_public_key( file_to_verify, public_key_file, signed_file, h
 
             output_file = open(output_file_path, 'r')
             status = output_file.read()
-
+            os.remove(output_file_path)
             if 'OK' in status:
                 return {'ok': status}
             else:
