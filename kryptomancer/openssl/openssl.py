@@ -149,7 +149,7 @@ def digest_file( input_file, hash_algorithm ):
     data = {
         'hash' : digest
     }
-    os.remove(file_path)
+    os.remove(key_file)
 
     return data
 
@@ -176,7 +176,7 @@ def hmac_file( input_file, hash_algorithm, key ):
         'hmac' : hmac
     }
 
-    os.remove(file_path)
+    os.remove(key_file)
 
     return data
 
