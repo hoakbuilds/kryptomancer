@@ -26,7 +26,9 @@ TEMP_FOLDER = os.getcwd() + '/temp'
 
 def generate_key( bytes, base64=None):
     key_dir=os.path.join(OPENSSL_OUTPUT_FOLDER, "key-file.txt")
-    
+    p = subprocess.Popen(['touch', key_dir]) # creating the output file before using it to prevent throwing errors
+    p.wait()
+
     key_file = open(key_dir, 'w+')
     if base64 is None:
 
@@ -59,6 +61,8 @@ def generate_aes_key_iv( bytes ):
     key_dir=os.path.join(OPENSSL_OUTPUT_FOLDER, "key-file.txt")
     iv_dir=os.path.join(OPENSSL_OUTPUT_FOLDER, "iv-file.txt")
     #print(iv_dir, key_dir)
+    p = subprocess.Popen(['touch', key_dir, iv_dir]) # creating the output file before using it to prevent throwing errors
+    p.wait()
 
     key_file = open(key_dir, 'w+')
     iv_file = open(iv_dir, 'w+')
@@ -95,6 +99,8 @@ def generate_3des_key_iv():
     key_dir=os.path.join(OPENSSL_OUTPUT_FOLDER, "key-file.txt")
     iv_dir=os.path.join(OPENSSL_OUTPUT_FOLDER, "iv-file.txt")
     #print(iv_dir, key_dir)
+    p = subprocess.Popen(['touch', key_dir, iv_dir]) # creating the output file before using it to prevent throwing errors
+    p.wait()
 
     key_file = open(key_dir, 'w+')
     iv_file = open(iv_dir, 'w+')
@@ -130,6 +136,8 @@ def generate_3des_key_iv():
 def digest_file( input_file, hash_algorithm ):
 
     key_dir=os.path.join(OPENSSL_OUTPUT_FOLDER, input_file+'.'+str(hash_algorithm))
+    p = subprocess.Popen(['touch', key_dir]) # creating the output file before using it to prevent throwing errors
+    p.wait()
     key_file = open(key_dir, 'w+')
 
     file_path = os.path.join(UPLOADS_FOLDER, input_file)
@@ -158,6 +166,8 @@ def digest_file( input_file, hash_algorithm ):
 def hmac_file( input_file, hash_algorithm, key ):
 
     key_dir=os.path.join(OPENSSL_OUTPUT_FOLDER, "key-file.txt")
+    p = subprocess.Popen(['touch', key_dir]) # creating the output file before using it to prevent throwing errors
+    p.wait()
     key_file = open(key_dir, 'w+')
 
     file_path = os.path.join(UPLOADS_FOLDER, input_file)
@@ -337,6 +347,7 @@ def view_key_from_pem( input_file ):
         data = {
             'pk' : key
         }
+    os.remove(key_dir)
     return data
 
 # openssl dgst -HASH -sign PRIVATE_KEY FILE_TO_SIGN > FILE.SIG
