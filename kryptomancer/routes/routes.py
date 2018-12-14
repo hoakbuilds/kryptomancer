@@ -95,18 +95,18 @@ def rsa_crypter():
     if request.method == 'POST':
         # check if the post request has the file part
         if 'file' not in request.files:
-            files = get_uploaded_files()
-            return render_template('file_crypter.html', listdir=files)
-            
-        file = request.files['file']
-        # if user does not select file, browser also
-        # submit an empty part without filename
-        if file:
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(UPLOAD_FOLDER, file.filename))
-            files = get_uploaded_files()
-            return render_template('rsa_crypter.html', name=filename, listdir=files)
-        else:
+            pass
+        else:            
+            file = request.files['file']
+            # if user does not select file, browser also
+            # submit an empty part without filename
+            if file:
+                filename = secure_filename(file.filename)
+                file.save(os.path.join(UPLOAD_FOLDER, file.filename))
+                files = get_uploaded_files()
+                return render_template('rsa_crypter.html', name=filename, listdir=files)
+        
+        
             files = get_uploaded_files()
             return render_template('rsa_crypter.html', error="File not supported.", listdir=files)
     else:
