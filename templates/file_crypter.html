@@ -5,29 +5,65 @@
 
 <div class="w3-container w3-content w3-padding-64">
     <h2 class="w3-cinzel w3-padding-16"> <b>Encrypt and Decrypt Files</b> </h2>
+    <button class="collapsible">Click me to have a tip!</button>
+    <div class="content">
+      <span>This area is reserved to the encryption and decryption of your files. 
+        <br>To <b>encrypt</b> a file:
+        
+        <ul class=" w3-middle">
+            <li><b>Provide your hexadecimal secret key(optional);</b></li>
+            <li><b>Provide your hexadecimal initialization vector(optional);</b></li>
+            <li><b>Select a cipher;</b></li>
+            <li><b>Encode to b64 base(optional);</b></li>at
+            <li><b>Upload your file to encrypt;</b></li>
+            <li><b>Select your files to encrypt;</b></li>
+            <li><b>Click on encrypt selected;</b></li>
+            <li><b>Copy to clipboard your generated keys and iv.</b></li>
+        </ul>
+        <br>To <b>decrypt</b> a file:
+        <ul class=" w3-middle">
+            <li><b>Provide your hexadecimal secret key;</b></li>
+            <li><b>Provide your hexadecimal initialization vector;</b></li>
+            <li><b>Select a cipher;</b></li>
+            <li><b>Encode to b64 base(in case the output is encoded);</b></li>
+            <li><b>Upload your file to decrypt;</b></li>
+            <li><b>Select your file to decrypt;</b></li>
+            <li><b>Click on decrypt selected;</b></li>
+        </ul>
+
+
+        Encryption is the process to attribute statistic confusion and difusion to your files, using a cryptographic cipher. This way, your files will be unreadable, as a secret.
+        When you trade files with a friend, ask him to send you the initialization vector and cipher used. Remember that you need a previously exchanged secret key.
+        Later, when you have the files, just decrypt them with the correct key, cipher and iv, and you will be able to unveil their secrets.
+
+      </span>
+    </div>
     <hr>
 
     
 
 
 
-    <div class="w3-left">
+    <!-- <div class="w3-left"> -->
       <form id="files" action="/crypter/" enctype=multipart/form-data method="POST">
 
-        <span class="w3-cinzel w3-xlarge">Provide an <b>iv</b>, a <b>key</b> and <b>select a cipher</b></span>
+        <span class="w3-cinzel w3-xlarge">Provide an <b>iv</b>, a <b>key</b></span>
         <br>
-        <br>
-        <span class="w3-cinzel w3-small"><b>Only the cipher is required, KEYS ARE ALWAYS GENERATED</b> in case you do not provide them. 
-        <br>  
-        You can also generate keys by demand clicking on "Generate Keys"</span>
+        <span class="w3-cinzel w3-small">Only required to decrypt</span>
         <br>
 
         <br>
 
         <label class="w3-cinzel">IV</label>
-        <input  name="encryption_iv" type="text">
+        <input  name="encryption_iv" type="text" placeholder="Initialization Vector">
         <label class="w3-cinzel">Key</label>
-        <input name="encryption_key"  type="text">
+        <input name="encryption_key"  type="text" placeholder="Key">
+
+        <hr>
+
+        <span class="w3-cinzel w3-xlarge">Select a <b>cipher</b></span>
+        <br>
+        <br>
         
 
         <select class="w3-cinzel" name="selected_cipher">
@@ -46,7 +82,7 @@
         
         <hr>
 
-        <span class="w3-cinzel">Upload your files</span>
+        <span class="w3-cinzel w3-xlarge "><b>Upload</b> your files</span>
         <br>
         <br>
         
@@ -74,32 +110,123 @@
 
         <input class="w3-dark-grey w3-round w3-cinzel" formaction="/encrypt_file/" type="submit" value="Encrypt Selected">
         <input class="w3-dark-grey w3-round w3-cinzel" formaction="/decrypt_file/" type="submit" value="Decrypt Selected">
-        <input class="w3-dark-grey w3-round w3-cinzel" formaction="/crypter/generate_keys_from_selected_files" type="submit" value="Generate Keys" onclick="show_table()">
+        <!-- <input class="w3-dark-grey w3-round w3-cinzel" formaction="/crypter/generate_keys_from_selected_files" type="submit" value="Generate Keys" onclick="show_table()"> -->
         <input class="w3-dark-grey w3-round w3-cinzel" formaction="/delete_file/" type="submit" value="Delete Selected">
         <br>
         <br>
 
-
-        <table class="w3-table w3-left w3-bordered">
-            <tr class=" w3-round w3-cinzel w3-large">
-              <th><b>Filename</b></th>
-              <th><b>IV</b></th>
-              <th><b>Key</b></th> 
-            </tr>
-            {% for item in enc_info  %}
-              <tr class="w3-round">
-                <td> {{ item.filename }}</td>
-                <td> {{ item.iv }}</td>
-                <td> {{ item.key }}</td>
-              </tr>
-            {% endfor %}
-          </table>
-
         </form>
-    </div>
+
+        
+
+    <!-- </div> -->
+
+    <div class="w3-container">
+        <div class="w3-responsive">
+            {% if gen_info %}
+              <table class="w3-table w3-left w3-bordered">
+                <tr class=" w3-round w3-cinzel w3-large">
+                  <th><b>Filename</b></th>
+                  <th></th>
+                  <th><b>IV</b></th>
+                  <th></th>
+                  <th><b>Key</b></th> 
+                </tr>
+                {% for item in gen_info  %}
+                  <tr class="w3-round">
+                    <td> {{ item.filename }}</td>
+                    <td> <button id="copy_{{item.filename}}_iv" onclick="crypter_iv_clip({{item|safe}})" onmouseout="outFunc({{item|safe}}, '_iv')" class="w3-dark-grey w3-round w3-cinzel">Copy.</button> </td>
+                    <td id="{{item.filename}}_iv">{{ item.iv }}</td>
+                    <td> <button id="copy_{{item.filename}}_key" onclick="crypter_key_clip({{item|safe}})" onmouseout="outFunc({{item|safe}}, '_key')" class="w3-dark-grey w3-round w3-cinzel">Copy.</button> </td>
+                    <td id="{{item.filename}}_key">{{ item.key }}</td>
+                  </tr>
+                {% endfor %}
+              </table>
+            {% endif %}
+
+            {% if enc_info %}
+              <table class="w3-table w3-left w3-bordered">
+                <tr class=" w3-round w3-cinzel w3-large">
+                  <th><b>Filename</b></th>
+                  <th><b>Algorithm</b></th>
+                  <th><b>Encryption</b></th>
+                  <th></th>
+                  <th><b>IV</b></th>
+                  <th></th>
+                  <th><b>Key</b></th> 
+                </tr>
+                {% for item in enc_info  %}
+                  <tr class="w3-round">
+                    <td> {{ item.filename }}</td>
+                    <td> {{ item.algorithm }}</td>
+                    <td> {{ item.status }}</td>
+                    <td> <button id="copy_{{item.filename}}_iv" onclick="crypter_iv_clip({{item|safe}})" onmouseout="outFunc({{item|safe}}, '_iv')" class="w3-dark-grey w3-round w3-cinzel">Copy.</button> </td>
+                    <td id="{{item.filename}}_iv">{{ item.iv }}</td>
+                    <td> <button id="copy_{{item.filename}}_key" onclick="crypter_key_clip({{item|safe}})" onmouseout="outFunc({{item|safe}}, '_key')" class="w3-dark-grey w3-round w3-cinzel">Copy.</button> </td>
+                    <td id="{{item.filename}}_key">{{ item.key }}</td>
+                  </tr>
+                {% endfor %}
+              </table>
+            {% endif %}
+            
+            {% if dec_info %}
+            <table class="w3-table w3-left w3-bordered">
+                <tr class=" w3-round w3-cinzel w3-large">
+                  <th><b>Filename</b></th>
+                  <th><b>Algorithm</b></th>
+                  <th><b>Decryption</b></th>
+                  <th></th>
+                  <th><b>IV</b></th>
+                  <th></th>
+                  <th><b>Key</b></th> 
+                </tr>
+                {% for item in dec_info  %}
+                  <tr class="w3-round">
+                    <td> {{ item.filename }}</td>
+                    <td> {{ item.algorithm }}</td>
+                    <td> {{ item.status }}</td>
+                    <td> <button id="copy_{{item.filename}}_iv" onclick="crypter_iv_clip({{item|safe}})" onmouseout="outFunc({{item|safe}}, '_iv')" class="w3-dark-grey w3-round w3-cinzel">Copy.</button> </td>
+                    <td id="{{item.filename}}_iv">{{ item.iv }}</td>
+                    <td> <button id="copy_{{item.filename}}_key" onclick="crypter_key_clip({{item|safe}})" onmouseout="outFunc({{item|safe}}, '_key')" class="w3-dark-grey w3-round w3-cinzel">Copy.</button> </td>
+                    <td id="{{item.filename}}_key">{{ item.key }}</td>
+                  </tr>
+                {% endfor %}
+              </table>
+            {% endif %}
+          </div>
+        </div>
 
   
 </div> 
+
+<script>
+  function crypter_iv_clip(element) {
+    var copyText = document.getElementById(element.filename+"_iv");
+    var textArea = document.createElement("textarea");
+    textArea.value = copyText.textContent;
+    document.body.appendChild(textArea);
+    textArea.select();
+    document.execCommand("Copy");
+    textArea.remove();
+    var tooltip = document.getElementById("copy_"+element.filename+"_iv");
+    tooltip.innerHTML = "Copied to clipboard.";
+  }
+    function crypter_key_clip(element) {
+    var copyText = document.getElementById(element.filename+"_key");
+    var textArea = document.createElement("textarea");
+    textArea.value = copyText.textContent;
+    document.body.appendChild(textArea);
+    textArea.select();
+    document.execCommand("Copy");
+    textArea.remove();
+    var tooltip = document.getElementById("copy_"+element.filename+"_key");
+    tooltip.innerHTML = "Copied to clipboard.";
+  }
+  function outFunc(element, flag) {
+    var tooltip = document.getElementById("copy_"+element.filename+flag);
+    tooltip.innerHTML = "Copy.";
+  }
+</script>
 {% endblock %}
 
 

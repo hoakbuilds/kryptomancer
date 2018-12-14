@@ -3,11 +3,35 @@
 {% block content %}
 
 <div class="w3-container w3-content w3-padding-64">
-    <h2 class="w3-cinzel w3-padding-16"> <b> HMAC Calculator </b> </h2>
+    <h2 class="w3-cinzel w3-padding-16-per"> <b> HMAC Calculator </b> </h2>
+    <button class="collapsible">Click me to have a tip!</button>
+    <div class="content">
+        <span>This area is reserved to the calculation of hash based message authentication codes from your files. <b>To calculate an HMAC</b>:
+            <br>
+            
+            <ul class=" w3-middle">
+                <li><b>Upload your desired files;</b></li>
+                <li><b>Provide your hexadecimal secret key;</b></li>
+                <li><b>Select your file for hmac calculation;</b></li>
+                <li><b>Select the desired hash function;</b></li>
+                <li><b>Click on the generate hmac button;</b></li>
+                <li><b>Copy to your clipboard the output values and store them.</b></li>
+            </ul>
+            
+            The hmac, like hash resumes, is used to verify the integrity of a file while providing an extra layer of security.
+            The extra key needed to extract the correct value, formalizes the source of the file. 
+            <br>When you trade files with a friend, ask him to send you the respective hmac value and hash function.
+            Remember that you need a previously exchanged secret key.
+            Later, when you have the files, just re-calculate the hmac with the same function and key, and check if the two are are the same.
+            If that is the case, it means that your file was not changed during the transmission and realy is the file of your friend.
+  
+        </span>
+    </div>
     <hr>
+    
 
 
-    <span class="w3-cinzel w3-xlarge">Provide a <b>key</b> to be used to calculate the HMAC.</span>
+    <span class="w3-cinzel w3-xlarge">Provide a <b>hex key</b> to calculate the HMAC.</span>
     <br>
     <br> 
     
@@ -16,8 +40,8 @@
         <label class="w3-cinzel">HMAC Key</label>
         <input  name="hmac_key" type="text">
         <br>
-        <hr> 
-        <span class="w3-cinzel">Upload your files</span>
+        <hr>
+        <span class="w3-cinzel w3-xlarge"><b>Upload</b> your files</span>
         <br>
         <br>
         
@@ -40,8 +64,12 @@
             <option class="w3-list" value="{{item}}" name="selected_files">{{ item }} </option> 
           {% endfor %} 
         </select>
+        <br>
+        <br>
 
-        <span class="w3-cinzel">Select the desired cryptographic hash function</span>
+        <span class="w3-cinzel w3-xlarge">Select <b>hash function</b></span>
+        <br>
+        <br>
     
         <select class="w3-cinzel" name="hash_algorithm">
             <option disabled >Hash function</option>
@@ -49,8 +77,6 @@
             <option  value="sha256" >SHA256</option>
             <option  value="sha512" >SHA512</option>
             <option  value="md5" >MD5</option>
-            <option  value="sm3" >SM3</option>
-            <option  value="blake2s256">BLAKE2S256</option>
         </select>
 
         <input class="w3-dark-grey w3-round w3-cinzel" formaction="/hmac" type="submit" value="Generate HMAC">
@@ -59,23 +85,31 @@
         <br>
     </form>
 
-    <table class="w3-table w3-left w3-bordered">
-    <tr class="w3-round w3-cinzel w3-large">
-        <th>Filename</th>
-        <th>Algorithm</th>
-        <th></th>
-        <th>HMAC</th> 
-    </tr>
-    {% for item in hmac_info  %}
-        <tr>
-        <td> {{ item.filename }}</td>
-        <td> {{ item.algorithm }}</td>
-        <td> <button id="copy_{{item.filename}}" onclick="digest_clip({{item|safe}})" onmouseout="outFunc({{item|safe}})" class="w3-dark-grey w3-round w3-cinzel">Copy.</button> </td>
-        <td id="{{item.filename}}"> {{ item.hmac }}</td>
-        </tr>
-    {% endfor %}
-    </table>
+    <div class="w3-container">
+        <div class="w3-responsive">
+            <table class="w3-table w3-left w3-bordered">
+                <tr class="w3-round w3-cinzel w3-large">
+                    <th>Filename</th>
+                    <th>Algorithm</th>
+                    <th></th>
+                    <th>HMAC</th> 
+                </tr>
+                {% for item in hmac_info  %}
+                    <tr>
+                    <td> {{ item.filename }}</td>
+                    <td> {{ item.algorithm }}</td>
+                    <td> <button id="copy_{{item.filename}}" onclick="digest_clip({{item|safe}})" onmouseout="outFunc({{item|safe}})" class="w3-dark-grey w3-round w3-cinzel">Copy.</button> </td>
+                    <td id="{{item.filename}}"> {{ item.hmac }}</td>
+                    </tr>
+                {% endfor %}
+                </table>
+        </div>
+    </div>
+
+    
 </div>
+
+
 
 
 <script>
