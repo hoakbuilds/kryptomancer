@@ -5,11 +5,11 @@
   <h2 class="w3-cinzel w3-padding-16-per"> <b>Calculate cryptographic hash functions</b> </h2>
   <button class="collapsible">Click me to have a tip!</button>
   <div class="content">
-      <span>This area is reserved to the calculation of cryptographic hash resumes from your files. To digest one or more of your files just:
+      <span>This area is reserved to the calculation of cryptographic hash resumes from your files. <b>To digest one or more of your files</b> just:
           <br>
           
           <ul class="w3-middle">
-              <li><b>Upload your desiered files;</b></li>
+              <li><b>Upload your desired files;</b></li>
               <li><b>Select the files to resume from the folder system;</b></li>
               <li><b>Select the desired hash function;</b></li>
               <li><b>Click on the digest button;</b></li>
@@ -25,7 +25,7 @@
   <hr> 
 
   <div class="w3-left">
-  <span class="w3-cinzel">Upload a file</span>
+  <span class="w3-cinzel w3-xlarge">Upload a file</span>
   <br>
   <br>
 
@@ -69,22 +69,28 @@
     <input class="w3-dark-grey w3-round w3-cinzel" formaction="/delete_file/" type="submit" value="Delete Selected">   
   </form>
 
-  <table class="w3-table w3-left w3-bordered">
-  <tr class="w3-round w3-cinzel w3-large">
-    <th>Filename</th>
-    <th>Algorithm</th>
-    <th></th>
-    <th>Digest</th>
-  </tr>
-  {% for item in digest_info  %}
-    <tr>
-      <td> {{ item.filename }}</td>
-      <td> {{ item.algorithm }}</td>
-      <td> <button id="copy_{{item.filename}}" onclick="digest_clip({{item|safe}})" onmouseout="outFunc({{item|safe}})" class="w3-dark-grey w3-round w3-cinzel">Copy.</button> </td>
-      <td id="{{item.filename}}">  {{ item.hash }}</td> 
-    </tr>
-  {% endfor %}
-  </table>
+  
+</div>
+
+<div class="w3-container">
+  <div class="w3-responsive">
+    <table class="w3-table w3-left w3-bordered">
+      <tr class="w3-round w3-cinzel w3-large">
+        <th>Filename</th>
+        <th>Algorithm</th>
+        <th></th>
+        <th>Digest</th>
+      </tr>
+      {% for item in digest_info  %}
+        <tr>
+          <td> {{ item.filename }}</td>
+          <td> {{ item.algorithm }}</td>
+          <td> <button id="copy_{{item.filename}}" onclick="digest_clip({{item|safe}})" onmouseout="outFunc({{item|safe}})" class="w3-dark-grey w3-round w3-cinzel">Copy.</button> </td>
+          <td id="{{item.filename}}">  {{ item.hash }}</td> 
+        </tr>
+      {% endfor %}
+      </table>
+  </div>
 </div>
 
 </div>
