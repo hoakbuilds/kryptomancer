@@ -10,6 +10,7 @@
                     <span>This area is reserved to the digital signing of documents, using a secret key. To sign a Document, just:
                             <br>
                         <ul class="w3-middle">
+                                <li><b>Upload your files;</b></li>
                                 <li><b>Select the resume algorithm for your signature;</b></li>
                                 <li><b>Select your file to sign;</b></li>
                                 <li><b>Select your secret key;</b></li>
@@ -43,32 +44,32 @@
         <input class="w3-dark-grey w3-round w3-cinzel" type=file name=file>
         <input class="w3-dark-grey w3-round w3-cinzel" type=submit value=Upload>
         <hr>
-        <select multiple type="file" class="w3-select" size="10" name="uploaded_files" enctype="multipart/form-data">
-          <option class="w3-list w3-center" disabled name="uploaded_files">Untouched Files</option> 
+        <select multiple type="file" class="w3-select" size="10" name="sign_uploaded_files" enctype="multipart/form-data">
+          <option class="w3-list w3-center" disabled name="sign_uploaded_files">Untouched Files</option> 
           {% for item in listdir.untouched  %}
-            <option class="w3-list" value="{{item}}" name="uploaded_files">{{ item }} </option> 
+            <option class="w3-list" value="{{item}}" name="sign_uploaded_files">{{ item }} </option> 
           {% endfor %}
-          <option class="w3-list w3-center" disabled name="uploaded_files">Encrypted Files</option> 
+          <option class="w3-list w3-center" disabled name="sign_uploaded_files">Encrypted Files</option> 
           {% for item in listdir.encrypted  %}
-            <option class="w3-list" value="{{item}}" name="uploaded_files">{{ item }} </option> 
+            <option class="w3-list" value="{{item}}" name="sign_uploaded_files">{{ item }} </option> 
           {% endfor %}
-          <option class="w3-list w3-center" disabled name="uploaded_files">Decrypted Files</option>
+          <option class="w3-list w3-center" disabled name="sign_uploaded_files">Decrypted Files</option>
           {% for item in listdir.decrypted  %}
-            <option class="w3-list" value="{{item}}" name="uploaded_files">{{ item }} </option> 
+            <option class="w3-list" value="{{item}}" name="sign_uploaded_files">{{ item }} </option> 
           {% endfor %}
-           <option class="w3-list w3-center" disabled name="uploaded_files">Signature Files</option> 
+           <option class="w3-list w3-center" disabled name="sign_uploaded_files">Signature Files</option> 
           {% for item in listdir.signed  %}
-            <option class="w3-list" value="{{item}}" name="uploaded_files">{{ item }} </option> 
+            <option class="w3-list" value="{{item}}" name="sign_uploaded_files">{{ item }} </option> 
           {% endfor %}
         </select>
-        <select multiple type="file" class="w3-select" size="10" name="selected_files" enctype="multipart/form-data">
-            <option class="w3-list w3-center" disabled name="selected_files">Secrets</option> 
+        <select multiple type="file" class="w3-select" size="10" name="sign_selected_files" enctype="multipart/form-data">
+            <option class="w3-list w3-center" disabled name="sign_selected_files">Secrets</option> 
             {% for item in listdir.sk  %}
-            <option class="w3-list" value="{{item}}" name="selected_files">{{ item }} </option> 
+            <option class="w3-list" value="{{item}}" name="sign_selected_files">{{ item }} </option> 
             {% endfor %}
-            <option class="w3-list w3-center" disabled name="selected_files">Public</option> 
+            <option class="w3-list w3-center" disabled name="sign_selected_files">Public</option> 
             {% for item in listdir.pk  %}
-            <option class="w3-list" value="{{item}}" name="selected_files">{{ item }} </option> 
+            <option class="w3-list" value="{{item}}" name="sign_selected_files">{{ item }} </option> 
             {% endfor %}
         </select>
         <button type="submit" value='Generate Key' class=" w3-dark-grey w3-round w3-cinzel">Sign File</button>

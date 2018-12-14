@@ -28,7 +28,7 @@ from kryptomancer.openssl import (
 )
 
 UPLOAD_FOLDER = os.getcwd() + '/uploads'
-TEMP_FOLDER = os.getcwd() + '/temp'
+RSA_FOLDER = os.getcwd() + '/temp'
 OPENSSL_OUTPUT_FOLDER = os.getcwd() + '/openssl_out'
 
 @routes.route('/')
@@ -336,24 +336,23 @@ def signify():
         print('post', file=sys.stderr)
         print(request.__dict__, file=sys.stderr)
         if 'file' not in request.files:
-            files = {**get_temporary_files(), **get_uploaded_files()} #joins two dicts :)
-            return render_template('sign.html', listdir=files)
-            
-        file = request.files['file']
-        # if user does not select file, browser also
-        # submit an empty part without filename
-        if file:
-            filename = secure_filename(file.filename)
-            print(filename, file=sys.stderr)
-            file.save(os.path.join(UPLOAD_FOLDER, file.filename))
-            files = {**get_temporary_files(), **get_uploaded_files()} #joins two dicts :)
-            return render_template('sign.html', name=filename, listdir=files)
+            pass
+        else:  
+            file = request.files['file']
+            # if user does not select file, browser also
+            # submit an empty part without filename
+            if file:
+                filename = secure_filename(file.filename)
+                print(filename, file=sys.stderr)
+                file.save(os.path.join(UPLOAD_FOLDER, file.filename))
+                files = {**get_temporary_files(), **get_uploaded_files()} #joins two dicts :)
+                return render_template('sign.html', name=filename, listdir=files)
 
         files = {**get_temporary_files(), **get_uploaded_files()} #joins two dicts :)
-        private_key_file = request.form.get('selected_files')
+        private_key_file = request.form.get('sign_selected_files')
         if private_key_file is None:
             return render_template('sign.html',  data=[], listdir=files)
-        file_to_sign = request.form.getlist('uploaded_files')
+        file_to_sign = request.form.getlist('sign_uploaded_files')
         if file_to_sign is None:
             return render_template('sign.html',  data=[], listdir=files)
         hash = request.form.get('selected_cipher')
@@ -364,6 +363,8 @@ def signify():
                                             hash_algorithm=hash)
             data['filename'] = f
             data_list.append(data)
+        
+        files = {**get_temporary_files(), **get_uploaded_files()} #joins two dicts :)
         return render_template('sign.html',  data=data_list, listdir=files)
     
     print('get', file=sys.stderr)
@@ -375,6 +376,25 @@ def signify():
 def verify():
     print('verify', file=sys.stderr)
     if request.method == 'POST':
+        print('post', file=sys.stderr)
+        print(request.__dict__, file=sys.stderr)
+        if 'file' not in request.files:
+            pass
+        else:           
+            file = request.files['file']
+            # if user does not select file, browser also
+            # submit an empty part without filename
+            if file:
+                filename = secure_filename(file.filename)
+                print(filename, file=sys.stderr)
+                split = filename.split('.')[-1]
+                if split == 'pem' or split == 'pub':
+                    file.save(os.path.join(RSA_FOLDER, file.filename))
+                else:
+                    file.save(os.path.join(UPLOAD_FOLDER, file.filename))
+                files = {**get_temporary_files(), **get_uploaded_files()} #joins two dicts :)
+                return render_template('verify.html', name=filename, listdir=files)
+
         files = {**get_temporary_files(), **get_uploaded_files()} #joins two dicts :)
         public_key_file = request.form.get('selected_files')
         if public_key_file is None:
@@ -466,11 +486,10 @@ def delete_file():
                 print(f,  file=sys.stderr)
                 split = f.split('.')[-1]
                 if split == 'pub' or split == 'pem':
-                    redirect_rsa = True
-                    filename = os.path.join(TEMP_FOLDER, f)
+                    filename = os.path.join(RSA_FOLDER, f)
                 else:
                     filename = os.path.join(UPLOAD_FOLDER, f)
-                print(filename, file=sys.stderr)
+                    print(filename, file=sys.stderr)
                 try:
                     os.remove(filename)
                 except:
@@ -484,14 +503,45 @@ def delete_file():
                 print(f,  file=sys.stderr)
                 split = f.split('.')[-1]
                 if split == 'sig':
-                    redirect_sign = True
                     filename = os.path.join(UPLOAD_FOLDER, f)
-                print(filename, file=sys.stderr)
+                    print(filename, file=sys.stderr)
                 try:
                     os.remove(filename)
                 except:
                     pass
                     
+        selected_files = request.form.getlist('sign_selected_files')
+        if selected_files is not None: # Deletes selected files in select form
+            print('------------ Files Selected:', file=sys.stderr)
+            redirect_sign=True
+            for f in selected_files:
+                print(f,  file=sys.stderr)
+                split = f.split('.')[-1]
+                if split == 'pub' or split == 'pem':
+                    filename = os.path.join(RSA_FOLDER, f)
+                else:
+                    filename = os.path.join(UPLOAD_FOLDER, f)
+                    print(filename, file=sys.stderr)
+                try:
+                    os.remove(filename)
+                except:
+                    pass
+
+        uploaded_files = request.form.getlist('sign_uploaded_files')
+
+        if uploaded_files is not None: # Deletes selected files in select form
+            print('------------ Files Selected From Uploaded Files:', file=sys.stderr)
+            redirect_sign=True
+            for f in uploaded_files:
+                print(f,  file=sys.stderr)
+                split = f.split('.')[-1]
+                if split == 'sig':
+                    filename = os.path.join(UPLOAD_FOLDER, f)
+                    print(filename, file=sys.stderr)
+                try:
+                    os.remove(filename)
+                except:
+                    pass
         if redirect_rsa is not None:
             files = get_temporary_files()
             return render_template('rsa_gen.html', listdir=files, enc_info=[])   
@@ -600,7 +650,7 @@ def generate_keys_for_files(files, selected_cipher):
 # Gets temporary app files
 # These may be .pem files
 def get_temporary_files():
-    listdir = os.listdir(TEMP_FOLDER)
+    listdir = os.listdir(RSA_FOLDER)
     res = {}
     sk = []
     pk = []

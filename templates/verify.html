@@ -9,6 +9,7 @@
             <span>This area is reserved to the verification of digital signed documents, using a public key. To verify a signature, just:
                     <br>
                 <ul class="w3-middle">
+                        <li><b>Upload your files;</b></li>
                         <li><b>Select the resume algorithm for your signature;</b></li>
                         <li><b>Select the original file to verify;</b></li>
                         <li><b>Select the signature file to verify;</b></li>
@@ -33,6 +34,15 @@
         </select>
         <br>
         <hr>
+
+        <span class="w3-cinzel w3-xlarge "><b>Upload </b>your files</span>
+        <br>
+        <br>
+        
+
+        <input class="w3-dark-grey w3-round w3-cinzel" type=file name=file>
+        <input class="w3-dark-grey w3-round w3-cinzel" type=submit value=Upload>
+        <hr>
         <select multiple type="file" class="w3-select" size="10" name="uploaded_files" enctype="multipart/form-data">
           <option class="w3-list w3-center" disabled name="uploaded_files">Untouched Files</option> 
           {% for item in listdir.untouched  %}
@@ -51,6 +61,16 @@
             <option class="w3-list" value="{{item}}" name="uploaded_files">{{ item }} </option> 
           {% endfor %}
         </select>
+        <br>
+        <br>
+        <span class="w3-cinzel w3-xlarge "><b>Upload public key files</b></span>
+        <br>
+        <br>
+        
+
+        <input class="w3-dark-grey w3-round w3-cinzel" type=file name=file>
+        <input class="w3-dark-grey w3-round w3-cinzel" type=submit value=Upload>
+        <hr>
         <select multiple type="file" class="w3-select" size="10" name="selected_files" enctype="multipart/form-data">
             <option class="w3-list w3-center" disabled name="selected_files">Secrets</option> 
             {% for item in listdir.sk  %}
