@@ -200,7 +200,7 @@ CIFRAR O FICHEIRO SECRET.KEY PARA SECRET.RSA UTILIZANDO A CHAVE PUBLICA DE ALGUÃ
 def rsa_encrypt(input_file, key_file):
     file_path = os.path.join(UPLOADS_FOLDER, input_file)
     key_file = os.path.join(RSA_FOLDER, key_file)
-    enc_file = os.path.join(UPLOADS_FOLDER,  input_file + ".rsa")
+    enc_file = os.path.join(UPLOADS_FOLDER,  input_file + ".rsaenc")
     p = subprocess.Popen(['touch', enc_file]) # creating the output file before using it to prevent throwing errors
     p.wait()
 
