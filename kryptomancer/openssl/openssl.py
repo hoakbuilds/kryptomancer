@@ -204,6 +204,9 @@ def rsa_encrypt(input_file, key_file):
     p = subprocess.Popen(['touch', enc_file]) # creating the output file before using it to prevent throwing errors
     p.wait()
 
+
+    print("openssl rsautl -encrypt -in " + file_path +" -out " +enc_file + " -inkey "+key_file + " -pubin", file=sys.stderr )
+
     try:
         p = subprocess.Popen(
                     ['openssl', 'rsautl', '-encrypt', '-in', file_path, '-out', enc_file, '-inkey', key_file, '-pubin'],
@@ -228,6 +231,9 @@ def rsa_decrypt(input_file, key_file):
     dec_file = os.path.join(UPLOADS_FOLDER,  input_file + ".rsadec")
     p = subprocess.Popen(['touch', dec_file]) # creating the output file before using it to prevent throwing errors
     p.wait()
+
+
+    print("openssl rsautl -decrypt -in " + file_path +" -out " +dec_file + " -inkey "+key_file, file=sys.stderr )
 
     try:
         p = subprocess.Popen(

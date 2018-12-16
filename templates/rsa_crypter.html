@@ -7,23 +7,20 @@
 
             <button class="collapsible">Click me to have a tip!</button>
             <div class="content">
-                    <span>This area is reserved to the digital signing of documents, using a secret key. To sign a Document, just:
+                    <span>This area is reserved to the encryption and decryption of files using a RSA public keys. Note that this method is best used along with symmetric key encryption like AES, to do that, read below:
                             <br>
                         <ul class="w3-middle">
-                                <li><b>Select your the resume algorith of your signature;</b></li>
-                                <li><b>Select your file to sign;</b></li>
-                                <li><b>Select your secret key;</b></li>
-                                <li><b>Select the file to sign;</b></li>
-                                <li><b>CLick on sign file;</b></li>
+                                <li><b>Generate keys for symmetric encryption and place them inside a file;</b></li>
+                                <li><b>Encrypt the file with the symmetric keys you generated in the step before;</b></li>
+                                <li><b>Encrypt the file with the symmetric keys using the RSA public key of the person you want to send the file to;</b></li>
+                                <li><b>Delete the unencrypted file containing the symmetric keys so no one finds them;</b></li>
+                                <li><b>Then you send the file encrypted with the symmetric keys and the file encrypted with the RSA public key to the person who has the private key;</b></li>
                             </ul>
-                            Digital signatures are the best way to deploy a unique signature to your files, directly linking them only to the properties of your secret key.
-                            That means that only the ones who have your public key can check if you signed the document.
-                            A slightly change on the original document or signature, will produce a total different output.
                     </span>
             </div>
     <hr>
 
-    <form class="example" action="/rsa_crypter" name="rsa_crypter" method=post>
+    <form class="example" action="/rsa_crypter" name="rsa_crypter" method=post enctype="multipart/form-data">
         <span class="w3-cinzel w3-xlarge "><b>Upload</b> your files</span>
         <br>
         <br>
@@ -68,6 +65,9 @@
             <div class="w3-container w3-row-cell w3-margin-top">
             <h2 class="w3-cinzel w3-cell">Filename: </h2>
             <p id="" class="w3-cell word-wrapper">{{ item.filename }}</p>
+            <br>
+            <h2 class="w3-cinzel w3-cell">Encryption File: </h2>
+            <p id="" class="w3-cell word-wrapper">{{ item.encryption_file }}</p>
             <br>
             <h2 class="w3-cinzel w3-cell">Signature: </h2>
             <p id="" class="w3-cell word-wrapper">{{ item.ok }}</p>

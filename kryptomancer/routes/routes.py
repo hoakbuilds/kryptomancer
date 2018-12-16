@@ -87,7 +87,7 @@ def crypter():
 
     return render_template('file_crypter.html', listdir=files)
 
-@routes.route('/rsa_crypter/', methods=['GET', 'POST']) 
+@routes.route('/rsa_crypter', methods=['GET', 'POST']) 
 def rsa_crypter():
     """
     Esta função serve uma página com um form de upload de ficheiros
@@ -104,6 +104,7 @@ def rsa_crypter():
             # submit an empty part without filename
             if file:
                 filename = secure_filename(file.filename)
+                print(filename, file=sys.stderr)
                 if filename.split('.')[-1] == 'pem':
                     file.save(os.path.join(RSA_FOLDER, file.filename))
                 else:
@@ -134,6 +135,35 @@ def rsa_encrypt():
             data = rsa_enc(input_file=f, key_file=public_key_file)
             data['filename'] = f
             data['encryption_file'] = public_key_file
+            if 'ok' in data:
+                data['status'] = data['ok']
+            else:
+                data['status'] = data['error']
+            data_list.append(data)
+
+        files = {**get_temporary_files(), **get_uploaded_files()} #joins two dicts :)
+        return render_template('rsa_crypter.html',  data=data, listdir=files)
+
+    files = {**get_temporary_files(), **get_uploaded_files()} #joins two dicts :)
+    return render_template('rsa_crypter.html', listdir=files)
+
+@routes.route('/rsa_decrypt/', methods=['POST'])
+def rsa_decrypt():
+    print('rsa_decrypt',file=sys.stderr)
+    if request.method == 'POST':
+        private_key_file = request.form.get('selected_files')
+        if private_key_file is None:
+            return render_template('rsa_crypter.html',  data=[], listdir=files)
+        file_to_encrypt = request.form.getlist('uploaded_files')
+        if not file_to_encrypt:
+            return render_template('rsa_crypter.html',  data=[], listdir=files)
+        
+        data_list = []
+        for f in file_to_encrypt:
+            print(private_key_file, f, file=sys.stderr)
+            data = rsa_dec(input_file=f, key_file=private_key_file)
+            data['filename'] = f
+            data['decryption_file'] = private_key_file
             if 'ok' in data:
                 data['status'] = data['ok']
             else:
