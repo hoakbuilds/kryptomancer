@@ -22,11 +22,12 @@ from . import openssl
 
 UPLOADS_FOLDER = os.getcwd() + '/uploads'
 OPENSSL_OUTPUT_FOLDER = os.getcwd() + '/openssl_out'
-TEMP_FOLDER = os.getcwd() + '/temp'
+RSA_FOLDER = os.getcwd() + '/temp'
 
 def generate_key( bytes, base64=None):
     key_dir=os.path.join(OPENSSL_OUTPUT_FOLDER, "key-file.txt")
-    
+    p = subprocess.Popen(['touch', key_dir]) # creating the output file before using it to prevent throwing errors
+    p.wait()
     key_file = open(key_dir, 'w+')
     if base64 is None:
 
@@ -49,7 +50,7 @@ def generate_key( bytes, base64=None):
     key = key_file.read()
 
     data = {
-        'key' : key
+        'key' : key.split('\n')[0]
     }
     os.remove(key_dir)
 
@@ -59,6 +60,8 @@ def generate_aes_key_iv( bytes ):
     key_dir=os.path.join(OPENSSL_OUTPUT_FOLDER, "key-file.txt")
     iv_dir=os.path.join(OPENSSL_OUTPUT_FOLDER, "iv-file.txt")
     #print(iv_dir, key_dir)
+    p = subprocess.Popen(['touch', key_dir, iv_dir]) # creating the output file before using it to prevent throwing errors
+    p.wait()
 
     key_file = open(key_dir, 'w+')
     iv_file = open(iv_dir, 'w+')
@@ -84,8 +87,8 @@ def generate_aes_key_iv( bytes ):
     print('IV ' + iv + 'Key ' + key)
 
     data = {
-        'iv' : iv,
-        'key' : key
+        'iv' : iv.split('\n')[0],
+        'key' : key.split('\n')[0]
     }
     os.remove(key_dir)
     os.remove(iv_dir)
@@ -95,6 +98,8 @@ def generate_3des_key_iv():
     key_dir=os.path.join(OPENSSL_OUTPUT_FOLDER, "key-file.txt")
     iv_dir=os.path.join(OPENSSL_OUTPUT_FOLDER, "iv-file.txt")
     #print(iv_dir, key_dir)
+    p = subprocess.Popen(['touch', key_dir, iv_dir]) # creating the output file before using it to prevent throwing errors
+    p.wait()
 
     key_file = open(key_dir, 'w+')
     iv_file = open(iv_dir, 'w+')
@@ -120,8 +125,8 @@ def generate_3des_key_iv():
     print('IV ' + iv + 'Key ' + key)
 
     data = {
-        'iv' : iv,
-        'key' : key
+        'iv' : iv.split('\n')[0],
+        'key' : key.split('\n')[0]
     }
     os.remove(key_dir)
     os.remove(iv_dir)
@@ -130,6 +135,8 @@ def generate_3des_key_iv():
 def digest_file( input_file, hash_algorithm ):
 
     key_dir=os.path.join(OPENSSL_OUTPUT_FOLDER, input_file+'.'+str(hash_algorithm))
+    p = subprocess.Popen(['touch', key_dir]) # creating the output file before using it to prevent throwing errors
+    p.wait()
     key_file = open(key_dir, 'w+')
 
     file_path = os.path.join(UPLOADS_FOLDER, input_file)
@@ -158,6 +165,8 @@ def digest_file( input_file, hash_algorithm ):
 def hmac_file( input_file, hash_algorithm, key ):
 
     key_dir=os.path.join(OPENSSL_OUTPUT_FOLDER, "key-file.txt")
+    p = subprocess.Popen(['touch', key_dir]) # creating the output file before using it to prevent throwing errors
+    p.wait()
     key_file = open(key_dir, 'w+')
 
     file_path = os.path.join(UPLOADS_FOLDER, input_file)
@@ -182,6 +191,108 @@ def hmac_file( input_file, hash_algorithm, key ):
     os.remove(key_dir)
 
     return data
+
+
+"""
+Generates keys for symmetric file encryption and saves them in a file to be encrypted with RSA
+Returns:
+    generated keys,
+    name of the file to be encrypted with RSA (containing the keys)
+"""
+def keys_for_RSA_session( input_file ):
+    output_filename = input_file.split('.')[0]+".keys"
+    output_file = os.path.join(OPENSSL_OUTPUT_FOLDER, output_filename )
+    p = subprocess.Popen(['touch', output_file]) # creating the output file before using it to prevent throwing errors
+    p.wait()
+    data = generate_aes_key_iv(32)
+
+    key_file = open(output_file, 'w+')
+
+    key_file.write(input_file+".enc\n"+data['iv']+"\n"+ data['key'])
+
+    data['key_filename'] = output_filename
+
+    return data
+
+"""
+Gets keys AES keys used in the RSA session
+Returns:
+    keys,
+    name of the file to be decrypted with RSA
+"""
+def get_AES_keys_from_RSA_session( input_file ):
+    output_filename = input_file.split('.')[0]+".keys"
+    output_file = os.path.join(OPENSSL_OUTPUT_FOLDER, output_filename )
+
+    key_file = open(output_file, 'r')
+
+     
+    return 
+
+
+"""
+CIFRAR O FICHEIRO SECRET.KEY PARA SECRET.RSA UTILIZANDO A CHAVE PUBLICA DE ALGUÉM:
+	-> openssl rsautl -encrypt -in secret.key -out secret.rsa -inkey alguem-pk.pem -pubin
+"""
+
+def rsa_encrypt(input_file, key_file):
+    file_path = os.path.join(OPENSSL_OUTPUT_FOLDER, input_file)
+    key_file = os.path.join(RSA_FOLDER, key_file)
+    enc_file = os.path.join(UPLOADS_FOLDER,  input_file + ".rsaenc")
+    p = subprocess.Popen(['touch', enc_file]) # creating the output file before using it to prevent throwing errors
+    p.wait()
+
+
+    print("openssl rsautl -encrypt -in " + file_path +" -out " +enc_file + " -inkey "+key_file + " -pubin", file=sys.stderr )
+
+    try:
+        p = subprocess.Popen(
+                    ['openssl', 'rsautl', '-encrypt', '-in', file_path, '-out', enc_file, '-inkey', key_file, '-pubin'],
+                    stdin = subprocess.PIPE,
+                    stdout = subprocess.PIPE,
+                    stderr = subprocess.PIPE
+                )
+        p.wait()
+        return {'ok':'ok'}
+    except:
+        print('Failed to encrypt: ' + str(file_path), file=sys.stderr)
+        return {'error':'failed'}
+
+"""
+DECIFRAR O FICHEIRO SECRET.RSA PARA SECRET-2.KEY UTILIZANDO A MINHA CHAVE PRIVADA
+	-> openssl rsautl -decrypt -in secret.rsa -out secret-2.key -inkey pk-and-sk.pem
+"""
+
+def rsa_decrypt(input_file, key_file):
+    file_path = os.path.join(UPLOADS_FOLDER, input_file)
+    key_file = os.path.join(RSA_FOLDER, key_file)
+    dec_file = os.path.join(UPLOADS_FOLDER,  input_file + ".rsadec")
+    p = subprocess.Popen(['touch', dec_file]) # creating the output file before using it to prevent throwing errors
+    p.wait()
+
+
+    print("openssl rsautl -decrypt -in " + file_path +" -out " +dec_file + " -inkey "+key_file, file=sys.stderr )
+
+    try:
+        p = subprocess.Popen(
+                    ['openssl', 'rsautl', '-decrypt', '-in', file_path, '-out', dec_file, '-inkey', key_file],
+                    stdin = subprocess.PIPE,
+                    stdout = subprocess.PIPE,
+                    stderr = subprocess.PIPE
+                )
+        p.wait()
+
+        dec_ = open(dec_file, 'r')
+        read = dec_.read()
+
+        filename = read.split('\n', 1)[0]
+        
+        return {'ok':'Decrypt OK', 'session_file' : filename}
+        
+    except:
+        print('Failed to decrypt: ' + str(file_path), file=sys.stderr)
+        return {'error':'failed'}
+
 
 
 def encrypt_file( input_file, key, iv, cipher = None, base64=None):
@@ -259,8 +370,8 @@ def decrypt_file( input_file, key, iv, cipher = None, base64=None ):
 #openssl genrsa -out mykey.pem
 #will actually produce a public - private key pair. The pair is stored in the generated mykey.pem file.
 def generate_rsa( sk_file  ):
-    sk_path = os.path.join(TEMP_FOLDER, sk_file + '.pem')
-    pk_path = os.path.join(TEMP_FOLDER, sk_path.split('.')[0] + '.pub')
+    sk_path = os.path.join(RSA_FOLDER, sk_file + '.pem')
+    pk_path = os.path.join(RSA_FOLDER, sk_path.split('.')[0] + '.pub')
     p = subprocess.Popen(['touch', pk_path, sk_path]) # creating the output file before using it to prevent throwing errors
     p.wait()
     try:
@@ -296,7 +407,7 @@ def generate_rsa( sk_file  ):
 # openssl rsa -in teste1.pem (to view SK)
 #this function will receive a .pem file and extract the PK/SK to show the user in the app
 def view_key_from_pem( input_file ):
-    input_file_path = os.path.join(TEMP_FOLDER, input_file) #concat input file name and temp folder path
+    input_file_path = os.path.join(RSA_FOLDER, input_file) #concat input file name and temp folder path
     split = input_file.split('.')[-1] #check file extension
     key_dir=os.path.join(OPENSSL_OUTPUT_FOLDER, "key."+split) #concat output file name and openssl's output folder path
 
@@ -343,7 +454,7 @@ def view_key_from_pem( input_file ):
 # openssl dgst -sha256 -sign /private-key-file.pem file-to-sign > file.sig
 def sign_file_with_private_key( file_to_verify, private_key_file , hash_algorithm):
     input_file_path = os.path.join(UPLOADS_FOLDER, file_to_verify) #concat input file name and uploads folder path
-    private_key_file_path = os.path.join(TEMP_FOLDER, private_key_file) #concat private key file name and temp folder path
+    private_key_file_path = os.path.join(RSA_FOLDER, private_key_file) #concat private key file name and temp folder path
     output_file_path = os.path.join(UPLOADS_FOLDER, file_to_verify+".sig")#concat output file name and uploads folder path
     p = subprocess.Popen(['touch', output_file_path]) # creating the output file before using it to prevent throwing errors
     p.wait()
@@ -383,7 +494,7 @@ def sign_file_with_private_key( file_to_verify, private_key_file , hash_algorith
 def verify_file_with_public_key( file_to_verify, public_key_file, signed_file, hash_algorithm ):
     signed_file_path = os.path.join(UPLOADS_FOLDER, signed_file) #concat signed file name and uploads folder path
     input_file_path = os.path.join(UPLOADS_FOLDER, file_to_verify) #concat input file name and uploads folder path
-    public_key_file_path = os.path.join(TEMP_FOLDER, public_key_file) #concat public key file name and temp folder path
+    public_key_file_path = os.path.join(RSA_FOLDER, public_key_file) #concat public key file name and temp folder path
     output_file_path = os.path.join(UPLOADS_FOLDER, file_to_verify+".ver")#concat output file name and uploads folder path
     p = subprocess.Popen(['touch', output_file_path]) # creating the output file before using it to prevent throwing errors
     p.wait()
