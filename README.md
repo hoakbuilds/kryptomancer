@@ -60,8 +60,6 @@ Note: to be able to run the app natively you will need the python `pywebview` pa
 python3 kryptomancer.py &
 ```
 
-Final note: for the app to be able to run properly, in the root dir of the repository you may have to create the following folders (due to permission issues) `temp`, `uploads`, `openssl_out`.
-
 
 ## Built With
 
@@ -75,7 +73,9 @@ Final note: for the app to be able to run properly, in the root dir of the repos
 
 * **Hugo Carvalho** - *Initial work* - [murlokito](https://github.com/murlokito)
 * **António Matos** - *Initial work* - [ajsmatos](https://github.com/ajsmatos)
-* 
+* **João Silva** - *Initial work* - [JoaoSilva](https://github.com/JoaoSilva)
+* **Guilherme Poeta** - *Initial work* - [P0ETA](https://github.com/P0ETA)
+
 See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
 
 ## License

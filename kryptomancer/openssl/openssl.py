@@ -448,6 +448,7 @@ def view_key_from_pem( input_file ):
         data = {
             'pk' : key
         }
+    os.remove(key_dir)
     return data
 
 # openssl dgst -HASH -sign PRIVATE_KEY FILE_TO_SIGN > FILE.SIG
