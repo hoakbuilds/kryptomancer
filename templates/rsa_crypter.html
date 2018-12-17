@@ -61,6 +61,7 @@
         <input class="w3-dark-grey w3-round w3-cinzel" formaction="/rsa_decrypt/" type="submit" value="Decrypt File">  
         <input class="w3-dark-grey w3-round w3-cinzel" formaction="/delete_file/" type="submit" value="Delete Selected">
     </form>
+    <form action="/decrypt_original/" name="decrypt_original" method=post enctype="multipart/form-data">
     <div class="w3-container">
         <div class="w3-responsive">
             {% if rsa_data %}
@@ -70,7 +71,7 @@
                   <th><b>AES Status</b></th>
                   <th><b>Key Filename</b></th>
                   <th><b>RSA Status</b></th>
-                  <th><b>Download</b></th>
+                  <!--th><b>Download</b></th-->
                 </tr>
                 {% for item in rsa_data  %}
                   <tr class="w3-round">
@@ -78,13 +79,54 @@
                     <td> {{ item.aes_status }}</td>
                     <td> {{ item.key_filename }}</td>
                     <td> {{ item.rsa_status }}</td>
-                    <th><b><input class="w3-dark-grey w3-round w3-cinzel" formaction="/download_zip/" type="submit" value="Download ZIP"></b></th>
+                    <!--th><b><input class="w3-dark-grey w3-round w3-cinzel" formaction="/download_zip/" type="submit" value="Download ZIP"></b></th-->
+                  </tr>
+                {% endfor %}
+              </table>
+            {% endif %}
+            {% if rsa_dec %}
+              <table class="w3-table w3-left w3-bordered">
+                <tr class=" w3-round w3-cinzel w3-large">
+                  <th><b>Filename</b></th>
+                  <th><b>Decryption Filename</b></th>
+                  <th><b>Status</b></th>
+                  <th><b>Session File</b></th>
+                  <th></th>
+                </tr>
+                {% for item in rsa_dec  %}
+                  <tr class="w3-round">
+                    <td> {{ item.filename }}</td>
+                    <td> {{ item.decryption_file }}</td>
+                    <td> {{ item.status }}</td>
+                    <td> {{ item.session_file }}</td>
+                    <th><b><input class="w3-dark-grey w3-round w3-cinzel" formaction="/decrypt_original/{{item.session_file}}" type="submit" value="Decrypt Original"></b></th>
+                  </tr>
+                {% endfor %}
+              </table>
+            {% endif %}
+            {% if dec_info %}
+              <table class="w3-table w3-left w3-bordered">
+                <tr class=" w3-round w3-cinzel w3-large">
+                  <th><b>Filename</b></th>
+                  <th><b>Algorithm</b></th>
+                  <th><b>Decryption</b></th>
+                  <th><b>IV</b></th>
+                  <th><b>Key</b></th> 
+                </tr>
+                {% for item in dec_info  %}
+                  <tr class="w3-round">
+                    <td> {{ item.filename }}</td>
+                    <td> {{ item.algorithm }}</td>
+                    <td> {{ item.status }}</td>
+                    <td id="{{item.filename}}_iv">{{ item.iv }}</td>
+                    <td id="{{item.filename}}_key">{{ item.key }}</td>
                   </tr>
                 {% endfor %}
               </table>
             {% endif %}
           </div>
         </div>
+        </form>
 </div>
 
 

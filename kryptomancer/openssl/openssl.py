@@ -208,11 +208,26 @@ def keys_for_RSA_session( input_file ):
 
     key_file = open(output_file, 'w+')
 
-    key_file.write(input_file +"\n"+data['iv'] + data['key'])
+    key_file.write(input_file+".enc\n"+data['iv']+"\n"+ data['key'])
 
     data['key_filename'] = output_filename
 
     return data
+
+"""
+Gets keys AES keys used in the RSA session
+Returns:
+    keys,
+    name of the file to be decrypted with RSA
+"""
+def get_AES_keys_from_RSA_session( input_file ):
+    output_filename = input_file.split('.')[0]+".keys"
+    output_file = os.path.join(OPENSSL_OUTPUT_FOLDER, output_filename )
+
+    key_file = open(output_file, 'r')
+
+     
+    return 
 
 
 """
@@ -221,7 +236,7 @@ CIFRAR O FICHEIRO SECRET.KEY PARA SECRET.RSA UTILIZANDO A CHAVE PUBLICA DE ALGUÃ
 """
 
 def rsa_encrypt(input_file, key_file):
-    file_path = os.path.join(UPLOADS_FOLDER, input_file)
+    file_path = os.path.join(OPENSSL_OUTPUT_FOLDER, input_file)
     key_file = os.path.join(RSA_FOLDER, key_file)
     enc_file = os.path.join(UPLOADS_FOLDER,  input_file + ".rsaenc")
     p = subprocess.Popen(['touch', enc_file]) # creating the output file before using it to prevent throwing errors
@@ -266,14 +281,14 @@ def rsa_decrypt(input_file, key_file):
                     stderr = subprocess.PIPE
                 )
         p.wait()
+
+        dec_ = open(dec_file, 'r')
+        read = dec_.read()
+
+        filename = read.split('\n', 1)[0]
         
-        original_file = os.path.join(UPLOADS_FOLDER, input_file.rsplit('.', 1)[0])
-        stat_original = os.stat(original_file)
-        stat_dec = os.stat(dec_file)
-        if stat_original.st_size == stat_dec.st_size:
-            return {'ok':'Decrypt OK'}
-        else:
-            return {'error': 'Decrypt Failed'}
+        return {'ok':'Decrypt OK', 'session_file' : filename}
+        
     except:
         print('Failed to decrypt: ' + str(file_path), file=sys.stderr)
         return {'error':'failed'}

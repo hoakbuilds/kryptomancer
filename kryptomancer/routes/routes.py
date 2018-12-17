@@ -127,9 +127,11 @@ def rsa_encrypt():
     if request.method == 'POST':
         public_key_file = request.form.get('rsa_selected_files')
         if public_key_file is None:
+            files = {**get_temporary_files(), **get_uploaded_files()} #joins two dicts :)
             return render_template('rsa_crypter.html',  data=[], listdir=files)
         file_to_encrypt = request.form.getlist('rsa_uploaded_files')
         if not file_to_encrypt:
+            files = {**get_temporary_files(), **get_uploaded_files()} #joins two dicts :)
             return render_template('rsa_crypter.html',  data=[], listdir=files)
         
         data_list = []
@@ -142,8 +144,7 @@ def rsa_encrypt():
             aes_enc_data = encrypt_file(input_file=f,
                         key=data['key'],
                         iv=data['iv'],
-                        cipher='aes-256-cbc',
-                        base64=True)
+                        cipher='aes-256-cbc')
             pprint(aes_enc_data)
             if 'ok' in aes_enc_data:
                 data['aes_status'] = aes_enc_data['ok'] 
@@ -154,20 +155,17 @@ def rsa_encrypt():
                     os.remove(os.path.join(OPENSSL_OUTPUT_FOLDER, data['key_filename']))
                     data['rsa_status'] = rsa_enc_data['ok']
                     pprint(data)
-                    data_list.append(data)
-                    pprint(data_list)
-                    files = {**get_temporary_files(), **get_uploaded_files()} #joins two dicts :)
-                    return render_template('rsa_crypter.html',  rsa_data=data_list, listdir=files)
                 else:
-                    files = {**get_temporary_files(), **get_uploaded_files()} #joins two dicts :)
-                    return render_template('rsa_crypter.html',  data=data_list, listdir=files)
                     data['rsa_status'] = rsa_enc_data['error']
 
             else:
                 data['status'] = aes_enc_data['error']
-
+            
+            data_list.append(data)
+                    
+        pprint(data_list)
         files = {**get_temporary_files(), **get_uploaded_files()} #joins two dicts :)
-        return render_template('rsa_crypter.html',  data=data_list, listdir=files)
+        return render_template('rsa_crypter.html',  rsa_data=data_list, listdir=files)
 
     files = {**get_temporary_files(), **get_uploaded_files()} #joins two dicts :)
     return render_template('rsa_crypter.html', listdir=files)
@@ -178,15 +176,17 @@ def rsa_decrypt():
     if request.method == 'POST':
         private_key_file = request.form.get('rsa_selected_files')
         if private_key_file is None:
+            files = {**get_temporary_files(), **get_uploaded_files()} #joins two dicts :)
             return render_template('rsa_crypter.html',  data=[], listdir=files)
         file_to_encrypt = request.form.getlist('rsa_uploaded_files')
         if not file_to_encrypt:
+            files = {**get_temporary_files(), **get_uploaded_files()} #joins two dicts :)
             return render_template('rsa_crypter.html',  data=[], listdir=files)
         
         data_list = []
         for f in file_to_encrypt:
             print(private_key_file, f, file=sys.stderr)
-            data = rsa_dec(input_file=f, key_file=private_key_file)
+            data = RSA_Dec(input_file=f, key_file=private_key_file)
             data['filename'] = f
             data['decryption_file'] = private_key_file
             if 'ok' in data:
@@ -196,7 +196,45 @@ def rsa_decrypt():
             data_list.append(data)
 
         files = {**get_temporary_files(), **get_uploaded_files()} #joins two dicts :)
-        return render_template('rsa_crypter.html',  data=data_list, listdir=files)
+        return render_template('rsa_crypter.html',  rsa_dec=data_list, listdir=files)
+
+    files = {**get_temporary_files(), **get_uploaded_files()} #joins two dicts :)
+    return render_template('rsa_crypter.html', listdir=files)
+
+@routes.route('/decrypt_original/<filename>', methods=['POST', 'GET'])
+def decrypt_original(filename):
+    print('decrypt_original',file=sys.stderr)
+    if request.method == 'POST':
+        print(filename, file=sys.stderr)
+
+        key_file = filename.split('.')[0] +".keys.rsaenc.rsadec"
+
+        data = open(os.path.join(UPLOAD_FOLDER, key_file), 'r').read() #concats file names, opens file and reads from that file in one line
+
+        lines = data.split('\n')
+
+        iv = lines[1]
+        key = lines[2]
+
+        dec_info = decrypt_single_file(lines[0],
+                                    key=key,
+                                    iv=iv,
+                                    cipher='aes-256-cbc'
+                                    )
+        data_list = []      
+        dec_info['filename'] = lines[0]
+        dec_info['algorithm'] = 'aes-256-cbc'  
+        if 'ok' in dec_info:
+            dec_info['status'] = dec_info['ok']
+            pprint(dec_info)
+        elif 'error' in dec_info:
+            dec_info['status'] = dec_info['error']
+            pprint(dec_info)
+        
+        data_list.append(dec_info)
+
+        files = {**get_temporary_files(), **get_uploaded_files()} #joins two dicts :)
+        return render_template('rsa_crypter.html',  dec_info=data_list, listdir=files)
 
     files = {**get_temporary_files(), **get_uploaded_files()} #joins two dicts :)
     return render_template('rsa_crypter.html', listdir=files)
