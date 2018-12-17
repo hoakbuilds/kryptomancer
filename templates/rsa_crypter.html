@@ -29,7 +29,7 @@
         <input class="w3-dark-grey w3-round w3-cinzel" type=file name=file>
         <input class="w3-dark-grey w3-round w3-cinzel" type=submit value=Upload>
         <hr>
-        <select multiple type="file" class="w3-select" size="10" name="uploaded_files" enctype="multipart/form-data">
+        <select multiple type="file" class="w3-select" size="10" name="rsa_uploaded_files" enctype="multipart/form-data">
           <option class="w3-list w3-center" disabled name="uploaded_files">Untouched Files</option> 
           {% for item in listdir.untouched  %}
             <option class="w3-list" value="{{item}}" name="uploaded_files">{{ item }} </option> 
@@ -47,7 +47,7 @@
             <option class="w3-list" value="{{item}}" name="uploaded_files">{{ item }} </option> 
           {% endfor %}
         </select>
-        <select multiple type="file" class="w3-select" size="10" name="selected_files" enctype="multipart/form-data">
+        <select multiple type="file" class="w3-select" size="10" name="rsa_selected_files" enctype="multipart/form-data">
             <option class="w3-list w3-center" disabled name="selected_files">Secrets</option> 
             {% for item in listdir.sk  %}
             <option class="w3-list" value="{{item}}" name="selected_files">{{ item }} </option> 
@@ -59,6 +59,7 @@
         </select>
         <input class="w3-dark-grey w3-round w3-cinzel" formaction="/rsa_encrypt/" type="submit" value="Encrypt File">
         <input class="w3-dark-grey w3-round w3-cinzel" formaction="/rsa_decrypt/" type="submit" value="Decrypt File">  
+        <input class="w3-dark-grey w3-round w3-cinzel" formaction="/delete_file/" type="submit" value="Delete Selected">
     </form>
     {% for item in data  %}
         {% if item.ok %}

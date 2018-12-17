@@ -122,10 +122,10 @@ def rsa_crypter():
 def rsa_encrypt():
     print('rsa_encrypt',file=sys.stderr)
     if request.method == 'POST':
-        public_key_file = request.form.get('selected_files')
+        public_key_file = request.form.get('rsa_selected_files')
         if public_key_file is None:
             return render_template('rsa_crypter.html',  data=[], listdir=files)
-        file_to_encrypt = request.form.getlist('uploaded_files')
+        file_to_encrypt = request.form.getlist('rsa_uploaded_files')
         if not file_to_encrypt:
             return render_template('rsa_crypter.html',  data=[], listdir=files)
         
@@ -151,10 +151,10 @@ def rsa_encrypt():
 def rsa_decrypt():
     print('rsa_decrypt',file=sys.stderr)
     if request.method == 'POST':
-        private_key_file = request.form.get('selected_files')
+        private_key_file = request.form.get('rsa_selected_files')
         if private_key_file is None:
             return render_template('rsa_crypter.html',  data=[], listdir=files)
-        file_to_encrypt = request.form.getlist('uploaded_files')
+        file_to_encrypt = request.form.getlist('rsa_uploaded_files')
         if not file_to_encrypt:
             return render_template('rsa_crypter.html',  data=[], listdir=files)
         
@@ -542,6 +542,7 @@ def delete_file():
         # check if the post request has the file part
         redirect_rsa = None
         redirect_sign = None
+        redirect_rsagen = None
         selected_files = request.form.getlist('selected_files')
         if selected_files: # Deletes selected files in select form
             print('------------ Files Selected:', file=sys.stderr)
@@ -595,7 +596,7 @@ def delete_file():
         uploaded_files = request.form.getlist('sign_uploaded_files')
 
         if uploaded_files: # Deletes selected files in select form
-            print('------------ Files Selected From Sign/Verify Uploaded Files:', file=sys.stderr)
+            print('------------ Key Files Selected From Sign/Verify Uploaded Files:', file=sys.stderr)
             redirect_sign=True
             for f in uploaded_files:
                 print(f,  file=sys.stderr)
@@ -607,9 +608,67 @@ def delete_file():
                     os.remove(filename)
                 except:
                     pass
-        if redirect_rsa == True:
-            files = get_temporary_files()
+        
+        selected_files = request.form.getlist('rsagen_selected_files')
+        if selected_files: # Deletes selected files in select form
+            print('------------ Files Selected From Sign/Verify:', file=sys.stderr)
+            print(selected_files, file=sys.stderr)
+            redirect_rsagen=True
+            for f in selected_files:
+                print(f,  file=sys.stderr)
+                split = f.split('.')[-1]
+                if split == 'pub' or split == 'pem':
+                    filename = os.path.join(RSA_FOLDER, f)
+                else:
+                    filename = os.path.join(UPLOAD_FOLDER, f)
+                    print(filename, file=sys.stderr)
+                try:
+                    os.remove(filename)
+                except:
+                    pass
+
+        selected_files = request.form.getlist('rsa_selected_files')
+        if selected_files: # Deletes selected files in select form
+            print('------------ Files Selected From RSA E/D:', file=sys.stderr)
+            print(selected_files, file=sys.stderr)
+            redirect_rsa=True
+            for f in selected_files:
+                print(f,  file=sys.stderr)
+                split = f.split('.')[-1]
+                if split == 'pub' or split == 'pem':
+                    filename = os.path.join(RSA_FOLDER, f)
+                else:
+                    filename = os.path.join(UPLOAD_FOLDER, f)
+                    print(filename, file=sys.stderr)
+                try:
+                    os.remove(filename)
+                except:
+                    pass
+
+        uploaded_files = request.form.getlist('rsa_uploaded_files')
+
+        if uploaded_files: # Deletes selected files in select form
+            print('------------ Key Files Selected From RSA E/D:', file=sys.stderr)
+            redirect_rsa=True
+            for f in uploaded_files:
+                print(f,  file=sys.stderr)
+                split = f.split('.')[-1]
+                if split == 'pub' or split == 'pem':
+                    filename = os.path.join(RSA_FOLDER, f)
+                else:
+                    filename = os.path.join(UPLOAD_FOLDER, f)
+                    print(filename, file=sys.stderr)
+                try:
+                    os.remove(filename)
+                except:
+                    pass
+
+        if redirect_rsagen == True:
+            files = {**get_temporary_files(), **get_uploaded_files()} #joins two dicts :)
             return render_template('rsa_gen.html', listdir=files, enc_info=[])   
+        if redirect_rsa == True:
+            files = {**get_temporary_files(), **get_uploaded_files()} #joins two dicts :)
+            return render_template('rsa_crypter.html', listdir=files, enc_info=[])   
         if redirect_sign == True :
             files = {**get_temporary_files(), **get_uploaded_files()} #joins two dicts :)
             return render_template('sign.html', listdir=files, enc_info=[])   
