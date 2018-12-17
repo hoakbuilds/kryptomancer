@@ -61,29 +61,30 @@
         <input class="w3-dark-grey w3-round w3-cinzel" formaction="/rsa_decrypt/" type="submit" value="Decrypt File">  
         <input class="w3-dark-grey w3-round w3-cinzel" formaction="/delete_file/" type="submit" value="Delete Selected">
     </form>
-    {% for item in data  %}
-        {% if item.ok %}
-            <div class="w3-container w3-row-cell w3-margin-top">
-            <h2 class="w3-cinzel w3-cell">Filename: </h2>
-            <p id="" class="w3-cell word-wrapper">{{ item.filename }}</p>
-            <br>
-            <h2 class="w3-cinzel w3-cell">Encryption File: </h2>
-            <p id="" class="w3-cell word-wrapper">{{ item.encryption_file }}</p>
-            <br>
-            <h2 class="w3-cinzel w3-cell">Signature: </h2>
-            <p id="" class="w3-cell word-wrapper">{{ item.ok }}</p>
-            </div>
-        {% endif %}
-        {% if item.error %}
-            <div class="w3-container w3-row-cell w3-margin-top">
-            <h2 class="w3-cinzel w3-cell">Filename: </h2>
-            <p id="" class="w3-cell word-wrapper">{{ item.filename }}</p>
-            <br>
-            <h2 class="w3-cinzel w3-cell">Signature: </h2>
-            <p id="" class="w3-cell word-wrapper">{{ item.error }}</p>
-            </div>
-        {% endif %}
-    {% endfor %}
+    <div class="w3-container">
+        <div class="w3-responsive">
+            {% if rsa_data %}
+              <table class="w3-table w3-left w3-bordered">
+                <tr class=" w3-round w3-cinzel w3-large">
+                  <th><b>Filename</b></th>
+                  <th><b>AES Status</b></th>
+                  <th><b>Key Filename</b></th>
+                  <th><b>RSA Status</b></th>
+                  <th><b>Download</b></th>
+                </tr>
+                {% for item in rsa_data  %}
+                  <tr class="w3-round">
+                    <td> {{ item.filename }}</td>
+                    <td> {{ item.aes_status }}</td>
+                    <td> {{ item.key_filename }}</td>
+                    <td> {{ item.rsa_status }}</td>
+                    <th><b><input class="w3-dark-grey w3-round w3-cinzel" formaction="/download_zip/" type="submit" value="Download ZIP"></b></th>
+                  </tr>
+                {% endfor %}
+              </table>
+            {% endif %}
+          </div>
+        </div>
 </div>
 
 

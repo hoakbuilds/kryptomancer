@@ -14,11 +14,13 @@ from werkzeug.utils import secure_filename
 from threading import Thread, Lock
 from time import sleep
 
-from kryptomancer import url_ok, run_server
+from kryptomancer import url_ok, run_server, check_folders
 
 logger = logging.getLogger(__name__)
 
 if __name__ == '__main__':
+
+    check_folders()
 
     if 'docker' in sys.argv:
         run_server(docker=True)

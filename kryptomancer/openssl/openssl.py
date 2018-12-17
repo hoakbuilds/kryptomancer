@@ -50,7 +50,7 @@ def generate_key( bytes, base64=None):
     key = key_file.read()
 
     data = {
-        'key' : key
+        'key' : key.split('\n')[0]
     }
     os.remove(key_dir)
 
@@ -87,8 +87,8 @@ def generate_aes_key_iv( bytes ):
     print('IV ' + iv + 'Key ' + key)
 
     data = {
-        'iv' : iv,
-        'key' : key
+        'iv' : iv.split('\n')[0],
+        'key' : key.split('\n')[0]
     }
     os.remove(key_dir)
     os.remove(iv_dir)
@@ -125,8 +125,8 @@ def generate_3des_key_iv():
     print('IV ' + iv + 'Key ' + key)
 
     data = {
-        'iv' : iv,
-        'key' : key
+        'iv' : iv.split('\n')[0],
+        'key' : key.split('\n')[0]
     }
     os.remove(key_dir)
     os.remove(iv_dir)
@@ -191,6 +191,29 @@ def hmac_file( input_file, hash_algorithm, key ):
     os.remove(key_dir)
 
     return data
+
+
+"""
+Generates keys for symmetric file encryption and saves them in a file to be encrypted with RSA
+Returns:
+    generated keys,
+    name of the file to be encrypted with RSA (containing the keys)
+"""
+def keys_for_RSA_session( input_file ):
+    output_filename = input_file.split('.')[0]+".keys"
+    output_file = os.path.join(OPENSSL_OUTPUT_FOLDER, output_filename )
+    p = subprocess.Popen(['touch', output_file]) # creating the output file before using it to prevent throwing errors
+    p.wait()
+    data = generate_aes_key_iv(32)
+
+    key_file = open(output_file, 'w+')
+
+    key_file.write(input_file +"\n"+data['iv'] + data['key'])
+
+    data['key_filename'] = output_filename
+
+    return data
+
 
 """
 CIFRAR O FICHEIRO SECRET.KEY PARA SECRET.RSA UTILIZANDO A CHAVE PUBLICA DE ALGUÉM:
