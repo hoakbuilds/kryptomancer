@@ -23,7 +23,6 @@ from threading import Thread
 from flask import Flask, url_for, render_template, jsonify, request, make_response, redirect
 
 from kryptomancer.routes import *
-from kryptomancer.openssl import OPENSSL_OUTPUT_FOLDER, UPLOADS_FOLDER, TEMP_FOLDER
 
 path_to_static = os.getcwd() + '/static'
 path_to_templates = os.getcwd() + '/templates'

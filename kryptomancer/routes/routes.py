@@ -578,7 +578,7 @@ def gen_rsa():
 def view_key():
     print('view_key', file=sys.stderr)
     if request.method == 'POST':
-        selected_files = request.form.getlist('selected_files')
+        selected_files = request.form.getlist('rsagen_selected_files')
         if selected_files:
             key_list = []
             for f in selected_files:
