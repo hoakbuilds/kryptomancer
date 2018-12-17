@@ -1,3 +1,5 @@
+![kryptomancer](docs/kryptomancer.jpg)
+
 # kryptomancer
 
 An OpenSSL wizard (GUI), made for a University Class, open sourced for the greater good.
