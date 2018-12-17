@@ -31,7 +31,7 @@
         <input  name="sk_file" type="text">
         <br>
         <hr>
-        <select multiple type="file" class="w3-select " size="10" name="selected_files" enctype="multipart/form-data">
+        <select multiple type="file" class="w3-select " size="10" name="rsagen_selected_files" enctype="multipart/form-data">
             <option class="w3-list w3-center" disabled name="selected_files">Secrets</option> 
             {% for item in listdir.sk  %}
             <option class="w3-list" value="{{item}}" name="selected_files">{{ item }} </option> 
