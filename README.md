@@ -1,6 +1,7 @@
 ![kryptomancer](docs/kryptomancer.jpg)
 
 # kryptomancer
+[![Build Status](https://api.cirrus-ci.com/github/murlokito/kryptomancer.svg)](https://cirrus-ci.com/github/murlokito/kryptomancer)
 
 An OpenSSL wizard (GUI), made for a University Class, open sourced for the greater good.
 
