@@ -178,13 +178,13 @@ def rsa_decrypt():
         if private_key_file is None:
             files = {**get_temporary_files(), **get_uploaded_files()} #joins two dicts :)
             return render_template('rsa_crypter.html',  data=[], listdir=files)
-        file_to_encrypt = request.form.getlist('rsa_uploaded_files')
-        if not file_to_encrypt:
+        file_to_decrypt = request.form.getlist('rsa_uploaded_files')
+        if not file_to_decrypt:
             files = {**get_temporary_files(), **get_uploaded_files()} #joins two dicts :)
             return render_template('rsa_crypter.html',  data=[], listdir=files)
         
         data_list = []
-        for f in file_to_encrypt:
+        for f in file_to_decrypt:
             print(private_key_file, f, file=sys.stderr)
             data = RSA_Dec(input_file=f, key_file=private_key_file)
             data['filename'] = f
