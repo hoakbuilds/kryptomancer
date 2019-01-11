@@ -214,21 +214,6 @@ def keys_for_RSA_session( input_file ):
 
     return data
 
-"""
-Gets keys AES keys used in the RSA session
-Returns:
-    keys,
-    name of the file to be decrypted with RSA
-"""
-def get_AES_keys_from_RSA_session( input_file ):
-    output_filename = input_file.split('.')[0]+".keys"
-    output_file = os.path.join(OPENSSL_OUTPUT_FOLDER, output_filename )
-
-    key_file = open(output_file, 'r')
-
-     
-    return 
-
 
 """
 CIFRAR O FICHEIRO SECRET.KEY PARA SECRET.RSA UTILIZANDO A CHAVE PUBLICA DE ALGUÉM:

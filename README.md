@@ -68,15 +68,14 @@ python3 kryptomancer.py &
 * [Flask](http://flask.pocoo.org/) - The web framework used
 * [pywebview](https://pywebview.flowrl.com) - A cross-platform wrapper for web apps to display its content in a native window
 
-## Contributing
+## Contributors
 
-
-## Authors
-
-* **Hugo Carvalho** - *Initial work* - [murlokito](https://github.com/murlokito)
-* **António Matos** - *Initial work* - [ajsmatos](https://github.com/ajsmatos)
+* **Hugo Carvalho** - *Maintainer* - [murlokito](https://github.com/murlokito)
+* **António Matos** - *Maintainer* - [ajsmatos](https://github.com/ajsmatos)
 * **João Silva** - *Initial work* - [JoaoSilva](https://github.com/JoaoSilva)
 * **Guilherme Poeta** - *Initial work* - [P0ETA](https://github.com/P0ETA)
+
+* **Pedro Marreiros** - *Testing Monkey* - [sombrito](https://github.com/sombrito)
 
 See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
 
@@ -87,5 +86,6 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 ## Acknowledgments
 
 * Prof. Pedro Inácio for the project assignment
+* Pedro Marreiros for being our testing monkey
 * Hat tip to anyone whose code samples were used in fixing our problems
 * Inspiration

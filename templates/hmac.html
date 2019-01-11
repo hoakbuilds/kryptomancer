@@ -23,7 +23,7 @@
             <br>When you trade files with a friend, ask him to send you the respective hmac value and hash function.
             Remember that you need a previously exchanged secret key.
             Later, when you have the files, just re-calculate the hmac with the same function and key, and check if the two are are the same.
-            If that is the case, it means that your file was not changed during the transmission and realy is the file of your friend.
+            If that is the case, it means that your file was not changed during the transmission and really is the file of your friend.
   
         </span>
     </div>
@@ -50,7 +50,7 @@
         <input class="w3-dark-grey w3-round w3-cinzel" type=submit value=Upload>
         <br>
         <hr>
-        <select multiple type="file" class="w3-select" size="10" name="selected_files" enctype="multipart/form-data">
+        <select multiple type="file" class="w3-select" size="10" name="hmac_selected_files" enctype="multipart/form-data">
           <option class="w3-list w3-center" disabled name="selected_files">Untouched Files</option> 
           {% for item in listdir.untouched  %}
             <option class="w3-list" value="{{item}}" name="selected_files">{{ item }} </option> 
@@ -80,7 +80,7 @@
         </select>
 
         <input class="w3-dark-grey w3-round w3-cinzel" formaction="/hmac" type="submit" value="Generate HMAC">
-        <input class="w3-dark-grey w3-round w3-cinzel" formaction="/delete_temp/" type="submit" value="Delete Selected">
+        <input class="w3-dark-grey w3-round w3-cinzel" formaction="/delete_file/" type="submit" value="Delete Selected">
         <br>
         <br>
     </form>
