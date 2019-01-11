@@ -606,11 +606,29 @@ def delete_file():
         redirect_rsa = None
         redirect_sign = None
         redirect_rsagen = None
+        redirect_hmac = None
         selected_files = request.form.getlist('selected_files')
         if selected_files: # Deletes selected files in select form
             print('------------ Files Selected:', file=sys.stderr)
             for f in selected_files:
                 print(f,  file=sys.stderr)
+                split = f.split('.')[-1]
+                if split == 'pub' or split == 'pem':
+                    filename = os.path.join(RSA_FOLDER, f)
+                    print(filename, file=sys.stderr)
+                else:
+                    filename = os.path.join(UPLOAD_FOLDER, f)
+                    print(filename, file=sys.stderr)
+                try:
+                    os.remove(filename)
+                except:
+                    pass
+
+        selected_files = request.form.getlist('hmac_selected_files')
+        if selected_files: # Deletes selected files in select form
+            print('------------ Files Selected:', file=sys.stderr)
+            for f in selected_files:
+                redirect_hmac = True
                 split = f.split('.')[-1]
                 if split == 'pub' or split == 'pem':
                     filename = os.path.join(RSA_FOLDER, f)
@@ -728,7 +746,10 @@ def delete_file():
 
         if redirect_rsagen == True:
             files = {**get_temporary_files(), **get_uploaded_files()} #joins two dicts :)
-            return render_template('rsa_gen.html', listdir=files, enc_info=[])   
+            return render_template('rsa_gen.html', listdir=files, enc_info=[])
+        if redirect_hmac == True:
+            files = {**get_temporary_files(), **get_uploaded_files()} #joins two dicts :)
+            return render_template('hmac.html', listdir=files, enc_info=[])   
         if redirect_rsa == True:
             files = {**get_temporary_files(), **get_uploaded_files()} #joins two dicts :)
             return render_template('rsa_crypter.html', listdir=files, enc_info=[])   
