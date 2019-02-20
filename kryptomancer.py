@@ -38,4 +38,4 @@ if __name__ == '__main__':
 
     else:
         webview.create_window("kryptomancer",
-                        "http://127.0.0.1:5000", resizable=True)
+                        "http://127.0.0.1:5000", resizable=True, frameless=True)
