@@ -3,7 +3,7 @@
 # kryptomancer
 [![Build Status](https://api.cirrus-ci.com/github/murlokito/kryptomancer.svg)](https://cirrus-ci.com/github/murlokito/kryptomancer)
 
-An OpenSSL wizard (GUI), made for a University Class, open sourced for the greater good.
+An OpenSSL wizard (GUI), created in the context of IT Security subject, at Universidade da Beira Inteiror (UBI) . Open sourced for the greater good.
 
 ## Getting Started
 
